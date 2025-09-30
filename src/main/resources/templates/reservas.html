@@ -1,0 +1,53 @@
+<!-- reservas.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reservas - Motorentix</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/reservas.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <header class="reserva-header">
+      <h1>Gestión de Reservas</h1>
+    </header>
+
+    <main class="reserva-main">
+      <section class="formulario">
+        <h2>Crear nueva reserva</h2>
+        <form id="form-reserva">
+          <label for="nombre">Nombre del cliente:</label>
+          <input type="text" id="nombre" required />
+
+          <label for="vehiculo">Vehículo:</label>
+          <input type="text" id="vehiculo" required />
+
+          <label for="fecha">Fecha:</label>
+          <input type="date" id="fecha" required />
+
+          <label for="hora">Hora:</label>
+          <input type="time" id="hora" required />
+
+          <button type="submit">Reservar</button>
+        </form>
+      </section>
+
+      <section class="reservas-lista">
+        <h2>Reservas programadas</h2>
+        <ul id="lista-reservas">
+          <!-- Las reservas se mostrarán aquí con JS -->
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Motorentix. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script src="js/reservas.js"></script>
+</body>
+</html>

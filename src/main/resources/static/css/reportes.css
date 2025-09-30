@@ -1,0 +1,101 @@
+/* Estructura general */
+.wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Encabezado */
+.reportes-header {
+  background-color: #003049;
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+.reportes-header h1 {
+  font-size: 2rem;
+}
+
+/* Contenido principal */
+.reportes-main {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  padding: 2rem;
+  background-color: #f5f5f5;
+}
+
+/* Formulario de filtros */
+.filtros {
+  flex: 1;
+  min-width: 300px;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.filtros h2 {
+  margin-bottom: 1rem;
+  color: #003049;
+}
+
+.filtros label {
+  display: block;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+.filtros input {
+  width: 100%;
+  padding: 0.6rem;
+  margin-top: 0.3rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.filtros button {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.8rem;
+  background-color: #f77f00;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.filtros button:hover {
+  background-color: #e06600;
+}
+
+/* Resultados */
+.resultado-reportes {
+  flex: 1;
+  min-width: 300px;
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 6px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.05);
+}
+
+.resultado-reportes h2 {
+  margin-bottom: 1rem;
+  color: #003049;
+}
+
+.resultado-reportes ul {
+  list-style: none;
+  padding: 0;
+}
+
+.resultado-reportes li {
+  background-color: #e9ecef;
+  border-left: 5px solid #1e6091;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}

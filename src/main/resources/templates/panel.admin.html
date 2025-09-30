@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Panel de Administración - MotorEntix</title>
+
+	<link rel="stylesheet" th:href="@{/css/panel.admin.css}">
+</head>
+
+<body>
+	<header>
+		<div class="logo">
+			<h1>MotorEntix</h1>
+		</div>
+		<div class="user-info">
+			<span>Administrador</span>
+			<div class="user-avatar">A</div>
+		</div>
+	</header>
+
+	<div class="container">
+		<nav class="sidebar">
+			<ul class="sidebar-menu">
+				<li class="menu-item active">
+					<span>📊</span> Dashboard
+				</li>
+				<li class="menu-item">
+					<span>🚗</span> Vehículos
+				</li>
+				<li class="menu-item">
+					<span>👥</span> Clientes
+				</li>
+				<li class="menu-item">
+					<span>📋</span> Reservas
+				</li>
+				<li class="menu-item">
+					<span>💰</span> Pagos
+				</li>
+				<li class="menu-item">
+					<span>⚙️</span> Configuración
+				</li>
+				<li class="menu-item">
+					<span>📈</span> Reportes
+				</li>
+			</ul>
+		</nav>
+
+		<main class="main-content">
+			<div class="page-header">
+				<h2 class="page-title">Panel de Administración</h2>
+				<button class="btn btn-primary">Generar Reporte</button>
+			</div>
+
+			<div class="stats-cards">
+				<div class="stat-card">
+					<div class="stat-value">24</div>
+					<div class="stat-label">Vehículos Activos</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">156</div>
+					<div class="stat-label">Reservas del Mes</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">$45,230</div>
+					<div class="stat-label">Ingresos Totales</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">92%</div>
+					<div class="stat-label">Tasa de Ocupación</div>
+				</div>
+			</div>
+
+
+			<div class="table-container">
+				<div class="table-header">
+					<h3 class="table-title">Vehículos Disponibles</h3>
+					<button class="btn btn-primary">Agregar Vehículo</button>
+				</div>
+
+				<table>
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Marca</th>
+							<th>Modelo</th>
+							<th>Año</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="vehiculo : ${vehiculos}">
+							<td th:text="${vehiculo.id_vehiculo}"></td>
+							<td th:text="${vehiculo.placa}"></td>
+							<td th:text="${vehiculo.marca}"></td>
+							<td th:text="${vehiculo.modelo}"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+	</div>
+
+
+	</main>
+	</div>
+</body>
+
+</html>

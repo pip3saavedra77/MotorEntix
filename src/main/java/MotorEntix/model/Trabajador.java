@@ -24,7 +24,7 @@ public class Trabajador {
 
 	@ManyToOne
 	private Usuario usuario;
-	@OneToMany(mappedBy = "Trabador")
+	@OneToMany(mappedBy = "trabajador")
 	private List<Servicio> servicio;
 
 	public Trabajador() {

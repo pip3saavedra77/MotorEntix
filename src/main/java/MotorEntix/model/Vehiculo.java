@@ -11,12 +11,12 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Vehiculo")
+@Table(name = "vehiculo")
 public class Vehiculo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 
-	private Integer id;
+	private Integer id_vehiculo;
 	private String placa;
 	private String marca;
 	private String modelo;
@@ -31,17 +31,23 @@ public class Vehiculo {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public String toString() {
-		return "Vehiculo [id=" + id + ", placa=" + placa + ", marca=" + marca + ", modelo=" + modelo + "]";
+	public Vehiculo(Integer id_vehiculo, String placa, String marca, String modelo, Usuario usuario,
+			List<HistorialServicios> historialservicios) {
+		super();
+		this.id_vehiculo = id_vehiculo;
+		this.placa = placa;
+		this.marca = marca;
+		this.modelo = modelo;
+		this.usuario = usuario;
+		this.historialservicios = historialservicios;
 	}
 
-	public Integer getId() {
-		return id;
+	public Integer getId_vehiculo() {
+		return id_vehiculo;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setId_vehiculo(Integer id_vehiculo) {
+		this.id_vehiculo = id_vehiculo;
 	}
 
 	public String getPlaca() {
@@ -84,15 +90,12 @@ public class Vehiculo {
 		this.historialservicios = historialservicios;
 	}
 
-	public Vehiculo(Integer id, String placa, String marca, String modelo, Usuario usuario,
-			List<HistorialServicios> historialservicios) {
-		super();
-		this.id = id;
-		this.placa = placa;
-		this.marca = marca;
-		this.modelo = modelo;
-		this.usuario = usuario;
-		this.historialservicios = historialservicios;
+	@Override
+	public String toString() {
+		return "Vehiculo [id_vehiculo=" + id_vehiculo + ", placa=" + placa + ", marca=" + marca + ", modelo=" + modelo
+				+ "]";
 	}
+
+	
 
 }
