@@ -22,4 +22,10 @@ public class VehiculoServiceImplement implements IVehiculoService {
         return lista;
     }
     
+    @Override
+    public  Vehiculo guardar(Vehiculo vehiculo) {
+    	return vehiculoRepository.save(vehiculo);
+    }
+    
+    
 }

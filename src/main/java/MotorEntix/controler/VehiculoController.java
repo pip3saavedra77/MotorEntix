@@ -18,17 +18,16 @@ public class VehiculoController {
     @Autowired
     private IVehiculoService vehiculoService;
 
-    @GetMapping("/admin")
-    public String mostrarPanelAdmin(Model model) {
-        List<Vehiculo> vehiculos = vehiculoService.listarTodos();
-        model.addAttribute("vehiculos", vehiculos);
-        return "panel.admin"; // 👈 solo esto
-    }
+    
 
     @GetMapping("/vehiculos")
     public String listarVehiculos() {
         return "redirect:/admin/panel-admin";
     }
+    
+    
+    
+    
 }
 
 

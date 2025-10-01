@@ -17,10 +17,10 @@ public class Trabajador {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 
-	private Integer id;
+	private Integer id_trabajador;
 	private String especialidad;
-	private String horaIngreso;
-	private String horaSalida;
+	private String hora_Ingreso;
+	private String hora_Salida;
 
 	@ManyToOne
 	private Usuario usuario;
@@ -32,23 +32,23 @@ public class Trabajador {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Trabajador(Integer id, String especialidad, String horaIngreso, String horaSalida, Usuario usuario,
-			List<Servicio> servicio) {
+	public Trabajador(Integer id_trabajador, String especialidad, String hora_Ingreso, String hora_Salida,
+			Usuario usuario, List<Servicio> servicio) {
 		super();
-		this.id = id;
+		this.id_trabajador = id_trabajador;
 		this.especialidad = especialidad;
-		this.horaIngreso = horaIngreso;
-		this.horaSalida = horaSalida;
+		this.hora_Ingreso = hora_Ingreso;
+		this.hora_Salida = hora_Salida;
 		this.usuario = usuario;
 		this.servicio = servicio;
 	}
 
-	public Integer getId() {
-		return id;
+	public Integer getId_trabajador() {
+		return id_trabajador;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setId_trabajador(Integer id_trabajador) {
+		this.id_trabajador = id_trabajador;
 	}
 
 	public String getEspecialidad() {
@@ -59,20 +59,20 @@ public class Trabajador {
 		this.especialidad = especialidad;
 	}
 
-	public String getHoraIngreso() {
-		return horaIngreso;
+	public String getHora_Ingreso() {
+		return hora_Ingreso;
 	}
 
-	public void setHoraIngreso(String horaIngreso) {
-		this.horaIngreso = horaIngreso;
+	public void setHora_Ingreso(String hora_Ingreso) {
+		this.hora_Ingreso = hora_Ingreso;
 	}
 
-	public String getHoraSalida() {
-		return horaSalida;
+	public String getHora_Salida() {
+		return hora_Salida;
 	}
 
-	public void setHoraSalida(String horaSalida) {
-		this.horaSalida = horaSalida;
+	public void setHora_Salida(String hora_Salida) {
+		this.hora_Salida = hora_Salida;
 	}
 
 	public Usuario getUsuario() {
@@ -93,8 +93,8 @@ public class Trabajador {
 
 	@Override
 	public String toString() {
-		return "Trabajador [id=" + id + ", especialidad=" + especialidad + ", horaIngreso=" + horaIngreso
-				+ ", horaSalida=" + horaSalida + "]";
+		return "Trabajador [id_trabajador=" + id_trabajador + ", especialidad=" + especialidad + ", hora_Ingreso="
+				+ hora_Ingreso + ", hora_Salida=" + hora_Salida + "]";
 	}
 
 }
