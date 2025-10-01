@@ -55,7 +55,8 @@
 
 			<div class="form-container">
 				<!-- 📌 Formulario conectado a Spring Boot -->
-				<form class="vehicle-form" th:action="@{/admin/vehiculos/guardar}" th:object="${vehiculo}" method="post">
+				<form class="vehicle-form" th:action="@{/admin/vehiculos/guardar}" th:object="${vehiculo}"
+					method="post">
 
 					<div class="form-section">
 						<h3 class="section-title">Información Básica del Vehículo</h3>
@@ -142,6 +143,16 @@
 							</div>
 
 							<div class="form-group">
+								<label for="combustible" class="form-label">Estado</label>
+								<select th:field="*{estadoVehiculo}" class="form-select">
+									<option value="">Seleccione el estado</option>
+									<option value="EnMantenimiento">en mantenimiento</option>
+									<option value="Realizado">realizado</option>
+						
+								</select>
+							</div>
+
+							<div class="form-group">
 								<label for="color" class="form-label">Color</label>
 								<input type="text" th:field="*{color}" class="form-input"
 									placeholder="Color del vehículo">
@@ -165,7 +176,8 @@
 					</div>
 
 					<div class="form-actions">
-						<button type="button" class="btn btn-secondary" onclick="window.history.back()">Cancelar</button>
+						<button type="button" class="btn btn-secondary"
+							onclick="window.history.back()">Cancelar</button>
 						<button type="reset" class="btn btn-outline">Limpiar Formulario</button>
 						<button type="submit" class="btn btn-primary">Agregar Vehículo</button>
 					</div>
@@ -174,24 +186,7 @@
 
 			<hr>
 
-			<!-- 📌 Tabla para mostrar vehículos ya registrados -->
-			<h2>Vehículos Registrados</h2>
-			<table border="1">
-				<tr>
-					<th>ID</th>
-					<th>Marca</th>
-					<th>Modelo</th>
-					<th>Año</th>
-					<th>Placa</th>
-				</tr>
-				<tr th:each="v : ${vehiculos}">
-					<td th:text="${v.id}"></td>
-					<td th:text="${v.marca}"></td>
-					<td th:text="${v.modelo}"></td>
-					<td th:text="${v.anio}"></td>
-					<td th:text="${v.placa}"></td>
-				</tr>
-			</table>
+
 		</main>
 	</div>
 </body>
