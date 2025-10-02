@@ -113,8 +113,25 @@
 							<td th:text="${vehiculo.estadoVehiculo}"></td>
 							<td th:text="${vehiculo.descripcion}"></td>
 
+							<!-- Acciones -->
+							<td>
+								<!-- Botón Editar -->
+								<a th:href="@{/admin/vehiculos/editar/{id}(id=${vehiculo.id_vehiculo})}"
+									class="btn btn-warning">✏️ Editar</a>
+
+
+								<!-- Botón Eliminar -->
+								<form th:action="@{/admin/vehiculos/eliminar/{id}(id=${vehiculo.id_vehiculo})}"
+									method="post" style="display:inline;">
+									<button type="submit" class="btn btn-danger"
+										onclick="return confirm('¿Seguro que deseas eliminar este vehículo?')">
+										🗑️ Eliminar
+									</button>
+								</form>
+							</td>
 						</tr>
 					</tbody>
+
 				</table>
 			</div>
 	</div>

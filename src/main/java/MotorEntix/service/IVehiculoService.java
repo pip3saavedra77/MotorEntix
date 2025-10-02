@@ -8,4 +8,7 @@ public interface IVehiculoService {
 
 	Vehiculo guardar(Vehiculo vehiculo);
 
+	Vehiculo obtenerPorId(Integer id);
+
+	void eliminar(Integer id);
 }

@@ -16,7 +16,7 @@ public class Usuario {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 
-	private Integer id;
+	private Integer id_usuario;
 	private String nombre;
 	private String apellido;
 	private String correo;
@@ -37,19 +37,37 @@ public class Usuario {
 	@OneToMany(mappedBy = "usuario")
 	private java.util.List<Notificacion> notificacion;
 
-	@Override
-	public String toString() {
-		return "Usuario [id=" + id + ", nombre=" + nombre + ", apellido=" + apellido + ", correo=" + correo
-				+ ", direccion=" + direccion + ", telefono=" + telefono + ", contraseña=" + contraseña + ", estado="
-				+ estado + ", rol=" + rol + "]";
+	public Usuario() {
+		super();
+		// TODO Auto-generated constructor stub
 	}
 
-	public Integer getId() {
-		return id;
+	public Usuario(Integer id_usuario, String nombre, String apellido, String correo, String direccion, String telefono,
+			String contraseña, String estado, String rol, List<Vehiculo> vehiculo, List<Factura> factura,
+			List<Reserva> reserva, List<Trabajador> trabajador, List<Notificacion> notificacion) {
+		super();
+		this.id_usuario = id_usuario;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.correo = correo;
+		this.direccion = direccion;
+		this.telefono = telefono;
+		this.contraseña = contraseña;
+		this.estado = estado;
+		this.rol = rol;
+		this.vehiculo = vehiculo;
+		this.factura = factura;
+		this.reserva = reserva;
+		this.trabajador = trabajador;
+		this.notificacion = notificacion;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public Integer getId_usuario() {
+		return id_usuario;
+	}
+
+	public void setId_usuario(Integer id_usuario) {
+		this.id_usuario = id_usuario;
 	}
 
 	public String getNombre() {
@@ -156,29 +174,11 @@ public class Usuario {
 		this.notificacion = notificacion;
 	}
 
-	public Usuario(Integer id, String nombre, String apellido, String correo, String direccion, String telefono,
-			String contraseña, String estado, String rol, List<Vehiculo> vehiculo, List<Factura> factura,
-			List<Reserva> reserva, List<Trabajador> trabajador, List<Notificacion> notificacion) {
-		super();
-		this.id = id;
-		this.nombre = nombre;
-		this.apellido = apellido;
-		this.correo = correo;
-		this.direccion = direccion;
-		this.telefono = telefono;
-		this.contraseña = contraseña;
-		this.estado = estado;
-		this.rol = rol;
-		this.vehiculo = vehiculo;
-		this.factura = factura;
-		this.reserva = reserva;
-		this.trabajador = trabajador;
-		this.notificacion = notificacion;
-	}
-
-	public Usuario() {
-		super();
-		// TODO Auto-generated constructor stub
+	@Override
+	public String toString() {
+		return "Usuario [id_usuario=" + id_usuario + ", nombre=" + nombre + ", apellido=" + apellido + ", correo="
+				+ correo + ", direccion=" + direccion + ", telefono=" + telefono + ", contraseña=" + contraseña
+				+ ", estado=" + estado + ", rol=" + rol + "]";
 	}
 
 }

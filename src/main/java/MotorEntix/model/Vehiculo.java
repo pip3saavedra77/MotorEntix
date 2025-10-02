@@ -34,11 +34,30 @@ public class Vehiculo {
 	@OneToMany(mappedBy = "vehiculo")
 	private java.util.List<HistorialServicios> historialservicios;
 
+	/**
+	 * 
+	 */
 	public Vehiculo() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
+	/**
+	 * @param id_vehiculo
+	 * @param placa
+	 * @param marca
+	 * @param modelo
+	 * @param anio
+	 * @param version
+	 * @param tipoVehiculo
+	 * @param transmicion
+	 * @param combustible
+	 * @param color
+	 * @param estadoVehiculo
+	 * @param descripcion
+	 * @param usuario
+	 * @param historialservicios
+	 */
 	public Vehiculo(Integer id_vehiculo, String placa, String marca, String modelo, String anio, String version,
 			String tipoVehiculo, String transmicion, String combustible, String color, String estadoVehiculo,
 			String descripcion, Usuario usuario, List<HistorialServicios> historialservicios) {
