@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import MotorEntix.model.Vehiculo;
 import MotorEntix.service.IVehiculoService;
@@ -21,12 +22,23 @@ public class panelAdminController {
 	@Autowired
 	private IVehiculoService vehiculoService;
 
-	// 📌 Mostrar el panel principal con la lista de vehículos
+	// 📌 ÚNICO método para mostrar el panel principal con búsqueda opcional
 	@GetMapping("/panel")
-	public String mostrarPanelAdmin(Model model) {
-		List<Vehiculo> vehiculos = vehiculoService.listarTodos();
+	public String mostrarPanelAdmin(@RequestParam(value = "search", required = false) String search, Model model) {
+
+		List<Vehiculo> vehiculos;
+
+		if (search != null && !search.trim().isEmpty()) {
+			// Si hay término de búsqueda, filtrar vehículos
+			vehiculos = vehiculoService.buscarPorTermino(search);
+		} else {
+			// Si no hay búsqueda, mostrar todos
+			vehiculos = vehiculoService.listarTodos();
+		}
+
 		model.addAttribute("vehiculos", vehiculos);
 		model.addAttribute("vehiculo", new Vehiculo());
+		model.addAttribute("searchTerm", search);
 		return "panel.admin";
 	}
 
@@ -49,7 +61,7 @@ public class panelAdminController {
 	public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
 		Vehiculo vehiculo = vehiculoService.obtenerPorId(id);
 		model.addAttribute("vehiculo", vehiculo);
-		return "editarVehiculo"; // Vista Thymeleaf
+		return "editarVehiculo";
 	}
 
 	// 📌 Guardar cambios del vehículo editado
@@ -57,7 +69,6 @@ public class panelAdminController {
 	public String actualizarVehiculo(@PathVariable Integer id, @ModelAttribute("vehiculo") Vehiculo vehiculo) {
 		Vehiculo vehiculoExistente = vehiculoService.obtenerPorId(id);
 
-		// actualizar los datos
 		vehiculoExistente.setMarca(vehiculo.getMarca());
 		vehiculoExistente.setModelo(vehiculo.getModelo());
 		vehiculoExistente.setPlaca(vehiculo.getPlaca());
@@ -70,8 +81,7 @@ public class panelAdminController {
 		vehiculoExistente.setTransmicion(vehiculo.getTransmicion());
 
 		vehiculoService.guardar(vehiculoExistente);
-
-		return "redirect:/admin/panel"; // Redirige al panel después de editar
+		return "redirect:/admin/panel";
 	}
 
 	// 📌 Eliminar vehículo
@@ -84,26 +94,26 @@ public class panelAdminController {
 	// ================= Otras secciones =================
 	@GetMapping("/inventario")
 	public String inventario() {
-		return "panel.admin/adminInventario";
+		return "adminInventario";
 	}
 
 	@GetMapping("/reportes")
 	public String reportes() {
-		return "panel.admin/adminReportes";
+		return "adminReportes";
 	}
 
 	@GetMapping("/reservas")
 	public String reservas() {
-		return "panel.admin/adminReservas";
+		return "adminReservas";
 	}
 
 	@GetMapping("/servicios")
 	public String servicios() {
-		return "panel.admin/adminServicios";
+		return "adminServicios";
 	}
 
 	@GetMapping("/trabajadores")
 	public String trabajadores() {
-		return "panel.admin/adminTrabajadores";
+		return "adminTrabajadores";
 	}
 }

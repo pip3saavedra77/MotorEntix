@@ -40,7 +40,7 @@ public class LoginController {
 			// Redirección según rol
 			switch (u.getRol().toLowerCase()) {
 			case "administrador":
-				return "redirect:/panel.admin";
+				return "redirect:/admin/panel";
 			case "cliente":
 				return "redirect:/panel.cliente";
 			case "dueno":

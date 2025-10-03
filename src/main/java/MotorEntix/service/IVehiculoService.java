@@ -11,4 +11,6 @@ public interface IVehiculoService {
 	Vehiculo obtenerPorId(Integer id);
 
 	void eliminar(Integer id);
+
+	List<Vehiculo> buscarPorTermino(String search);
 }

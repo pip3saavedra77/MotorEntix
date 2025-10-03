@@ -36,4 +36,10 @@ public class VehiculoServiceImpl implements IVehiculoService {
 	public void eliminar(Integer id) {
 		vehiculoRepository.deleteById(id);
 	}
+
+	@Override
+	public List<Vehiculo> buscarPorTermino(String termino) {
+		// TODO Auto-generated method stub
+		return vehiculoRepository.buscarPorTermino(termino);
+	}
 }
