@@ -1,0 +1,45 @@
+<!-- reportes.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reportes - Motorentix</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/reportes.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <header class="reportes-header">
+      <h1>Panel de Reportes</h1>
+    </header>
+
+    <main class="reportes-main">
+      <section class="filtros">
+        <h2>Filtrar por período</h2>
+        <form id="form-reportes">
+          <label for="rango">Rango de fechas:</label>
+          <input type="date" id="fecha-inicio" required />
+          <input type="date" id="fecha-fin" required />
+
+          <button type="submit">Generar</button>
+        </form>
+      </section>
+
+      <section class="resultado-reportes">
+        <h2>Resultados</h2>
+        <ul id="lista-reportes">
+          <!-- Aquí aparecerán los reportes generados -->
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Motorentix. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script src="js/reportes.js"></script>
+</body>
+</html>

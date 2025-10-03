@@ -1,0 +1,67 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Iniciar Sesión - Motorentix</title>
+	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="css/login.css" />
+</head>
+
+<body>
+
+	<div class="wrapper">
+		<header>
+			<h1>Motorentix</h1>
+			<nav>
+				<ul>
+					<li><a href="index.html">Inicio</a></li>
+					<li><a href="faq.html">Preguntas Frecuentes</a></li>
+					<li><a href="contacto.html">Contacto</a></li>
+				</ul>
+			</nav>
+		</header>
+
+		<main class="login-main">
+			<section class="login-form">
+				<h2>Iniciar Sesión</h2>
+
+
+					<form th:action="@{/procesar-login}" method="post">
+						<label for="usuario">Usuario:</label>
+						<input type="text" id="usuario" name="usuario" required />
+
+						<label for="contrasena">Contraseña:</label>
+						<input type="password" id="contrasena" name="contrasena" required />
+
+						<label for="rol">Selecciona tu rol:</label>
+						<select id="rol" name="rol" required>
+							<option value="">-- Selecciona --</option>
+							<option value="cliente">Cliente</option>
+							<option value="administrador">Administrador</option>
+							<option value="dueno">Dueño</option>
+						</select>
+
+						<button type="submit">Ingresar</button>
+					</form>
+
+					<!-- Aquí aparece el error si algo está mal -->
+					<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+				</section>
+
+
+			</section>
+		</main>
+	</div>
+
+	<footer>
+		<p>&copy; 2025 Motorentix. Todos los derechos reservados.</p>
+	</footer>
+
+	<script src="js/script.js"></script>
+	<script src="js/login.js"></script>
+</body>
+
+</html>

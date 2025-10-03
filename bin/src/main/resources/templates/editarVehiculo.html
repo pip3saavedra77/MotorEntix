@@ -1,0 +1,63 @@
+<!-- templates/admin/editarVehiculo.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Editar Vehículo</title>
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+	<link rel="stylesheet" th:href="@{/css/panel.admin.css}">
+	<!-- Si usas Bootstrap -->
+	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+</head>
+
+<body>
+	<div class="container mt-5">
+		<h2 class="text-center mb-4">Editar Vehículo</h2>
+
+		<form th:action="@{/vehiculos/editar/4{id}(id=${vehiculo.id_vehiculo})}" method="post" th:object="${vehiculo}">
+
+			<input type="hidden" th:field="*{id_vehiculo}" />
+
+
+			<!-- Campo oculto para el ID -->
+			<input type="hidden" th:field="*{id_vehiculo}" />
+
+			<label>Marca:</label>
+			<input type="text" th:field="*{marca}" />
+
+			<label>Modelo:</label>
+			<input type="text" th:field="*{modelo}" />
+
+			<label>Placa:</label>
+			<input type="text" th:field="*{placa}" />
+
+			<label>Año:</label>
+			<input type="number" th:field="*{anio}" />
+
+			<label>Color:</label>
+			<input type="text" th:field="*{color}" />
+
+			<label>Combustible:</label>
+			<input type="text" th:field="*{combustible}" />
+
+			<label>Transmisión:</label>
+			<input type="text" th:field="*{transmicion}" />
+
+			<label>Tipo Vehículo:</label>
+			<input type="text" th:field="*{tipoVehiculo}" />
+
+			<label>Estado:</label>
+			<input type="text" th:field="*{estadoVehiculo}" />
+
+			<label>Descripción:</label>
+			<textarea th:field="*{descripcion}"></textarea>
+
+			<button type="submit" class="btn btn-primary">Guardar cambios</button>
+			<a th:href="@{/admin/panel}" class="btn btn-secondary">Cancelar</a>
+		</form>
+
+	</div>
+</body>
+
+</html>

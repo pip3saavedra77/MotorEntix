@@ -1,0 +1,43 @@
+<!-- historial.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Historial de Servicios - Motorentix</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/historial.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <header class="historial-header">
+      <h1>Historial de Servicios</h1>
+    </header>
+
+    <main class="historial-main">
+      <section class="busqueda">
+        <h2>Buscar historial</h2>
+        <form id="form-historial">
+          <label for="cliente">Nombre del cliente o vehículo:</label>
+          <input type="text" id="cliente" placeholder="Ej: Juan Pérez o ABC123" required />
+          <button type="submit">Buscar</button>
+        </form>
+      </section>
+
+      <section class="resultado">
+        <h2>Resultados</h2>
+        <ul id="lista-historial">
+          <!-- Aquí se mostrarán los servicios con JS -->
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Motorentix. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script src="js/historial.js"></script>
+</body>
+</html>

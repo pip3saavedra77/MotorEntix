@@ -1,0 +1,39 @@
+/* css/index.css */
+.bienvenida {
+  padding: 5rem 2rem;
+  text-align: center;
+  background: linear-gradient(to right, #003049, #1e6091);
+  color: white;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.bienvenida h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.bienvenida p {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  max-width: 600px;
+}
+
+.btn-ingresar {
+  padding: 0.8rem 1.8rem;
+  background-color: #f77f00;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.btn-ingresar:hover {
+  background-color: #d16600;
+}
+    

@@ -1,0 +1,47 @@
+<!-- inventario.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Inventario - Motorentix</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/inventario.css" />
+</head>
+<body>
+  <div class="wrapper">
+    <header class="inventario-header">
+      <h1>Gestión de Inventario</h1>
+    </header>
+
+    <main class="inventario-main">
+      <section class="formulario">
+        <h2>Agregar producto</h2>
+        <form id="form-inventario">
+          <label for="producto">Nombre del producto:</label>
+          <input type="text" id="producto" required />
+
+          <label for="cantidad">Cantidad en stock:</label>
+          <input type="number" id="cantidad" min="1" required />
+
+          <button type="submit">Agregar</button>
+        </form>
+      </section>
+
+      <section class="lista-inventario">
+        <h2>Productos registrados</h2>
+        <ul id="lista-inventario">
+          <!-- Aquí aparecerá el inventario -->
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Motorentix. Todos los derechos reservados.</p>
+  </footer>
+
+  <script src="js/script.js"></script>
+  <script src="js/inventario.js"></script>
+</body>
+</html>
