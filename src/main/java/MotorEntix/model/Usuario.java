@@ -2,6 +2,7 @@ package MotorEntix.model;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -22,7 +23,8 @@ public class Usuario {
 	private String correo;
 	private String direccion;
 	private String telefono;
-	private String contraseña;
+	@Column(name = "contraseña")
+	private String contrasena;
 	private String estado;
 	private String rol;
 
@@ -43,7 +45,7 @@ public class Usuario {
 	}
 
 	public Usuario(Integer id_usuario, String nombre, String apellido, String correo, String direccion, String telefono,
-			String contraseña, String estado, String rol, List<Vehiculo> vehiculo, List<Factura> factura,
+			String contrasena, String estado, String rol, List<Vehiculo> vehiculo, List<Factura> factura,
 			List<Reserva> reserva, List<Trabajador> trabajador, List<Notificacion> notificacion) {
 		super();
 		this.id_usuario = id_usuario;
@@ -52,7 +54,7 @@ public class Usuario {
 		this.correo = correo;
 		this.direccion = direccion;
 		this.telefono = telefono;
-		this.contraseña = contraseña;
+		this.contrasena = contrasena;
 		this.estado = estado;
 		this.rol = rol;
 		this.vehiculo = vehiculo;
@@ -110,12 +112,12 @@ public class Usuario {
 		this.telefono = telefono;
 	}
 
-	public String getContraseña() {
-		return contraseña;
+	public String getContrasena() {
+		return contrasena;
 	}
 
-	public void setContraseña(String contraseña) {
-		this.contraseña = contraseña;
+	public void setContrasena(String contrasena) {
+		this.contrasena = contrasena;
 	}
 
 	public String getEstado() {
@@ -177,7 +179,7 @@ public class Usuario {
 	@Override
 	public String toString() {
 		return "Usuario [id_usuario=" + id_usuario + ", nombre=" + nombre + ", apellido=" + apellido + ", correo="
-				+ correo + ", direccion=" + direccion + ", telefono=" + telefono + ", contraseña=" + contraseña
+				+ correo + ", direccion=" + direccion + ", telefono=" + telefono + ", contrasena=" + contrasena
 				+ ", estado=" + estado + ", rol=" + rol + "]";
 	}
 

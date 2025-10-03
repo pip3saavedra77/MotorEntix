@@ -1,6 +1,7 @@
 <!-- index.html -->
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://thymeLeaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 
 <head>
 	<meta charset="UTF-8">
@@ -17,10 +18,10 @@
 			<h1>Motorentix</h1>
 			<nav>
 				<ul>
-					<li><a th:href="@{/index.html}">Inicio</a></li>
-					<li><a th:href="@{/login.html}">Iniciar Sesión</a></li>
-					<li><a th:href="@{/index.html}">Preguntas Frecuentes</a></li>
-					<li><a th:href="@{/index.html}">Contacto</a></li>
+					<li><a th:href="@{/index}">Inicio</a></li>
+					<li><a th:href="@{/login}">Iniciar Sesión</a></li>
+					<li><a th:href="@{/index}">Preguntas Frecuentes</a></li>
+					<li><a th:href="@{/index}">Contacto</a></li>
 				</ul>
 			</nav>
 		</header>
@@ -29,16 +30,10 @@
 			<section class="bienvenida">
 				<h2>Bienvenido a Motorentix</h2>
 				<p>Plataforma de gestión inteligente para talleres mecánicos.</p>
-				<a th:href="@{/login.html}" class="btn-ingresar">Ingresar al sistema</a>
+				<a th:href="@{/login}" class="btn-ingresar">Ingresar al sistema</a>
 			</section>
 		</main>
 	</div>
-
-
-
-
-
-
 
 	<footer>
 		<p>&copy; 2025 Motorentix. Todos los derechos reservados.</p>

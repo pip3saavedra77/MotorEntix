@@ -1,13 +1,12 @@
-<!-- login.html -->
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Iniciar Sesión - Motorentix</title>
-	<link rel="stylesheet" href="css/style.css" />
-	<link rel="stylesheet" href="css/login.css" />
+	<link rel="stylesheet" th:href="@{/css/style.css}" />
+	<link rel="stylesheet" th:href="@{/css/login.css}" />
 </head>
 
 <body>
@@ -17,9 +16,9 @@
 			<h1>Motorentix</h1>
 			<nav>
 				<ul>
-					<li><a href="index.html">Inicio</a></li>
-					<li><a href="faq.html">Preguntas Frecuentes</a></li>
-					<li><a href="contacto.html">Contacto</a></li>
+					<li><a th:href="@{/index}">Inicio</a></li>
+					<li><a th:href="@{/faq}">Preguntas Frecuentes</a></li>
+					<li><a th:href="@{/contacto}">Contacto</a></li>
 				</ul>
 			</nav>
 		</header>
@@ -28,30 +27,25 @@
 			<section class="login-form">
 				<h2>Iniciar Sesión</h2>
 
+				<form th:action="@{/procesar-login}" method="post">
+					<label for="usuario">Correo:</label>
+					<input type="text" id="usuario" name="usuario" required />
 
-					<form th:action="@{/procesar-login}" method="post">
-						<label for="usuario">Usuario:</label>
-						<input type="text" id="usuario" name="usuario" required />
+					<label for="contrasena">Contraseña:</label>
+					<input type="password" id="contrasena" name="contrasena" required />
 
-						<label for="contrasena">Contraseña:</label>
-						<input type="password" id="contrasena" name="contrasena" required />
+					<label for="rol">Selecciona tu rol:</label>
+					<select id="rol" name="rol" required>
+						<option value="">-- Selecciona --</option>
+						<option value="cliente">Cliente</option>
+						<option value="administrador">Administrador</option>
+						<option value="dueno">Dueño</option>
+					</select>
 
-						<label for="rol">Selecciona tu rol:</label>
-						<select id="rol" name="rol" required>
-							<option value="">-- Selecciona --</option>
-							<option value="cliente">Cliente</option>
-							<option value="administrador">Administrador</option>
-							<option value="dueno">Dueño</option>
-						</select>
+					<button type="submit">Ingresar</button>
+				</form>
 
-						<button type="submit">Ingresar</button>
-					</form>
-
-					<!-- Aquí aparece el error si algo está mal -->
-					<p th:if="${error}" th:text="${error}" style="color:red;"></p>
-				</section>
-
-
+				<p th:if="${error}" th:text="${error}" style="color:red;"></p>
 			</section>
 		</main>
 	</div>
@@ -60,8 +54,8 @@
 		<p>&copy; 2025 Motorentix. Todos los derechos reservados.</p>
 	</footer>
 
-	<script src="js/script.js"></script>
-	<script src="js/login.js"></script>
+	<script th:src="@{/js/script.js}"></script>
+	<script th:src="@{/js/login.js}"></script>
 </body>
 
 </html>
