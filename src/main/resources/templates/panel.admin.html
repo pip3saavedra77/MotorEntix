@@ -129,12 +129,12 @@
 							<td th:text="${vehiculo.descripcion}"></td>
 							<td>
 								<a th:href="@{/admin/vehiculos/editar/{id}(id=${vehiculo.id_vehiculo})}"
-									class="btn btn-warning">✏️ Editar</a>
+									class="btn-action btn-edit">Editar</a>
 								<form th:action="@{/admin/vehiculos/eliminar/{id}(id=${vehiculo.id_vehiculo})}"
 									method="post" style="display:inline;">
-									<button type="submit" class="btn btn-danger"
+									<button type="submit" class="btn-action btn-delete"
 										onclick="return confirm('¿Seguro que deseas eliminar este vehículo?')">
-										🗑️ Eliminar
+										Eliminar
 									</button>
 								</form>
 							</td>

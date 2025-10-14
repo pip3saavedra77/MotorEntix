@@ -1,39 +1,148 @@
-/* css/index.css */
+/* Sección Hero */
+.hero {
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem 2rem;
+	min-height: 80vh;
+}
+
 .bienvenida {
-  padding: 5rem 2rem;
-  text-align: center;
-  background: linear-gradient(to right, #003049, #1e6091);
-  color: white;
-  min-height: 60vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 3rem;
+	background-color: var(--card-bg);
+	border-radius: var(--border-radius);
+	box-shadow: var(--box-shadow);
+	text-align: center;
+	backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.1);
+	animation: fadeInUp 0.8s ease-out;
+	position: relative;
+	overflow: hidden;
+}
+
+/* Efecto decorativo */
+.bienvenida::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 4px;
+	background: linear-gradient(90deg, var(--accent-color), #E67E22);
 }
 
 .bienvenida h2 {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+	font-size: 2.8rem;
+	color: var(--primary-color);
+	margin-bottom: 1.5rem;
+	font-weight: 700;
+	line-height: 1.2;
 }
 
 .bienvenida p {
-  font-size: 1.2rem;
-  margin-bottom: 1.5rem;
-  max-width: 600px;
+	font-size: 1.3rem;
+	margin-bottom: 2.5rem;
+	color: var(--text-dark);
+	font-weight: 400;
 }
 
 .btn-ingresar {
-  padding: 0.8rem 1.8rem;
-  background-color: #f77f00;
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  border-radius: 6px;
-  font-size: 1rem;
-  transition: background 0.3s ease;
+	display: inline-block;
+	background: linear-gradient(135deg, var(--accent-color), #E67E22);
+	color: var(--text-light);
+	padding: 1rem 2.5rem;
+	border-radius: var(--border-radius);
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 1.2rem;
+	transition: all 0.3s ease;
+	box-shadow: 0 4px 15px rgba(242, 135, 5, 0.3);
+	border: none;
+	cursor: pointer;
+	letter-spacing: 0.5px;
+	position: relative;
+	overflow: hidden;
+}
+
+.btn-ingresar::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+	transition: left 0.5s;
 }
 
 .btn-ingresar:hover {
-  background-color: #d16600;
+	transform: translateY(-3px);
+	box-shadow: 0 8px 25px rgba(242, 135, 5, 0.4);
 }
-    
+
+.btn-ingresar:hover::before {
+	left: 100%;
+}
+
+.btn-ingresar:active {
+	transform: translateY(-1px);
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+/* Responsive para index */
+@media (max-width: 768px) {
+	.hero {
+		padding: 2rem 1rem;
+	}
+
+	.bienvenida {
+		padding: 2rem 1.5rem;
+	}
+
+	.bienvenida h2 {
+		font-size: 2.2rem;
+	}
+
+	.bienvenida p {
+		font-size: 1.1rem;
+	}
+
+	.btn-ingresar {
+		padding: 0.9rem 2rem;
+		font-size: 1.1rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.bienvenida h2 {
+		font-size: 1.8rem;
+	}
+
+	.bienvenida p {
+		font-size: 1rem;
+	}
+
+	.btn-ingresar {
+		width: 100%;
+		padding: 0.8rem 1.5rem;
+	}
+
+	.hero {
+		padding: 1rem;
+	}
+}
