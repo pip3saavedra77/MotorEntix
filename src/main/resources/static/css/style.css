@@ -22,7 +22,7 @@ body {
 	line-height: 1.6;
 	color: var(--text-dark);
 	background: linear-gradient(rgba(13, 27, 42, 0.85), rgba(13, 27, 42, 0.85)),
-		url('https://images.unsplash.com/photo-1603712610496-5362a2f83868?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center fixed;
+		url('/img/background.jpg') no-repeat center center fixed;
 	background-size: cover;
 	display: flex;
 	flex-direction: column;
@@ -35,13 +35,16 @@ body {
 	flex-direction: column;
 }
 
-/* Encabezado */
+/* ENCABEZADO OPTIMIZADO */
 header {
 	background-color: rgba(13, 27, 42, 0.95);
 	padding: 1rem 0;
 	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
 	backdrop-filter: blur(10px);
 	border-bottom: 2px solid var(--accent-color);
+	position: relative;
+	transform: translateZ(0);
+	/* Aceleración por hardware */
 }
 
 .header-content {
@@ -60,6 +63,7 @@ header h1 {
 	letter-spacing: 1px;
 }
 
+/* NAV OPTIMIZADO */
 nav ul {
 	display: flex;
 	list-style: none;
@@ -70,18 +74,23 @@ nav ul {
 	color: var(--text-light);
 	text-decoration: none;
 	font-weight: 500;
-	transition: all 0.3s ease;
+	transition: color 0.3s ease, transform 0.3s ease;
+	/* Solo propiedades optimizadas */
 	padding: 0.5rem 1rem;
 	border-radius: var(--border-radius);
 	position: relative;
+	display: block;
+	transform: translateZ(0);
+	/* Forzar aceleración GPU */
 }
 
+/* HOVER OPTIMIZADO - Evita cambiar background-color */
 .nav-link:hover {
 	color: var(--accent-color);
-	background-color: rgba(255, 255, 255, 0.1);
 	transform: translateY(-2px);
 }
 
+/* Active state optimizado */
 .nav-link.active {
 	color: var(--accent-color);
 	font-weight: 600;
@@ -96,15 +105,17 @@ nav ul {
 	left: 0;
 	background-color: var(--accent-color);
 	animation: slideIn 0.3s ease-out;
+	transform: translateZ(0);
 }
 
+/* ANIMACIONES OPTIMIZADAS */
 @keyframes slideIn {
 	from {
-		width: 0;
+		transform: scaleX(0);
 	}
 
 	to {
-		width: 100%;
+		transform: scaleX(1);
 	}
 }
 
@@ -119,7 +130,7 @@ footer {
 	border-top: 2px solid var(--accent-color);
 }
 
-/* Responsive */
+/* RESPONSIVE OPTIMIZADO */
 @media (max-width: 768px) {
 	.header-content {
 		flex-direction: column;
@@ -139,6 +150,17 @@ footer {
 
 	body {
 		background-attachment: scroll;
+	}
+
+	/* Optimizar animaciones en móvil */
+	.nav-link {
+		transition: color 0.2s ease;
+		/* Transiciones más rápidas en móvil */
+	}
+
+	.nav-link:hover {
+		transform: none;
+		/* Remover transform en hover para móvil */
 	}
 }
 

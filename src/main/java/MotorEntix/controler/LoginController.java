@@ -16,9 +16,15 @@ public class LoginController {
 		this.usuarioService = usuarioService;
 	}
 
-	// Mostrar página de login
+	// Mostrar página de login CON manejo de mensajes
 	@GetMapping("/login")
-	public String mostrarLogin() {
+	public String mostrarLogin(HttpSession session, Model model) {
+		// Limpiar mensaje de sesión después de mostrarlo
+		String mensaje = (String) session.getAttribute("mensaje");
+		if (mensaje != null) {
+			model.addAttribute("mensaje", mensaje);
+			session.removeAttribute("mensaje");
+		}
 		return "login"; // templates/login.html
 	}
 
