@@ -30,20 +30,15 @@ public class LoginController {
 
 	// Procesar login
 	@PostMapping("/procesar-login")
-	public String procesarLogin(@RequestParam String usuario, @RequestParam String contrasena, @RequestParam String rol,
-			HttpSession session, Model model) {
+	public String procesarLogin(@RequestParam String usuario, @RequestParam String contrasena, HttpSession session,
+			Model model) {
 
 		return usuarioService.validarUsuario(usuario, contrasena).map(u -> {
-			if (!u.getRol().equalsIgnoreCase(rol)) {
-				model.addAttribute("error", "El rol no coincide con el usuario.");
-				return "login";
-			}
-
 			// Guardar datos en sesión
 			session.setAttribute("usuarioLogueado", u.getNombre());
 			session.setAttribute("rol", u.getRol());
 
-			// Redirección según rol
+			// Redirección según rol obtenido de la base de datos
 			switch (u.getRol().toLowerCase()) {
 			case "administrador":
 				return "redirect:/admin/panel";
@@ -52,7 +47,8 @@ public class LoginController {
 			case "dueno":
 				return "redirect:/panel.dueno";
 			default:
-				return "redirect:/index";
+				model.addAttribute("error", "Rol no válido");
+				return "login";
 			}
 		}).orElseGet(() -> {
 			model.addAttribute("error", "Usuario o contraseña incorrectos");

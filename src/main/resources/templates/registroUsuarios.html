@@ -37,9 +37,10 @@
 						<div class="form-header">
 							<h2>Crear Cuenta</h2>
 							<p class="form-subtitle">Regístrate para acceder a todos nuestros servicios</p>
-							
+
 							<!-- Mostrar mensajes de error -->
-							<div th:if="${error}" class="error-message" style="color: red; margin: 1rem 0; padding: 1rem; background: #ffe6e6; border-radius: 5px;">
+							<div th:if="${error}" class="error-message"
+								style="color: red; margin: 1rem 0; padding: 1rem; background: #ffe6e6; border-radius: 5px;">
 								<span th:text="${error}"></span>
 							</div>
 						</div>
@@ -72,14 +73,14 @@
 
 								<div class="form-group full-width">
 									<label for="direccion">Dirección *</label>
-									<input type="text" id="direccion" th:field="*{direccion}" class="form-input" required
-										placeholder="Ingresa tu dirección completa">
+									<input type="text" id="direccion" th:field="*{direccion}" class="form-input"
+										required placeholder="Ingresa tu dirección completa">
 								</div>
 
 								<div class="form-group">
 									<label for="contrasena">Contraseña *</label>
-									<input type="password" id="contrasena" th:field="*{contrasena}" class="form-input" required
-										placeholder="Mínimo 8 caracteres" minlength="8">
+									<input type="password" id="contrasena" th:field="*{contrasena}" class="form-input"
+										required placeholder="Mínimo 8 caracteres" minlength="8">
 								</div>
 
 								<!-- Campo adicional para confirmar contraseña (no se guarda en BD) -->
