@@ -1,62 +1,142 @@
 <!-- templates/admin/editarVehiculo.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
 	<meta charset="UTF-8">
-	<title>Editar Vehículo</title>
-	<link rel="stylesheet" th:href="@{/css/style.css}">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Editar Vehículo - MotorEntix</title>
 	<link rel="stylesheet" th:href="@{/css/panel.admin.css}">
-	<!-- Si usas Bootstrap -->
-	<link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+	<link rel="stylesheet" th:href="@{/css/registrarVehiculo.css}">
 </head>
 
 <body>
-	<div class="container mt-5">
-		<h2 class="text-center mb-4">Editar Vehículo</h2>
+	<header>
+		<div class="logo">
+			<h1>MotorEntix</h1>
+		</div>
+		<div class="user-info">
+			<span>Administrador</span>
+			<div class="user-avatar">A</div>
+		</div>
+	</header>
 
-		<form th:action="@{/vehiculos/editar/4{id}(id=${vehiculo.id_vehiculo})}" method="post" th:object="${vehiculo}">
+	<div class="container">
+		<nav class="sidebar">
+			<ul class="sidebar-menu">
+				<li class="menu-item">
+					<span>📊</span> Dashboard
+				</li>
+				<li class="menu-item active">
+					<span>🚗</span> Vehículos
+				</li>
+				<li class="menu-item">
+					<span>👥</span> Clientes
+				</li>
+				<li class="menu-item">
+					<span>📋</span> Reservas
+				</li>
+				<li class="menu-item">
+					<span>💰</span> Pagos
+				</li>
+				<li class="menu-item">
+					<span>⚙</span> Configuración
+				</li>
+				<li class="menu-item">
+					<span>📈</span> Reportes
+				</li>
+			</ul>
+		</nav>
 
-			<input type="hidden" th:field="*{id_vehiculo}" />
+		<main class="main-content">
+			<div class="page-header">
+				<h2 class="page-title">Editar Vehículo</h2>
+				<button class="btn btn-secondary" onclick="window.history.back()">← Volver</button>
+			</div>
+
+			<div class="form-container">
+				<!-- 📌 Formulario para editar -->
+				<form th:action="@{/admin/vehiculos/editar/{id}(id=${vehiculo.id_vehiculo})}" th:object="${vehiculo}"
+					method="post">
 
 
-			<!-- Campo oculto para el ID -->
-			<input type="hidden" th:field="*{id_vehiculo}" />
 
-			<label>Marca:</label>
-			<input type="text" th:field="*{marca}" />
+					<input type="hidden" th:field="*{id_vehiculo}" />
 
-			<label>Modelo:</label>
-			<input type="text" th:field="*{modelo}" />
+					<div class="form-section">
+						<h3 class="section-title">Información Básica del Vehículo</h3>
 
-			<label>Placa:</label>
-			<input type="text" th:field="*{placa}" />
+						<div class="form-group">
+							<label for="marca" class="form-label">Marca *</label>
+							<input type="text" th:field="*{marca}" class="form-input" required>
+						</div>
 
-			<label>Año:</label>
-			<input type="number" th:field="*{anio}" />
+						<div class="form-group">
+							<label for="modelo" class="form-label">Modelo *</label>
+							<input type="text" th:field="*{modelo}" class="form-input" required>
+						</div>
 
-			<label>Color:</label>
-			<input type="text" th:field="*{color}" />
+						<div class="form-group">
+							<label for="anio" class="form-label">Año *</label>
+							<input type="number" th:field="*{anio}" min="2000" max="2100" class="form-input" required>
+						</div>
 
-			<label>Combustible:</label>
-			<input type="text" th:field="*{combustible}" />
+						<div class="form-group">
+							<label for="placa" class="form-label">Placa *</label>
+							<input type="text" th:field="*{placa}" class="form-input" required>
+						</div>
+					</div>
 
-			<label>Transmisión:</label>
-			<input type="text" th:field="*{transmicion}" />
+					<div class="form-section">
+						<h3 class="section-title">Detalles del Vehículo</h3>
 
-			<label>Tipo Vehículo:</label>
-			<input type="text" th:field="*{tipoVehiculo}" />
+						<div class="form-row">
+							<div class="form-group">
+								<label for="tipoVehiculo" class="form-label">Tipo de Vehículo</label>
+								<input type="text" th:field="*{tipoVehiculo}" class="form-input">
+							</div>
 
-			<label>Estado:</label>
-			<input type="text" th:field="*{estadoVehiculo}" />
+							<div class="form-group">
+								<label for="transmicion" class="form-label">Transmisión</label>
+								<input type="text" th:field="*{transmicion}" class="form-input">
+							</div>
+						</div>
 
-			<label>Descripción:</label>
-			<textarea th:field="*{descripcion}"></textarea>
+						<div class="form-row">
+							<div class="form-group">
+								<label for="combustible" class="form-label">Combustible</label>
+								<input type="text" th:field="*{combustible}" class="form-input">
+							</div>
 
-			<button type="submit" class="btn btn-primary">Guardar cambios</button>
-			<a th:href="@{/admin/panel}" class="btn btn-secondary">Cancelar</a>
-		</form>
+							<div class="form-group">
+								<label for="estadoVehiculo" class="form-label">Estado</label>
+								<input type="text" th:field="*{estadoVehiculo}" class="form-input">
+							</div>
 
+							<div class="form-group">
+								<label for="color" class="form-label">Color</label>
+								<input type="text" th:field="*{color}" class="form-input">
+							</div>
+						</div>
+					</div>
+
+					<div class="form-section">
+						<h3 class="section-title">Características Adicionales</h3>
+
+						<div class="form-group">
+							<label for="descripcion" class="form-label">Descripción</label>
+							<textarea th:field="*{descripcion}" class="form-textarea" rows="4"></textarea>
+						</div>
+					</div>
+
+					<div class="form-actions">
+						<button type="button" class="btn btn-secondary"
+							onclick="window.history.back()">Cancelar</button>
+						<button type="submit" class="btn btn-primary">Guardar Cambios</button>
+					</div>
+				</form>
+			</div>
+		</main>
 	</div>
 </body>
 

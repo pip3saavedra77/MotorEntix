@@ -5,7 +5,6 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Panel de Administración - MotorEntix</title>
-
 	<link rel="stylesheet" th:href="@{/css/panel.admin.css}">
 </head>
 
@@ -72,13 +71,29 @@
 				</div>
 			</div>
 
+			<!-- Mensaje de resultados de búsqueda -->
+			<div th:if="${searchTerm}" class="search-results-info">
+				<p>Resultados de búsqueda para: "<span th:text="${searchTerm}"></span>"
+					- <span th:text="${vehiculos.size()}"></span> vehículos encontrados</p>
+			</div>
 
 			<div class="table-container">
 				<div class="table-header">
 					<h3 class="table-title">Vehículos Disponibles</h3>
-					<a th:href="@{/admin/registrar}" class="btn btn-primary">Agregar Vehículo</a>
+					<div class="table-actions">
+						<!-- Barra de Búsqueda al lado del botón Agregar -->
+						<form th:action="@{/admin/panel}" method="get" class="search-form">
+							<div class="search-container">
+								<input type="text" name="search" th:value="${searchTerm}"
+									placeholder="Buscar vehículos..." class="search-input">
+								<button type="submit" class="btn btn-search">🔍</button>
+								<a th:href="@{/admin/panel}" class="btn btn-clear" th:if="${searchTerm}"
+									title="Limpiar búsqueda">❌</a>
+							</div>
+						</form>
+						<a th:href="@{/admin/registrar}" class="btn btn-primary"> Agregar Vehículo</a>
+					</div>
 				</div>
-
 
 				<table>
 					<thead>
@@ -95,7 +110,7 @@
 							<th>Color</th>
 							<th>Estado</th>
 							<th>Descripcion</th>
-
+							<th>Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -112,32 +127,29 @@
 							<td th:text="${vehiculo.color}"></td>
 							<td th:text="${vehiculo.estadoVehiculo}"></td>
 							<td th:text="${vehiculo.descripcion}"></td>
-
-							<!-- Acciones -->
 							<td>
-								<!-- Botón Editar -->
 								<a th:href="@{/admin/vehiculos/editar/{id}(id=${vehiculo.id_vehiculo})}"
-									class="btn btn-warning">✏️ Editar</a>
-
-
-								<!-- Botón Eliminar -->
+									class="btn-action btn-edit">Editar</a>
 								<form th:action="@{/admin/vehiculos/eliminar/{id}(id=${vehiculo.id_vehiculo})}"
 									method="post" style="display:inline;">
-									<button type="submit" class="btn btn-danger"
+									<button type="submit" class="btn-action btn-delete"
 										onclick="return confirm('¿Seguro que deseas eliminar este vehículo?')">
-										🗑️ Eliminar
+										Eliminar
 									</button>
 								</form>
 							</td>
 						</tr>
+						<tr th:if="${vehiculos.empty}">
+							<td colspan="13" style="text-align: center;">
+								<span th:if="${searchTerm}">No se encontraron vehículos que coincidan con tu
+									búsqueda.</span>
+								<span th:unless="${searchTerm}">No hay vehículos registrados.</span>
+							</td>
+						</tr>
 					</tbody>
-
 				</table>
 			</div>
-	</div>
-
-
-	</main>
+		</main>
 	</div>
 </body>
 

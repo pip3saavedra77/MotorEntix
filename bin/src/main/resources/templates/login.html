@@ -1,67 +1,89 @@
-<!-- login.html -->
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>Iniciar Sesión - Motorentix</title>
-	<link rel="stylesheet" href="css/style.css" />
-	<link rel="stylesheet" href="css/login.css" />
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Iniciar Sesión - MotorEntix</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" th:href="@{/css/style.css}">
+	<link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 
 <body>
-
 	<div class="wrapper">
 		<header>
-			<h1>Motorentix</h1>
-			<nav>
-				<ul>
-					<li><a href="index.html">Inicio</a></li>
-					<li><a href="faq.html">Preguntas Frecuentes</a></li>
-					<li><a href="contacto.html">Contacto</a></li>
-				</ul>
-			</nav>
+			<div class="header-content">
+				<h1>MotorEntix</h1>
+				<nav>
+					<ul>
+						<li><a th:href="@{/index}" class="nav-link">Inicio</a></li>
+						<li><a th:href="@{/login}" class="nav-link active">Iniciar Sesión</a></li>
+						<li><a th:href="@{/registroUsuarios}" class="nav-link">Registrarse</a></li>
+						<li><a th:href="@{/index}" class="nav-link">Preguntas Frecuentes</a></li>
+						<li><a th:href="@{/index}" class="nav-link">Contacto</a></li>
+					</ul>
+				</nav>
+			</div>
 		</header>
 
-		<main class="login-main">
-			<section class="login-form">
-				<h2>Iniciar Sesión</h2>
+		<main>
+			<section class="login-hero">
+				<div class="login-container">
+					<div class="login-form">
+						<div class="form-header">
+							<h2>Iniciar Sesión</h2>
+							<p class="form-subtitle">Accede a tu cuenta para gestionar tus vehículos</p>
+
+							<!-- Mostrar mensajes -->
+							<div th:if="${mensaje}" class="success-message"
+								style="color: green; margin: 1rem 0; padding: 1rem; background: #e6ffe6; border-radius: 5px;">
+								<span th:text="${mensaje}"></span>
+							</div>
+							<div th:if="${error}" class="error-message"
+								style="color: red; margin: 1rem 0; padding: 1rem; background: #ffe6e6; border-radius: 5px;">
+								<span th:text="${error}"></span>
+							</div>
+						</div>
+
+						<form th:action="@{/procesar-login}" method="post" class="form-login">
+							<div class="form-group">
+								<label for="usuario">Correo Electrónico *</label>
+								<input type="email" id="usuario" name="usuario" class="form-input" required
+									placeholder="ejemplo@correo.com">
+							</div>
+
+							<div class="form-group">
+								<label for="contrasena">Contraseña *</label>
+								<input type="password" id="contrasena" name="contrasena" class="form-input" required
+									placeholder="Ingresa tu contraseña">
+							</div>
 
 
-					<form th:action="@{/procesar-login}" method="post">
-						<label for="usuario">Usuario:</label>
-						<input type="text" id="usuario" name="usuario" required />
 
-						<label for="contrasena">Contraseña:</label>
-						<input type="password" id="contrasena" name="contrasena" required />
+							<button type="submit" class="btn-login">Ingresar</button>
 
-						<label for="rol">Selecciona tu rol:</label>
-						<select id="rol" name="rol" required>
-							<option value="">-- Selecciona --</option>
-							<option value="cliente">Cliente</option>
-							<option value="administrador">Administrador</option>
-							<option value="dueno">Dueño</option>
-						</select>
-
-						<button type="submit">Ingresar</button>
-					</form>
-
-					<!-- Aquí aparece el error si algo está mal -->
-					<p th:if="${error}" th:text="${error}" style="color:red;"></p>
-				</section>
+							<div class="register-link">
+								¿No tienes cuenta? <a th:href="@{/registroUsuarios}" class="register-link-a">Regístrate
+									aquí</a>
+							</div>
+						</form>
+					</div>
 
 
+				</div>
 			</section>
 		</main>
 	</div>
 
 	<footer>
-		<p>&copy; 2025 Motorentix. Todos los derechos reservados.</p>
+		<p>&copy; 2025 MotorEntix. Todos los derechos reservados.</p>
 	</footer>
 
-	<script src="js/script.js"></script>
-	<script src="js/login.js"></script>
+	<script th:src="@{/js/script.js}"></script>
 </body>
 
 </html>

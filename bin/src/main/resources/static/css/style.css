@@ -1,51 +1,176 @@
-/* css/style.css */
+/* Variables CSS para la paleta de colores */
+:root {
+	--primary-color: #0D1B2A;
+	--secondary-color: #E0E0E0;
+	--accent-color: #F28705;
+	--text-light: #FFFFFF;
+	--text-dark: #333333;
+	--card-bg: rgba(248, 249, 250, 0.95);
+	--border-radius: 8px;
+	--box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos generales */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background-color: #f4f4f4;
-  color: #333;
-}
-
-header {
-  background-color: #1a1a1a;
-  padding: 1rem;
-  color: white;
-  text-align: center;
-}
-
-nav ul {
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  list-style: none;
-  margin-top: 0.5rem;
-}
-
-nav ul li a {
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-footer {
-  text-align: center;
-  padding: 1rem;
-  background-color: #1a1a1a;
-  color: white;
-  margin-top: 2rem;
-}
-/* Estructura sticky footer */
-html, body {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+	font-family: 'Poppins', sans-serif;
+	line-height: 1.6;
+	color: var(--text-dark);
+	background: linear-gradient(rgba(13, 27, 42, 0.85), rgba(13, 27, 42, 0.85)),
+		url('/img/background.jpg') no-repeat center center fixed;
+	background-size: cover;
+	display: flex;
+	flex-direction: column;
+	min-height: 100vh;
 }
 
 .wrapper {
-  flex: 1;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+/* ENCABEZADO OPTIMIZADO */
+header {
+	background-color: rgba(13, 27, 42, 0.95);
+	padding: 1rem 0;
+	box-shadow: 0 2px 15px rgba(0, 0, 0, 0.2);
+	backdrop-filter: blur(10px);
+	border-bottom: 2px solid var(--accent-color);
+	position: relative;
+	transform: translateZ(0);
+	/* Aceleración por hardware */
+}
+
+.header-content {
+	max-width: 1200px;
+	margin: 0 auto;
+	padding: 0 2rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+header h1 {
+	color: var(--text-light);
+	font-size: 2.2rem;
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+
+/* NAV OPTIMIZADO */
+nav ul {
+	display: flex;
+	list-style: none;
+	gap: 2rem;
+}
+
+.nav-link {
+	color: var(--text-light);
+	text-decoration: none;
+	font-weight: 500;
+	transition: color 0.3s ease, transform 0.3s ease;
+	/* Solo propiedades optimizadas */
+	padding: 0.5rem 1rem;
+	border-radius: var(--border-radius);
+	position: relative;
+	display: block;
+	transform: translateZ(0);
+	/* Forzar aceleración GPU */
+}
+
+/* HOVER OPTIMIZADO - Evita cambiar background-color */
+.nav-link:hover {
+	color: var(--accent-color);
+	transform: translateY(-2px);
+}
+
+/* Active state optimizado */
+.nav-link.active {
+	color: var(--accent-color);
+	font-weight: 600;
+}
+
+.nav-link.active::after {
+	content: '';
+	position: absolute;
+	width: 100%;
+	height: 2px;
+	bottom: 0;
+	left: 0;
+	background-color: var(--accent-color);
+	animation: slideIn 0.3s ease-out;
+	transform: translateZ(0);
+}
+
+/* ANIMACIONES OPTIMIZADAS */
+@keyframes slideIn {
+	from {
+		transform: scaleX(0);
+	}
+
+	to {
+		transform: scaleX(1);
+	}
+}
+
+/* Pie de página */
+footer {
+	background-color: rgba(13, 27, 42, 0.95);
+	color: var(--text-light);
+	text-align: center;
+	padding: 1.5rem;
+	margin-top: auto;
+	backdrop-filter: blur(10px);
+	border-top: 2px solid var(--accent-color);
+}
+
+/* RESPONSIVE OPTIMIZADO */
+@media (max-width: 768px) {
+	.header-content {
+		flex-direction: column;
+		gap: 1rem;
+		padding: 0 1rem;
+	}
+
+	nav ul {
+		gap: 1rem;
+		flex-wrap: wrap;
+		justify-content: center;
+	}
+
+	header h1 {
+		font-size: 1.8rem;
+	}
+
+	body {
+		background-attachment: scroll;
+	}
+
+	/* Optimizar animaciones en móvil */
+	.nav-link {
+		transition: color 0.2s ease;
+		/* Transiciones más rápidas en móvil */
+	}
+
+	.nav-link:hover {
+		transform: none;
+		/* Remover transform en hover para móvil */
+	}
+}
+
+@media (max-width: 480px) {
+	nav ul {
+		gap: 0.5rem;
+	}
+
+	.nav-link {
+		padding: 0.4rem 0.8rem;
+		font-size: 0.9rem;
+	}
 }

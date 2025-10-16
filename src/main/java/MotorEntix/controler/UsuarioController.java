@@ -49,15 +49,4 @@ public class UsuarioController {
 		}
 	}
 
-	// ELIMINAR ESTE MÉTODO - Ya existe en LoginController
-	// @GetMapping("/login")
-	// public String login(HttpSession session, Model model) {
-	// // Limpiar mensaje de sesión después de mostrarlo
-	// String mensaje = (String) session.getAttribute("mensaje");
-	// if (mensaje != null) {
-	// model.addAttribute("mensaje", mensaje);
-	// session.removeAttribute("mensaje");
-	// }
-	// return "login";
-	// }
 }

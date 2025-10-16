@@ -1,58 +1,283 @@
-<!-- panel.cliente.html -->
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Panel del Cliente - Motorentix</title>
-  <link rel="stylesheet" href="css/style.css" />
-  <link rel="stylesheet" href="css/panel.cliente.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - MotorEntix</title>
+    <link rel="stylesheet" th:href="@{/css/panel.cliente.css}">
+	
 </head>
 <body>
-  <div class="wrapper">
-    <aside class="sidebar">
-      <h2>Motorentix</h2>
-      <nav>
-        <ul>
-          <li><a href="#">Mi perfil</a></li>
-          <li><a href="reservas.html">Reservas</a></li>
-          <li><a href="historial.html">Historial</a></li>
-          <li><a href="servicios.html">Servicios</a></li>
-          <li><a href="login.html">Cerrar sesión</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <main class="panel-content">
-      <header class="panel-header">
-        <h1>Bienvenido, Cliente</h1>
-      </header>
-
-      <section class="bienvenida">
-        <p>Aquí puedes consultar tus reservas, ver el historial de tu vehículo y gestionar tus servicios.</p>
-      </section>
-
-      <section class="accesos-rapidos">
-        <h2>Accesos rápidos</h2>
-        <div class="tarjetas">
-          <div class="tarjeta">
-            <h3>Reservas activas</h3>
-            <p>2 pendientes</p>
-          </div>
-          <div class="tarjeta">
-            <h3>Servicios recientes</h3>
-            <p>Cambio de aceite</p>
-          </div>
+    <header>
+        <div class="logo">
+            <h1>MotorEntix</h1>
         </div>
-      </section>
-    </main>
-  </div>
+        <div class="user-info">
+            <span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Cliente</span>
+            <span th:unless="${usuario != null}">Cliente</span>
+            <div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">C</div>
+            <div class="user-avatar" th:unless="${usuario != null}">C</div>
+        </div>
+    </header>
 
-  <footer>
-    <p>&copy; 2025 Motorentix. Todos los derechos reservados.</p>
-  </footer>
+    <div class="container">
+        <nav class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-item active">
+                    <a th:href="@{/panel.cliente}" class="menu-link">
+                        <span>👤</span> Mi Perfil
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/vehiculos-cliente}" class="menu-link">
+                        <span>🚗</span> Mis Vehículos
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/reservasCliente}" class="menu-link">
+                        <span>📋</span> Reservas
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/historial}" class="menu-link">
+                        <span>📊</span> Historial
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/servicios}" class="menu-link">
+                        <span>🔧</span> Servicios
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/logout}" class="menu-link">
+                        <span>🚪</span> Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </nav>
 
-  <script src="js/script.js"></script>
-  <script src="js/panel.cliente.js"></script>
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Mi Perfil</h2>
+                <button class="btn btn-primary">Guardar Cambios</button>
+            </div>
+
+            <!-- Información del perfil -->
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">Información Personal</h3>
+                </div>
+                <div style="padding: 2rem;">
+                    <div style="display: grid; grid-template-columns: auto 1fr; gap: 2rem; align-items: start;">
+                        <!-- Avatar y información básica -->
+                        <div style="text-align: center;">
+                            <div style="width: 120px; height: 120px; background: linear-gradient(135deg, var(--accent-color), #E67E22); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: white; margin: 0 auto 1rem; border: 4px solid white; box-shadow: var(--box-shadow);"
+                                 th:text="${usuario != null} ? ${usuario.nombre.substring(0, 1)} : 'C'">
+                                C
+                            </div>
+                            <button class="btn-action btn-edit" style="margin-top: 0.5rem;">Cambiar Foto</button>
+                            <div style="margin-top: 1rem;">
+                                <span class="status-indicator status-available">Cliente Activo</span>
+                            </div>
+                        </div>
+
+                        <!-- Formulario de información -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Nombre</label>
+                                <input type="text" class="search-input" style="width: 100%;" 
+                                       th:value="${usuario != null} ? ${usuario.nombre} : ''" 
+                                       placeholder="Ingresa tu nombre">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Apellido</label>
+                                <input type="text" class="search-input" style="width: 100%;" 
+                                       th:value="${usuario != null} ? ${usuario.apellido} : ''" 
+                                       placeholder="Ingresa tu apellido">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Correo Electrónico</label>
+                                <input type="email" class="search-input" style="width: 100%;" 
+                                       th:value="${usuario != null} ? ${usuario.correo} : ''" 
+                                       placeholder="tu@email.com">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Teléfono</label>
+                                <input type="tel" class="search-input" style="width: 100%;" 
+                                       value="+57 300 123 4567" 
+                                       placeholder="+57 300 123 4567">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Fecha de Nacimiento</label>
+                                <input type="date" class="search-input" style="width: 100%;" value="1990-05-15">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Tipo de Documento</label>
+                                <select class="search-input" style="width: 100%;">
+                                    <option value="cc">Cédula de Ciudadanía</option>
+                                    <option value="ce">Cédula de Extranjería</option>
+                                    <option value="pasaporte">Pasaporte</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Número de Documento</label>
+                                <input type="text" class="search-input" style="width: 100%;" value="123456789" placeholder="Número de documento">
+                            </div>
+                            <div>
+                                <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Género</label>
+                                <select class="search-input" style="width: 100%;">
+                                    <option value="masculino">Masculino</option>
+                                    <option value="femenino">Femenino</option>
+                                    <option value="otro">Otro</option>
+                                    <option value="prefiero-no-decir">Prefiero no decir</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Información de contacto y dirección -->
+            <div class="table-container" style="margin-top: 2rem;">
+                <div class="table-header">
+                    <h3 class="table-title">Información de Contacto y Dirección</h3>
+                </div>
+                <div style="padding: 2rem;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Dirección</label>
+                            <input type="text" class="search-input" style="width: 100%;" value="Calle 123 #45-67" placeholder="Dirección completa">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Ciudad</label>
+                            <input type="text" class="search-input" style="width: 100%;" value="Bogotá" placeholder="Ciudad">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Departamento</label>
+                            <input type="text" class="search-input" style="width: 100%;" value="Cundinamarca" placeholder="Departamento">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Código Postal</label>
+                            <input type="text" class="search-input" style="width: 100%;" value="110111" placeholder="Código postal">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">País</label>
+                            <input type="text" class="search-input" style="width: 100%;" value="Colombia" placeholder="País">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de seguridad -->
+            <div class="table-container" style="margin-top: 2rem;">
+                <div class="table-header">
+                    <h3 class="table-title">Seguridad y Contraseña</h3>
+                </div>
+                <div style="padding: 2rem;">
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 1.5rem; max-width: 500px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Contraseña Actual</label>
+                            <input type="password" class="search-input" style="width: 100%;" placeholder="Ingresa tu contraseña actual">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Nueva Contraseña</label>
+                            <input type="password" class="search-input" style="width: 100%;" placeholder="Ingresa nueva contraseña">
+                        </div>
+                        <div>
+                            <label style="display: block; margin-bottom: 0.5rem; font-weight: 500; color: var(--primary-color);">Confirmar Nueva Contraseña</label>
+                            <input type="password" class="search-input" style="width: 100%;" placeholder="Confirma nueva contraseña">
+                        </div>
+                        <div>
+                            <button class="btn btn-primary">Cambiar Contraseña</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preferencias y estadísticas -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem;">
+                <!-- Preferencias de notificación -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Preferencias de Notificación</h3>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div style="display: flex; justify-content: between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                            <span>Notificaciones por Email</span>
+                            <label style="position: relative; display: inline-block; width: 50px; height: 24px;">
+                                <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--accent-color); transition: .4s; border-radius: 24px;"></span>
+                            </label>
+                        </div>
+                        <div style="display: flex; justify-content: between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                            <span>Notificaciones por SMS</span>
+                            <label style="position: relative; display: inline-block; width: 50px; height: 24px;">
+                                <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
+                                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px;"></span>
+                            </label>
+                        </div>
+                        <div style="display: flex; justify-content: between; align-items: center; padding: 1rem 0; border-bottom: 1px solid rgba(0,0,0,0.1);">
+                            <span>Recordatorios de Reservas</span>
+                            <label style="position: relative; display: inline-block; width: 50px; height: 24px;">
+                                <input type="checkbox" checked style="opacity: 0; width: 0; height: 0;">
+                                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: var(--accent-color); transition: .4s; border-radius: 24px;"></span>
+                            </label>
+                        </div>
+                        <div style="display: flex; justify-content: between; align-items: center; padding: 1rem 0;">
+                            <span>Ofertas y Promociones</span>
+                            <label style="position: relative; display: inline-block; width: 50px; height: 24px;">
+                                <input type="checkbox" style="opacity: 0; width: 0; height: 0;">
+                                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 24px;"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estadísticas del perfil -->
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3 class="table-title">Mi Actividad</h3>
+                    </div>
+                    <div style="padding: 1.5rem;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: center;">
+                            <div>
+                                <div style="font-size: 2rem; font-weight: bold; color: var(--accent-color);">12</div>
+                                <div style="font-size: 0.9rem; color: var(--text-dark);">Reservas Totales</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; font-weight: bold; color: var(--success-color);">4.8</div>
+                                <div style="font-size: 0.9rem; color: var(--text-dark);">Calificación Promedio</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; font-weight: bold; color: var(--info-color);">3</div>
+                                <div style="font-size: 0.9rem; color: var(--text-dark);">Vehículos Registrados</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 2rem; font-weight: bold; color: var(--primary-color);">15</div>
+                                <div style="font-size: 0.9rem; color: var(--text-dark);">Servicios Realizados</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(0,0,0,0.1);">
+                            <div style="font-weight: 500; margin-bottom: 0.5rem;">Miembro desde:</div>
+                            <div style="color: var(--text-dark);">Enero 15, 2024</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones de cuenta -->
+            <div class="table-container" style="margin-top: 2rem;">
+                <div class="table-header">
+                    <h3 class="table-title">Acciones de Cuenta</h3>
+                </div>
+                <div style="padding: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn-action btn-edit">Descargar Mis Datos</button>
+                    <button class="btn-action btn-info">Exportar Historial</button>
+                    <button class="btn-action btn-delete" style="background: linear-gradient(135deg, #6c757d, #5a6268);">Desactivar Cuenta</button>
+                    <button class="btn-action btn-delete">Eliminar Cuenta</button>
+                </div>
+            </div>
+        </main>
+    </div>
 </body>
 </html>
