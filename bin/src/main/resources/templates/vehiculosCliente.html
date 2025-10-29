@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Vehículos - MotorEntix</title>
+    <link rel="stylesheet" th:href="@{/css/panel.cliente.css}">
+	
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>MotorEntix</h1>
+        </div>
+        <div class="user-info">
+            <span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Cliente</span>
+            <span th:unless="${usuario != null}">Cliente</span>
+            <div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">C</div>
+            <div class="user-avatar" th:unless="${usuario != null}">C</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <nav class="sidebar">
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a th:href="@{/panel.cliente}" class="menu-link">
+                        <span>👤</span> Mi Perfil
+                    </a>
+                </li>
+                <li class="menu-item active">
+                    <a th:href="@{/vehiculos-cliente}" class="menu-link">
+                        <span>🚗</span> Mis Vehículos
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/reservasCliente}" class="menu-link">
+                        <span>📋</span> Reservas
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/historial}" class="menu-link">
+                        <span>📊</span> Historial
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/servicios}" class="menu-link">
+                        <span>🔧</span> Servicios
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a th:href="@{/logout}" class="menu-link">
+                        <span>🚪</span> Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h2 class="page-title">Mis Vehículos</h2>
+                <button class="btn btn-primary">Agregar Vehículo</button>
+            </div>
+
+            <!-- Tarjetas de estadísticas -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-value" th:text="${totalVehiculos != null} ? ${totalVehiculos} : '3'">3</div>
+                    <div class="stat-label">Vehículos Registrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" th:text="${vehiculosActivos != null} ? ${vehiculosActivos} : '2'">2</div>
+                    <div class="stat-label">Vehículos Activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" th:text="${proximosServicios != null} ? ${proximosServicios} : '1'">1</div>
+                    <div class="stat-label">Próximos Servicios</div>
+                </div>
+
+            </div>
+
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">Mis Vehículos Registrados</h3>
+                    <div class="table-actions">
+                        <div class="search-container">
+                            <input type="text" placeholder="Buscar vehículos..." class="search-input">
+                            <button class="btn btn-search">🔍</button>
+                        </div>
+                        <button class="btn btn-primary">Agregar Nuevo</button>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Placa</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Año</th>
+                            <th>Color</th>
+                            <th>Versión</th>
+                            <th>Estado</th>
+                            <th>Último Servicio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Vehículo 1 -->
+                        <tr>
+                            <td>ABC123</td>
+                            <td>Toyota</td>
+                            <td>Corolla</td>
+                            <td>2023</td>
+                            <td>Rojo</td>
+                            <td>LE</td>
+                            <td>
+                                <span class="status-indicator status-available">Activo</span>
+                            </td>
+                            <td>15/09/2024</td>
+                            <td>
+                                <button class="btn-action btn-edit">Editar</button>
+                                <button class="btn-action btn-info">Servicios</button>
+                                <button class="btn-action btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Vehículo 2 -->
+                        <tr>
+                            <td>XYZ789</td>
+                            <td>Honda</td>
+                            <td>Civic</td>
+                            <td>2024</td>
+                            <td>Azul</td>
+                            <td>EX</td>
+                            <td>
+                                <span class="status-indicator status-available">Activo</span>
+                            </td>
+                            <td>20/10/2024</td>
+                            <td>
+                                <button class="btn-action btn-edit">Editar</button>
+                                <button class="btn-action btn-info">Servicios</button>
+                                <button class="btn-action btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Vehículo 3 -->
+                        <tr>
+                            <td>DEF456</td>
+                            <td>Mazda</td>
+                            <td>CX-5</td>
+                            <td>2022</td>
+                            <td>Blanco</td>
+                            <td>Touring</td>
+                            <td>
+                                <span class="status-indicator status-maintenance">En Servicio</span>
+                            </td>
+                            <td>05/11/2024</td>
+                            <td>
+                                <button class="btn-action btn-edit">Editar</button>
+                                <button class="btn-action btn-info">Servicios</button>
+                                <button class="btn-action btn-delete">Eliminar</button>
+                            </td>
+                        </tr>
+                        
+                        <!-- Ejemplo de vehículo sin datos (Thymeleaf) -->
+                        <tr th:if="${vehiculos != null and vehiculos.empty}">
+                            <td colspan="9" style="text-align: center;">
+                                No tienes vehículos registrados. 
+                                <a th:href="@{/cliente/vehiculos/agregar}" class="btn-action btn-edit" style="margin-left: 10px;">
+                                    Agregar primer vehículo
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Sección de próximos servicios -->
+            <div class="table-container" style="margin-top: 2rem;">
+                <div class="table-header">
+                    <h3 class="table-title">Próximos Servicios</h3>
+                    <div class="table-actions">
+                        <a th:href="@{/cliente/servicios}" class="btn btn-primary">Ver Todos los Servicios</a>
+                    </div>
+                </div>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Vehículo</th>
+                            <th>Tipo de Servicio</th>
+                            <th>Fecha Programada</th>
+                            <th>Kilometraje Actual</th>
+                            <th>Próximo en</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Toyota Corolla (ABC123)</td>
+                            <td>Cambio de Aceite</td>
+                            <td>15/12/2024</td>
+                            <td>45,000 km</td>
+                            <td>5,000 km</td>
+                            <td><span class="status-indicator status-maintenance">Pendiente</span></td>
+                            <td>
+                                <button class="btn-action btn-edit">Agendar</button>
+                                <button class="btn-action btn-info">Detalles</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Honda Civic (XYZ789)</td>
+                            <td>Rotación de Llantas</td>
+                            <td>20/01/2025</td>
+                            <td>38,500 km</td>
+                            <td>1,500 km</td>
+                            <td><span class="status-indicator status-available">Programado</span></td>
+                            <td>
+                                <button class="btn-action btn-edit">Reagendar</button>
+                                <button class="btn-action btn-info">Detalles</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

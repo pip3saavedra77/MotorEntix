@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Panel de Administración - MotorEntix</title>
 	<link rel="stylesheet" th:href="@{/css/panel.admin.css}">
+
 </head>
 
 <body>
@@ -81,7 +82,6 @@
 				<div class="table-header">
 					<h3 class="table-title">Vehículos Disponibles</h3>
 					<div class="table-actions">
-						<!-- Barra de Búsqueda al lado del botón Agregar -->
 						<form th:action="@{/admin/panel}" method="get" class="search-form">
 							<div class="search-container">
 								<input type="text" name="search" th:value="${searchTerm}"
@@ -91,66 +91,469 @@
 									title="Limpiar búsqueda">❌</a>
 							</div>
 						</form>
-						<a th:href="@{/admin/registrar}" class="btn btn-primary"> Agregar Vehículo</a>
+						<a th:href="@{/admin/registrar}" class="btn btn-primary">Agregar Vehículo</a>
 					</div>
 				</div>
 
-				<table>
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Placa</th>
-							<th>Marca</th>
-							<th>Modelo</th>
-							<th>Año</th>
-							<th>Version</th>
-							<th>Tipo de vehiculo</th>
-							<th>Transmicion</th>
-							<th>Combustible</th>
-							<th>Color</th>
-							<th>Estado</th>
-							<th>Descripcion</th>
-							<th>Acciones</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr th:each="vehiculo : ${vehiculos}">
-							<td th:text="${vehiculo.id_vehiculo}"></td>
-							<td th:text="${vehiculo.placa}"></td>
-							<td th:text="${vehiculo.marca}"></td>
-							<td th:text="${vehiculo.modelo}"></td>
-							<td th:text="${vehiculo.anio}"></td>
-							<td th:text="${vehiculo.version}"></td>
-							<td th:text="${vehiculo.tipoVehiculo}"></td>
-							<td th:text="${vehiculo.transmicion}"></td>
-							<td th:text="${vehiculo.combustible}"></td>
-							<td th:text="${vehiculo.color}"></td>
-							<td th:text="${vehiculo.estadoVehiculo}"></td>
-							<td th:text="${vehiculo.descripcion}"></td>
-							<td>
-								<a th:href="@{/admin/vehiculos/editar/{id}(id=${vehiculo.id_vehiculo})}"
-									class="btn-action btn-edit">Editar</a>
-								<form th:action="@{/admin/vehiculos/eliminar/{id}(id=${vehiculo.id_vehiculo})}"
-									method="post" style="display:inline;">
-									<button type="submit" class="btn-action btn-delete"
-										onclick="return confirm('¿Seguro que deseas eliminar este vehículo?')">
-										Eliminar
+				<div class="table-wrapper">
+					<table id="vehiculosTable">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Placa</th>
+								<th>Marca</th>
+								<th>Color</th>
+								<th>Estado</th>
+								<th>Acciones</th>
+							</tr>
+						</thead>
+						<tbody id="tableBody">
+							<tr th:each="vehiculo : ${vehiculos}">
+								<td th:text="${vehiculo.id_vehiculo}"></td>
+								<td th:text="${vehiculo.placa}"></td>
+								<td th:text="${vehiculo.marca}"></td>
+								<td th:text="${vehiculo.color}"></td>
+								<td>
+									<span class="status-indicator" th:text="${vehiculo.estadoVehiculo}"></span>
+								</td>
+								<td>
+									<button class="btn-action btn-info btn-view-more"
+										th:data-id="${vehiculo.id_vehiculo}" th:data-placa="${vehiculo.placa}"
+										th:data-marca="${vehiculo.marca}" th:data-modelo="${vehiculo.modelo}"
+										th:data-anio="${vehiculo.anio}" th:data-version="${vehiculo.version}"
+										th:data-tipo="${vehiculo.tipoVehiculo}"
+										th:data-transmision="${vehiculo.transmicion}"
+										th:data-combustible="${vehiculo.combustible}" th:data-color="${vehiculo.color}"
+										th:data-estado="${vehiculo.estadoVehiculo}"
+										th:data-descripcion="${vehiculo.descripcion}">
+										Ver más
 									</button>
-								</form>
-							</td>
-						</tr>
-						<tr th:if="${vehiculos.empty}">
-							<td colspan="13" style="text-align: center;">
-								<span th:if="${searchTerm}">No se encontraron vehículos que coincidan con tu
-									búsqueda.</span>
-								<span th:unless="${searchTerm}">No hay vehículos registrados.</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+									<a th:href="@{/admin/vehiculos/editar/{id}(id=${vehiculo.id_vehiculo})}"
+										class="btn-action btn-edit">Editar</a>
+									<form th:action="@{/admin/vehiculos/eliminar/{id}(id=${vehiculo.id_vehiculo})}"
+										method="post" style="display:inline;">
+										<button type="submit" class="btn-action btn-delete"
+											onclick="return confirm('¿Seguro que deseas eliminar este vehículo?')">
+											Eliminar
+										</button>
+									</form>
+								</td>
+							</tr>
+
+							<tr th:if="${vehiculos.empty}">
+								<td colspan="6" style="text-align: center; padding: 2rem;">
+									<span th:if="${searchTerm}">No se encontraron vehículos que coincidan con tu
+										búsqueda.</span>
+									<span th:unless="${searchTerm}">No hay vehículos registrados.</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Controles de paginación - VERSIÓN CORREGIDA -->
+				<div class="pagination-container" th:if="${vehiculos.size() > 10}">
+					<div class="pagination-info">
+						📊 Mostrando <span id="currentRange">1-10</span> de <span th:text="${vehiculos.size()}"></span>
+						vehículos
+					</div>
+					<div class="pagination-controls">
+						<button class="btn-pagination btn-pagination-prev" onclick="changePage(-1)">
+							← Anterior
+						</button>
+						<div class="pagination-numbers" id="paginationNumbers"></div>
+						<button class="btn-pagination btn-pagination-next" onclick="changePage(1)">
+							Siguiente →
+						</button>
+					</div>
+				</div>
 			</div>
-		</main>
+
+			<!-- MODAL PANTALLA COMPLETA -->
+			<div id="modalVehiculo" class="modal">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h3>📋 Detalles completos del vehículo</h3>
+						<button class="close-modal">&times;</button>
+					</div>
+					<div class="modal-body">
+						<div class="modal-grid">
+							<div class="modal-section">
+								<h4>🚗 Información Básica</h4>
+								<div class="modal-details">
+									<div class="modal-detail">
+										<span class="modal-label">ID:</span>
+										<span id="modal-id">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">Placa:</span>
+										<span id="modal-placa">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">Marca:</span>
+										<span id="modal-marca">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">Modelo:</span>
+										<span id="modal-modelo">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">Año:</span>
+										<span id="modal-anio">-</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="modal-section">
+								<h4>⚙️ Especificaciones Técnicas</h4>
+								<div class="modal-details">
+									<div class="modal-detail">
+										<span class="modal-label">Versión:</span>
+										<span id="modal-version">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">Tipo de vehículo:</span>
+										<span id="modal-tipo">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">Transmisión:</span>
+										<span id="modal-transmision">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">Combustible:</span>
+										<span id="modal-combustible">-</span>
+									</div>
+								</div>
+							</div>
+
+							<div class="modal-section">
+								<h4>🎨 Características</h4>
+								<div class="modal-details">
+									<div class="modal-detail">
+										<span class="modal-label">Color:</span>
+										<span id="modal-color">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">Estado:</span>
+										<span id="modal-estado" class="status-indicator">-</span>
+									</div>
+									<div class="modal-detail full-width">
+										<span class="modal-label">Descripción:</span>
+										<span id="modal-descripcion">-</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-primary" onclick="cerrarModal()">Cerrar Vista de Detalles</button>
+					</div>
+				</div>
+			</div>
+
+
 	</div>
+	</div>
+	</div>
+	</main>
+	</div>
+	<script>
+		// Variables globales
+		let modal = null;
+
+		// Función para abrir el modal con los datos del vehículo
+		function abrirModal(button) {
+			console.log('Abriendo modal pantalla completa...');
+
+			// Obtener los datos del botón clickeado
+			const vehiculoData = {
+				id: button.getAttribute('data-id') || 'N/A',
+				placa: button.getAttribute('data-placa') || 'N/A',
+				marca: button.getAttribute('data-marca') || 'N/A',
+				modelo: button.getAttribute('data-modelo') || 'N/A',
+				anio: button.getAttribute('data-anio') || 'N/A',
+				version: button.getAttribute('data-version') || 'N/A',
+				tipo: button.getAttribute('data-tipo') || 'N/A',
+				transmision: button.getAttribute('data-transmision') || 'N/A',
+				combustible: button.getAttribute('data-combustible') || 'N/A',
+				color: button.getAttribute('data-color') || 'N/A',
+				estado: button.getAttribute('data-estado') || 'N/A',
+				descripcion: button.getAttribute('data-descripcion') || 'Sin descripción disponible'
+			};
+
+			console.log('Datos del vehículo:', vehiculoData);
+
+			// Llenar el modal con los datos
+			const fillField = (id, value) => {
+				const element = document.getElementById(id);
+				if (element) element.textContent = value;
+			};
+
+			fillField('modal-id', vehiculoData.id);
+			fillField('modal-placa', vehiculoData.placa);
+			fillField('modal-marca', vehiculoData.marca);
+			fillField('modal-modelo', vehiculoData.modelo);
+			fillField('modal-anio', vehiculoData.anio);
+			fillField('modal-version', vehiculoData.version);
+			fillField('modal-tipo', vehiculoData.tipo);
+			fillField('modal-transmision', vehiculoData.transmision);
+			fillField('modal-combustible', vehiculoData.combustible);
+			fillField('modal-color', vehiculoData.color);
+			fillField('modal-descripcion', vehiculoData.descripcion);
+
+			// Configurar el estado con la clase correspondiente
+			const estadoElement = document.getElementById('modal-estado');
+			if (estadoElement) {
+				estadoElement.textContent = vehiculoData.estado;
+
+				// Remover clases anteriores y agregar la nueva
+				estadoElement.className = 'status-indicator';
+				if (vehiculoData.estado === 'Disponible') {
+					estadoElement.classList.add('status-available');
+				} else if (vehiculoData.estado === 'Mantenimiento') {
+					estadoElement.classList.add('status-maintenance');
+				} else {
+					estadoElement.classList.add('status-rented');
+				}
+			}
+
+			// Mostrar el modal
+			if (modal) {
+				modal.style.display = 'block';
+				document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+			}
+		}
+
+		// Función para cerrar el modal
+		function cerrarModal() {
+			if (modal) {
+				modal.style.display = 'none';
+				document.body.style.overflow = 'auto'; // Restaurar scroll
+			}
+		}
+
+		// Inicializar cuando el DOM esté cargado
+		document.addEventListener('DOMContentLoaded', function () {
+			console.log('Inicializando modal pantalla completa...');
+
+			// Inicializar modal
+			modal = document.getElementById('modalVehiculo');
+
+			if (!modal) {
+				console.error('❌ No se encontró el modal');
+				return;
+			}
+
+			console.log('✅ Modal pantalla completa encontrado');
+
+			// Agregar event listeners a todos los botones "Ver más"
+			const viewMoreButtons = document.querySelectorAll('.btn-view-more');
+			console.log(`✅ Encontrados ${viewMoreButtons.length} botones "Ver más"`);
+
+			viewMoreButtons.forEach((button, index) => {
+				button.addEventListener('click', function (event) {
+					event.preventDefault();
+					event.stopPropagation();
+					console.log(`🖱️ Click en botón Ver más #${index + 1}`);
+					abrirModal(this);
+				});
+			});
+
+			// Cerrar modal al hacer clic fuera del contenido
+			modal.addEventListener('click', function (event) {
+				if (event.target === modal) {
+					cerrarModal();
+				}
+			});
+
+			// Cerrar modal con la tecla ESC
+			document.addEventListener('keydown', function (event) {
+				if (event.key === 'Escape') {
+					cerrarModal();
+				}
+			});
+
+			// Cerrar modal con el botón X
+			const closeButton = document.querySelector('.close-modal');
+			if (closeButton) {
+				closeButton.addEventListener('click', function (event) {
+					event.preventDefault();
+					cerrarModal();
+				});
+			}
+
+			console.log('✅ Modal pantalla completa inicializado');
+		});
+	</script>
+	<script>
+		// Variables de paginación
+		let currentPage = 1;
+		const rowsPerPage = 10;
+		let allRows = [];
+
+		// Función para inicializar la paginación
+		function initializePagination() {
+			console.log('Inicializando paginación...');
+
+			// Obtener todas las filas de la tabla (excluyendo la fila de "no resultados")
+			const tableBody = document.getElementById('tableBody');
+			allRows = Array.from(tableBody.querySelectorAll('tr')).filter(row =>
+				!row.querySelector('td[colspan]') // Excluir filas con colspan (mensajes de no resultados)
+			);
+
+			const totalRows = allRows.length;
+			console.log(`Total de filas: ${totalRows}`);
+
+			// Si hay más de 10 filas, inicializar paginación
+			if (totalRows > rowsPerPage) {
+				setupPagination(totalRows);
+				showPage(1);
+			} else {
+				// Si hay 10 o menos filas, mostrar todas y ocultar controles de paginación
+				document.querySelector('.pagination-container').style.display = 'none';
+				allRows.forEach(row => row.style.display = '');
+				updateRangeInfo(1, totalRows, totalRows);
+			}
+
+			// Aplicar estilos de estado a las filas visibles
+			applyStatusStyles();
+		}
+
+		// Función para configurar la paginación
+		function setupPagination(totalRows) {
+			const totalPages = Math.ceil(totalRows / rowsPerPage);
+			const paginationNumbers = document.getElementById('paginationNumbers');
+			paginationNumbers.innerHTML = '';
+
+			// Siempre mostrar primera página
+			addPageNumber(1, paginationNumbers);
+
+			// Mostrar puntos suspensivos si hay muchas páginas
+			if (currentPage > 3) {
+				addDots(paginationNumbers);
+			}
+
+			// Mostrar páginas alrededor de la actual
+			const startPage = Math.max(2, currentPage - 1);
+			const endPage = Math.min(totalPages - 1, currentPage + 1);
+
+			for (let i = startPage; i <= endPage; i++) {
+				if (i !== 1 && i !== totalPages) {
+					addPageNumber(i, paginationNumbers);
+				}
+			}
+
+			// Mostrar puntos suspensivos si hay muchas páginas
+			if (currentPage < totalPages - 2) {
+				addDots(paginationNumbers);
+			}
+
+			// Siempre mostrar última página si hay más de 1 página
+			if (totalPages > 1) {
+				addPageNumber(totalPages, paginationNumbers);
+			}
+
+			// Actualizar botones anterior/siguiente
+			updateNavigationButtons(totalPages);
+		}
+
+		// Función para agregar número de página
+		function addPageNumber(pageNumber, container) {
+			const pageElement = document.createElement('button');
+			pageElement.className = `page-number ${pageNumber === currentPage ? 'active' : ''}`;
+			pageElement.textContent = pageNumber;
+			pageElement.onclick = () => showPage(pageNumber);
+			container.appendChild(pageElement);
+		}
+
+		// Función para agregar puntos suspensivos
+		function addDots(container) {
+			const dots = document.createElement('span');
+			dots.className = 'page-number dots';
+			dots.textContent = '...';
+			container.appendChild(dots);
+		}
+
+		// Función para mostrar una página específica
+		function showPage(page) {
+			currentPage = page;
+			const startIndex = (page - 1) * rowsPerPage;
+			const endIndex = startIndex + rowsPerPage;
+
+			// Ocultar todas las filas
+			allRows.forEach(row => row.style.display = 'none');
+
+			// Mostrar solo las filas de la página actual
+			for (let i = startIndex; i < endIndex && i < allRows.length; i++) {
+				if (allRows[i]) {
+					allRows[i].style.display = '';
+				}
+			}
+
+			// Actualizar información del rango
+			const actualEnd = Math.min(endIndex, allRows.length);
+			updateRangeInfo(startIndex + 1, actualEnd, allRows.length);
+
+			// Actualizar controles de paginación
+			setupPagination(allRows.length);
+
+			// Re-aplicar estilos de estado
+			applyStatusStyles();
+		}
+
+		// Función para cambiar de página (anterior/siguiente)
+		function changePage(direction) {
+			const totalPages = Math.ceil(allRows.length / rowsPerPage);
+			const newPage = currentPage + direction;
+
+			if (newPage >= 1 && newPage <= totalPages) {
+				showPage(newPage);
+			}
+		}
+
+		// Función para actualizar botones de navegación
+		function updateNavigationButtons(totalPages) {
+			const prevBtn = document.querySelector('.btn-pagination-prev');
+			const nextBtn = document.querySelector('.btn-pagination-next');
+
+			prevBtn.disabled = currentPage === 1;
+			nextBtn.disabled = currentPage === totalPages;
+		}
+
+		// Función para actualizar información del rango
+		function updateRangeInfo(start, end, total) {
+			document.getElementById('currentRange').textContent = `${start}-${end}`;
+		}
+
+		// Función para aplicar estilos de estado
+		function applyStatusStyles() {
+			document.querySelectorAll('tbody tr').forEach(row => {
+				const estadoElement = row.querySelector('.status-indicator');
+				if (estadoElement && row.style.display !== 'none') {
+					const estado = estadoElement.textContent.trim();
+					estadoElement.className = 'status-indicator';
+					if (estado === 'Disponible') {
+						estadoElement.classList.add('status-available');
+					} else if (estado === 'Mantenimiento') {
+						estadoElement.classList.add('status-maintenance');
+					} else {
+						estadoElement.classList.add('status-rented');
+					}
+				}
+			});
+		}
+
+		// Inicializar cuando el DOM esté cargado
+		document.addEventListener('DOMContentLoaded', function () {
+			console.log('Inicializando sistema...');
+
+			// Inicializar paginación
+			initializePagination();
+
+			// El resto de tu código de inicialización del modal...
+			// (mantén tu código existente de inicialización del modal aquí)
+		});
+	</script>
 </body>
 
 </html>
