@@ -16,16 +16,15 @@ import MotorEntix.model.Vehiculo;
 import MotorEntix.service.IVehiculoService;
 
 @Controller
-@RequestMapping("/admin")
-public class panelAdminController {
+@RequestMapping("/admin/vehiculos")
+public class VehiculosController {
 
 	@Autowired
 	private IVehiculoService vehiculoService;
 
-	// 📌 ÚNICO método para mostrar el panel principal con búsqueda opcional
-	@GetMapping("/panel")
-	public String mostrarPanelAdmin(@RequestParam(value = "search", required = false) String search, Model model) {
-
+	// 📌 Lista de vehículos con búsqueda
+	@GetMapping("/lista")
+	public String listarVehiculos(@RequestParam(required = false) String search, Model model) {
 		List<Vehiculo> vehiculos;
 
 		if (search != null && !search.trim().isEmpty()) {
@@ -39,33 +38,36 @@ public class panelAdminController {
 		model.addAttribute("vehiculos", vehiculos);
 		model.addAttribute("vehiculo", new Vehiculo());
 		model.addAttribute("searchTerm", search);
-		return "panel.admin";
+		model.addAttribute("pagina", "vehiculos");
+		return "vehiculos";
 	}
 
 	// 📌 Mostrar formulario de registro de vehículos
 	@GetMapping("/registrar")
 	public String mostrarFormularioRegistro(Model model) {
 		model.addAttribute("vehiculo", new Vehiculo());
+		model.addAttribute("pagina", "vehiculos");
 		return "registrarVehiculo";
 	}
 
 	// 📌 Guardar vehículo (crear o editar)
-	@PostMapping("/vehiculos/guardar")
+	@PostMapping("/guardar")
 	public String guardarVehiculo(@ModelAttribute Vehiculo vehiculo) {
 		vehiculoService.guardar(vehiculo);
-		return "redirect:/admin/panel";
+		return "redirect:/admin/vehiculos/lista";
 	}
 
 	// 📌 Mostrar formulario de edición
-	@GetMapping("/vehiculos/editar/{id}")
+	@GetMapping("/editar/{id}")
 	public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
 		Vehiculo vehiculo = vehiculoService.obtenerPorId(id);
 		model.addAttribute("vehiculo", vehiculo);
+		model.addAttribute("pagina", "vehiculos");
 		return "editarVehiculo";
 	}
 
 	// 📌 Guardar cambios del vehículo editado
-	@PostMapping("/vehiculos/editar/{id}")
+	@PostMapping("/editar/{id}")
 	public String actualizarVehiculo(@PathVariable Integer id, @ModelAttribute("vehiculo") Vehiculo vehiculo) {
 		Vehiculo vehiculoExistente = vehiculoService.obtenerPorId(id);
 
@@ -81,39 +83,13 @@ public class panelAdminController {
 		vehiculoExistente.setTransmicion(vehiculo.getTransmicion());
 
 		vehiculoService.guardar(vehiculoExistente);
-		return "redirect:/admin/panel";
+		return "redirect:/admin/vehiculos/lista";
 	}
 
 	// 📌 Eliminar vehículo
-	@PostMapping("/vehiculos/eliminar/{id}")
+	@PostMapping("/eliminar/{id}")
 	public String eliminarVehiculo(@PathVariable Integer id) {
 		vehiculoService.eliminar(id);
-		return "redirect:/admin/panel";
-	}
-
-	// ================= Otras secciones =================
-	@GetMapping("/inventario")
-	public String inventario() {
-		return "adminInventario";
-	}
-
-	@GetMapping("/reportes")
-	public String reportes() {
-		return "adminReportes";
-	}
-
-	@GetMapping("/reservas")
-	public String reservas() {
-		return "adminReservas";
-	}
-
-	@GetMapping("/servicios")
-	public String servicios() {
-		return "adminServicios";
-	}
-
-	@GetMapping("/trabajadores")
-	public String trabajadores() {
-		return "adminTrabajadores";
+		return "redirect:/admin/vehiculos/lista";
 	}
 }
