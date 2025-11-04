@@ -9,38 +9,46 @@ import MotorEntix.service.IUsuarioService;
 @Service
 public class UsuarioServiceImpl implements IUsuarioService {
 
-	private final IUsuarioRepository usuarioRepository;
+    private final IUsuarioRepository usuarioRepository;
 
-	public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
-		this.usuarioRepository = usuarioRepository;
-	}
+    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
 
-	@Override
-	public Optional<Usuario> validarUsuario(String correo, String contrasena) {
-		return usuarioRepository.findByCorreoAndContrasena(correo, contrasena);
-	}
+    // TUS MÉTODOS EXISTENTES (se mantienen igual)
+    @Override
+    public Optional<Usuario> validarUsuario(String correo, String contrasena) {
+        return usuarioRepository.findByCorreoAndContrasena(correo, contrasena);
+    }
 
-	@Override
-	public Usuario registrarUsuario(Usuario usuario) {
-		// Validar que el correo no exista
-		if (usuarioRepository.existsByCorreo(usuario.getCorreo())) {
-			throw new RuntimeException("El correo ya está registrado");
-		}
+    @Override
+    public Usuario registrarUsuario(Usuario usuario) {
+        if (usuarioRepository.existsByCorreo(usuario.getCorreo())) {
+            throw new RuntimeException("El correo ya está registrado");
+        }
+        usuario.setEstado("activo");
+        usuario.setRol("cliente");
+        return usuarioRepository.save(usuario);
+    }
 
-		// Establecer valores por defecto
-		usuario.setEstado("activo");
-		usuario.setRol("cliente");
+    @Override
+    public Optional<Usuario> buscarPorCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo);
+    }
 
-		return usuarioRepository.save(usuario);
-	}
+    @Override
+    public boolean existePorCorreo(String correo) {
+        return usuarioRepository.existsByCorreo(correo);
+    }
 
-	@Override
-	public Optional<Usuario> buscarPorCorreo(String correo) {
-		return usuarioRepository.findByCorreo(correo);
-	}
+    // NUEVOS MÉTODOS PARA EL PERFIL
+    @Override
+    public Usuario findById(Integer id) {
+        return usuarioRepository.findById(id).orElse(null);
+    }
 
-	@Override
-	public boolean existePorCorreo(String correo) {
-		return usuarioRepository.existsByCorreo(correo);
-	}
+    @Override
+    public Usuario findByCorreo(String correo) {
+        return usuarioRepository.findByCorreo(correo).orElse(null);
+    }
 }

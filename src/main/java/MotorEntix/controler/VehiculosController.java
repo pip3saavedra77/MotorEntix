@@ -28,10 +28,8 @@ public class VehiculosController {
 		List<Vehiculo> vehiculos;
 
 		if (search != null && !search.trim().isEmpty()) {
-			// Si hay término de búsqueda, filtrar vehículos
 			vehiculos = vehiculoService.buscarPorTermino(search);
 		} else {
-			// Si no hay búsqueda, mostrar todos
 			vehiculos = vehiculoService.listarTodos();
 		}
 
@@ -39,7 +37,7 @@ public class VehiculosController {
 		model.addAttribute("vehiculo", new Vehiculo());
 		model.addAttribute("searchTerm", search);
 		model.addAttribute("pagina", "vehiculos");
-		return "vehiculos";
+		return "administrador/vehiculos"; // ← NOMBRE REAL
 	}
 
 	// 📌 Mostrar formulario de registro de vehículos
@@ -47,14 +45,7 @@ public class VehiculosController {
 	public String mostrarFormularioRegistro(Model model) {
 		model.addAttribute("vehiculo", new Vehiculo());
 		model.addAttribute("pagina", "vehiculos");
-		return "registrarVehiculo";
-	}
-
-	// 📌 Guardar vehículo (crear o editar)
-	@PostMapping("/guardar")
-	public String guardarVehiculo(@ModelAttribute Vehiculo vehiculo) {
-		vehiculoService.guardar(vehiculo);
-		return "redirect:/admin/vehiculos/lista";
+		return "administrador/registrarVehiculo"; // ← NOMBRE REAL
 	}
 
 	// 📌 Mostrar formulario de edición
@@ -63,10 +54,17 @@ public class VehiculosController {
 		Vehiculo vehiculo = vehiculoService.obtenerPorId(id);
 		model.addAttribute("vehiculo", vehiculo);
 		model.addAttribute("pagina", "vehiculos");
-		return "editarVehiculo";
+		return "administrador/editarVehiculo"; // ← NOMBRE REAL
 	}
 
-	// 📌 Guardar cambios del vehículo editado
+	// 📌 Guardar vehículo (crear o editar) - NO CAMBIA
+	@PostMapping("/guardar")
+	public String guardarVehiculo(@ModelAttribute Vehiculo vehiculo) {
+		vehiculoService.guardar(vehiculo);
+		return "redirect:/admin/vehiculos/lista";
+	}
+
+	// 📌 Guardar cambios del vehículo editado - NO CAMBIA
 	@PostMapping("/editar/{id}")
 	public String actualizarVehiculo(@PathVariable Integer id, @ModelAttribute("vehiculo") Vehiculo vehiculo) {
 		Vehiculo vehiculoExistente = vehiculoService.obtenerPorId(id);
@@ -86,7 +84,7 @@ public class VehiculosController {
 		return "redirect:/admin/vehiculos/lista";
 	}
 
-	// 📌 Eliminar vehículo
+	// 📌 Eliminar vehículo - NO CAMBIA
 	@PostMapping("/eliminar/{id}")
 	public String eliminarVehiculo(@PathVariable Integer id) {
 		vehiculoService.eliminar(id);

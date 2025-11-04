@@ -1,4 +1,4 @@
-package MotorEntix.controler;
+	package MotorEntix.controler;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/admin")
 public class PanelAdminController {
 
-	// 📌 Panel de administración principal
+	// 📌 Panel de administración principal - USA EL NOMBRE REAL
 	@GetMapping("/panel")
 	public String mostrarPanelAdmin(Model model) {
-		// Aquí puedes agregar estadísticas o datos para el dashboard
 		model.addAttribute("pagina", "dashboard");
-		return "panel.admin";
+		return "administrador/panel.admin"; // ← NOMBRE REAL
 	}
 
 	// 📌 Redirección a la vista de vehículos
@@ -27,42 +26,42 @@ public class PanelAdminController {
 	@GetMapping("/inventario")
 	public String inventario(Model model) {
 		model.addAttribute("pagina", "inventario");
-		return "adminInventario";
+		return "administrador/inventario"; // ← Cuando lo crees
 	}
 
 	@GetMapping("/proveedor")
 	public String proveedor(Model model) {
 		model.addAttribute("pagina", "proveedor");
-		return "adminProveedor";
+		return "administrador/proveedor"; // ← Cuando lo crees
 	}
 
 	@GetMapping("/mi-perfil")
 	public String miPerfil(Model model) {
 		model.addAttribute("pagina", "mi-perfil");
-		return "adminMiPerfil";
+		return "administrador/mi-perfil"; // ← Cuando lo crees
 	}
 
 	@GetMapping("/clientes")
 	public String clientes(Model model) {
 		model.addAttribute("pagina", "clientes");
-		return "adminClientes";
+		return "administrador/clientes"; // ← Cuando lo crees
 	}
 
 	@GetMapping("/reservas")
 	public String reservas(Model model) {
 		model.addAttribute("pagina", "reservas");
-		return "adminReservas";
+		return "administrador/reservas"; // ← Cuando lo crees
 	}
 
 	@GetMapping("/pagos")
 	public String pagos(Model model) {
 		model.addAttribute("pagina", "pagos");
-		return "adminPagos";
+		return "administrador/pagos"; // ← Cuando lo crees
 	}
 
 	@GetMapping("/configuracion")
 	public String configuracion(Model model) {
 		model.addAttribute("pagina", "configuracion");
-		return "adminConfiguracion";
+		return "administrador/configuracion"; // ← Cuando lo crees
 	}
 }

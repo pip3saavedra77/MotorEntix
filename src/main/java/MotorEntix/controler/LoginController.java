@@ -4,8 +4,9 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
+import MotorEntix.model.Usuario;
 import MotorEntix.service.IUsuarioService;
+import java.util.Optional;
 
 @Controller
 public class LoginController {
@@ -28,17 +29,34 @@ public class LoginController {
 		return "login"; // templates/login.html
 	}
 
-	// Procesar login
 	@PostMapping("/procesar-login")
 	public String procesarLogin(@RequestParam String usuario, @RequestParam String contrasena, HttpSession session,
 			Model model) {
 
-		return usuarioService.validarUsuario(usuario, contrasena).map(u -> {
-			// Guardar datos en sesión
-			session.setAttribute("usuarioLogueado", u.getNombre());
-			session.setAttribute("rol", u.getRol());
+		Optional<Usuario> usuarioOpt = usuarioService.validarUsuario(usuario, contrasena);
 
-			// Redirección según rol obtenido de la base de datos
+		if (usuarioOpt.isPresent()) {
+			Usuario u = usuarioOpt.get();
+
+			// DEBUG: Ver qué datos tenemos del usuario
+			System.out.println("=== LOGIN DEBUG ===");
+			System.out.println("ID: " + u.getId_usuario());
+			System.out.println("Email: " + u.getCorreo());
+			System.out.println("Nombre: " + u.getNombre());
+			System.out.println("Rol: " + u.getRol());
+
+			// GUARDAR DATOS COMPLETOS EN SESIÓN - ESTO ES CLAVE
+			session.setAttribute("usuarioId", u.getId_usuario()); // ← ID para buscar datos
+			session.setAttribute("usuarioEmail", u.getCorreo()); // ← Email como backup
+			session.setAttribute("usuarioLogueado", u.getNombre()); // ← Nombre para mostrar
+			session.setAttribute("rol", u.getRol()); // ← Rol para redirección
+
+			// DEBUG: Verificar qué se guardó en sesión
+			System.out.println("=== SESIÓN GUARDADA ===");
+			System.out.println("usuarioId: " + session.getAttribute("usuarioId"));
+			System.out.println("usuarioEmail: " + session.getAttribute("usuarioEmail"));
+
+			// Redirección según rol
 			switch (u.getRol().toLowerCase()) {
 			case "administrador":
 				return "redirect:/admin/panel";
@@ -50,10 +68,10 @@ public class LoginController {
 				model.addAttribute("error", "Rol no válido");
 				return "login";
 			}
-		}).orElseGet(() -> {
+		} else {
 			model.addAttribute("error", "Usuario o contraseña incorrectos");
 			return "login";
-		});
+		}
 	}
 
 	// Logout
@@ -61,22 +79,6 @@ public class LoginController {
 	public String logout(HttpSession session) {
 		session.invalidate();
 		return "redirect:/login";
-	}
-
-	// Paneles
-	@GetMapping("/panel.admin")
-	public String panelAdmin() {
-		return "panel.admin"; // templates/panel.admin.html
-	}
-
-	@GetMapping("/panel.cliente")
-	public String panelCliente() {
-		return "panel.cliente"; // templates/panel.cliente.html
-	}
-
-	@GetMapping("/panel.dueno")
-	public String panelDueno() {
-		return "panel.dueno"; // templates/panel.dueno.html
 	}
 
 	@GetMapping({ "/", "/index" })

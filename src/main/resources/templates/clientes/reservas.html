@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mis Reservas - MotorEntix</title>
+	<link rel="stylesheet" th:href="@{/css/panel.cliente.css}">
+</head>
+
+<body>
+	<header>
+		<div class="logo">
+			<h1>MotorEntix</h1>
+		</div>
+		<div class="user-info">
+			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Cliente</span>
+			<span th:unless="${usuario != null}">Cliente</span>
+			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">C</div>
+			<div class="user-avatar" th:unless="${usuario != null}">C</div>
+		</div>
+	</header>
+
+	<div class="container">
+		<nav class="sidebar">
+			<ul class="sidebar-menu">
+				<li class="menu-item">
+					<a th:href="@{/panel.cliente}" class="menu-link">
+						<span>👤</span> Mi Perfil
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/vehiculos-cliente}" class="menu-link">
+						<span>🚗</span> Mis Vehículos
+					</a>
+				</li>
+				<li class="menu-item active">
+					<a th:href="@{/reservasCliente}" class="menu-link">
+						<span>📋</span> Reservas
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/historial}" class="menu-link">
+						<span>📊</span> Historial
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/servicios}" class="menu-link">
+						<span>🔧</span> Servicios
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/logout}" class="menu-link">
+						<span>🚪</span> Cerrar Sesión
+					</a>
+				</li>
+			</ul>
+		</nav>
+
+		<main class="main-content">
+			<div class="page-header">
+				<h2 class="page-title">Mis Reservas</h2>
+				<button class="btn btn-primary">Nueva Reserva</button>
+			</div>
+
+			<!-- Filtros de búsqueda -->
+			<div class="table-container" style="margin-bottom: 2rem;">
+				<div class="table-header">
+					<h3 class="table-title">Filtrar Reservas</h3>
+				</div>
+				<div style="padding: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+					<div class="search-container">
+						<input type="text" placeholder="Buscar por vehículo o ID..." class="search-input">
+						<button class="btn btn-search">🔍</button>
+					</div>
+					<select class="search-input" style="min-width: 150px;">
+						<option value="">Todos los estados</option>
+						<option value="pendiente">Pendiente</option>
+						<option value="confirmada">Confirmada</option>
+						<option value="activa">Activa</option>
+						<option value="completada">Completada</option>
+						<option value="cancelada">Cancelada</option>
+					</select>
+					<input type="date" class="search-input" style="min-width: 150px;">
+					<button class="btn btn-primary">Aplicar Filtros</button>
+				</div>
+			</div>
+
+			<!-- Tarjetas de estadísticas -->
+			<div class="stats-cards">
+				<div class="stat-card">
+					<div class="stat-value">2</div>
+					<div class="stat-label">Reservas Activas</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">3</div>
+					<div class="stat-label">Pendientes</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">12</div>
+					<div class="stat-label">Completadas</div>
+				</div>
+				<div class="stat-card">
+					<div class="stat-value">$2,150</div>
+					<div class="stat-label">Total Gastado</div>
+				</div>
+			</div>
+
+			<!-- Tabla de reservas activas -->
+			<div class="table-container">
+				<div class="table-header">
+					<h3 class="table-title">Reservas Activas y Pendientes</h3>
+					<div class="table-actions">
+						<a href="#" class="btn btn-primary">Descargar Reporte</a>
+					</div>
+				</div>
+
+				<table>
+					<thead>
+						<tr>
+							<th>ID Reserva</th>
+							<th>Vehículo</th>
+							<th>Fecha Inicio</th>
+							<th>Fecha Fin</th>
+							<th>Duración</th>
+							<th>Total</th>
+							<th>Estado</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- Reserva 1 - Activa -->
+						<tr>
+							<td>#RES001</td>
+							<td>
+								<strong>Toyota Corolla 2023</strong><br>
+								<small>Placa: ABC123</small>
+							</td>
+							<td>15/03/2025<br><small>10:00 AM</small></td>
+							<td>20/03/2025<br><small>05:00 PM</small></td>
+							<td>5 días</td>
+							<td><strong>$250</strong></td>
+							<td>
+								<span class="status-indicator status-available">Activa</span>
+							</td>
+							<td>
+								<button class="btn-action btn-edit">Detalles</button>
+								<button class="btn-action btn-info">Extender</button>
+								<button class="btn-action btn-delete">Cancelar</button>
+							</td>
+						</tr>
+
+						<!-- Reserva 2 - Confirmada -->
+						<tr>
+							<td>#RES002</td>
+							<td>
+								<strong>Honda Civic 2024</strong><br>
+								<small>Placa: XYZ789</small>
+							</td>
+							<td>25/03/2025<br><small>09:00 AM</small></td>
+							<td>30/03/2025<br><small>06:00 PM</small></td>
+							<td>5 días</td>
+							<td><strong>$300</strong></td>
+							<td>
+								<span class="status-indicator status-available"
+									style="background-color: rgba(23, 162, 184, 0.1); color: #0c5460; border-color: rgba(23, 162, 184, 0.3);">
+									Confirmada
+								</span>
+							</td>
+							<td>
+								<button class="btn-action btn-edit">Detalles</button>
+								<button class="btn-action btn-delete">Cancelar</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</main>
+	</div>
+</body>
+
+</html>
