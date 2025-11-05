@@ -16,4 +16,6 @@ public interface IUsuarioService {
 	Usuario findById(Integer id);
 
 	Usuario findByCorreo(String correo);
+	
+	Usuario actualizarUsuario(Usuario usuario);
 }

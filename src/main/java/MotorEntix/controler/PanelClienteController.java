@@ -71,7 +71,7 @@ public class PanelClienteController {
 			Usuario usuario = usuarioService.findById(usuarioId);
 			model.addAttribute("usuario", usuario);
 		}
-		return "clientes/vehiculos";
+		return "clientes/vehiculosCliente"; // ← Cambiado a vehiculosCliente
 	}
 
 	@GetMapping("/reservasCliente")
@@ -81,7 +81,7 @@ public class PanelClienteController {
 			Usuario usuario = usuarioService.findById(usuarioId);
 			model.addAttribute("usuario", usuario);
 		}
-		return "clientes/reservas";
+		return "clientes/reservasCliente"; // ← Si tu archivo se llama así
 	}
 
 	@GetMapping("/historial")
@@ -91,7 +91,7 @@ public class PanelClienteController {
 			Usuario usuario = usuarioService.findById(usuarioId);
 			model.addAttribute("usuario", usuario);
 		}
-		return "clientes/historial";
+		return "clientes/historialCliente"; // ← O el nombre que uses
 	}
 
 	@GetMapping("/servicios")
@@ -101,6 +101,6 @@ public class PanelClienteController {
 			Usuario usuario = usuarioService.findById(usuarioId);
 			model.addAttribute("usuario", usuario);
 		}
-		return "clientes/servicios";
+		return "clientes/serviciosCliente"; // ← O el nombre que uses
 	}
 }

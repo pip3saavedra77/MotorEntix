@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Editar Perfil - MotorEntix</title>
+	<link rel="stylesheet" th:href="@{/css/panel.cliente.css}">
+	<link rel="stylesheet" th:href="@{/css/cssPanelCliente/perfil.css}">
+</head>
+
+<body>
+	<header>
+		<div class="logo">
+			<h1>MotorEntix</h1>
+		</div>
+		<div class="user-info">
+			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Usuario</span>
+			<span th:unless="${usuario != null}">Invitado</span>
+			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">U</div>
+			<div class="user-avatar" th:unless="${usuario != null}">I</div>
+		</div>
+	</header>
+
+	<div class="container">
+		<nav class="sidebar">
+			<ul class="sidebar-menu">
+				<li class="menu-item">
+					<a th:href="@{/panel.cliente}" class="menu-link">
+						<span>👤</span> Mi Perfil
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/vehiculos-cliente}" class="menu-link">
+						<span>🚗</span> Mis Vehículos
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/reservasCliente}" class="menu-link">
+						<span>📋</span> Reservas
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/historial}" class="menu-link">
+						<span>📊</span> Historial
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/servicios}" class="menu-link">
+						<span>🔧</span> Servicios
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/logout}" class="menu-link">
+						<span>🚪</span> Cerrar Sesión
+					</a>
+				</li>
+			</ul>
+		</nav>
+
+		<main class="main-content">
+			<div class="page-header">
+				<h1 class="page-title">Editar Perfil</h1>
+				<a th:href="@{/panel.cliente}" class="btn btn-primary">
+					<span>←</span> Volver al Perfil
+				</a>
+			</div>
+
+			<!-- Mensajes de éxito/error -->
+			<div th:if="${param.exito}" class="alert alert-success">
+				Perfil actualizado correctamente
+			</div>
+			<div th:if="${error}" class="alert alert-error" th:text="${error}">
+				Error al actualizar
+			</div>
+
+			<!-- Formulario de Edición -->
+			<div class="profile-section">
+				<form th:action="@{/actualizar-perfil}" th:object="${usuario}" method="post">
+					<div class="profile-info-grid">
+						<div class="profile-info-item">
+							<label class="input-label">Nombre</label>
+							<input type="text" th:field="*{nombre}" class="search-input" required
+								th:attr="value=${usuario.nombre}">
+						</div>
+
+						<div class="profile-info-item">
+							<label class="input-label">Apellido</label>
+							<input type="text" th:field="*{apellido}" class="search-input" required
+								th:attr="value=${usuario.apellido}">
+						</div>
+
+						<div class="profile-info-item">
+							<label class="input-label">Correo Electrónico</label>
+							<input type="email" th:field="*{correo}" class="search-input" required
+								th:attr="value=${usuario.correo}">
+						</div>
+
+						<div class="profile-info-item">
+							<label class="input-label">Teléfono</label>
+							<input type="tel" th:field="*{telefono}" class="search-input"
+								th:attr="value=${usuario.telefono}">
+						</div>
+
+						<div class="profile-info-item full-width">
+							<label class="input-label">Dirección</label>
+							<textarea th:field="*{direccion}" class="search-input" rows="3"
+								th:text="${usuario.direccion}"></textarea>
+						</div>
+
+						<!-- Campos ocultos para mantener datos no editables -->
+						<input type="hidden" th:field="*{id_usuario}">
+						<input type="hidden" th:field="*{estado}">
+						<input type="hidden" th:field="*{rol}">
+						<input type="hidden" th:field="*{contrasena}">
+					</div>
+
+					<div class="form-actions">
+						<button type="submit" class="btn btn-primary">
+							<span>💾</span> Guardar Cambios
+						</button>
+						<a th:href="@{/panel.cliente}" class="btn btn-secondary">
+							<span>❌</span> Cancelar
+						</a>
+					</div>
+				</form>
+			</div>
+		</main>
+	</div>
+</body>
+
+</html>

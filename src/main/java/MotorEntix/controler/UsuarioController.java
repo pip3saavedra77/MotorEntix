@@ -49,4 +49,49 @@ public class UsuarioController {
 		}
 	}
 
+	@GetMapping("/editar-perfil")
+	public String mostrarFormularioEdicion(Model model, HttpSession session) {
+		Integer usuarioId = (Integer) session.getAttribute("usuarioId");
+
+		if (usuarioId != null) {
+			Usuario usuario = usuarioService.findById(usuarioId);
+			if (usuario != null) {
+				model.addAttribute("usuario", usuario);
+				return "clientes/editarPerfil"; // ← Cambiado a editarPerfil (sin guión)
+			}
+		}
+		return "redirect:/panel.cliente";
+	}
+
+	@PostMapping("/actualizar-perfil")
+	public String actualizarPerfil(@ModelAttribute Usuario usuarioActualizado, HttpSession session, Model model) {
+		Integer usuarioId = (Integer) session.getAttribute("usuarioId");
+
+		if (usuarioId != null) {
+			try {
+				Usuario usuarioExistente = usuarioService.findById(usuarioId);
+
+				if (usuarioExistente != null) {
+					// Actualizar campos editables
+					usuarioExistente.setNombre(usuarioActualizado.getNombre());
+					usuarioExistente.setApellido(usuarioActualizado.getApellido());
+					usuarioExistente.setTelefono(usuarioActualizado.getTelefono());
+					usuarioExistente.setDireccion(usuarioActualizado.getDireccion());
+					usuarioExistente.setCorreo(usuarioActualizado.getCorreo());
+
+					// Guardar cambios
+					usuarioService.actualizarUsuario(usuarioExistente);
+
+					session.setAttribute("usuarioLogueado", usuarioExistente.getNombre());
+
+					return "redirect:/panel.cliente?exito=true";
+				}
+			} catch (Exception e) {
+				model.addAttribute("error", "Error al actualizar el perfil");
+				return "clientes/editarPerfil"; // ← Cambiado aquí también
+			}
+		}
+
+		return "redirect:/panel.cliente";
+	}
 }
