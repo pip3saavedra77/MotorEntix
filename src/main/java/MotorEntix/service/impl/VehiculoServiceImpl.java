@@ -1,12 +1,10 @@
 package MotorEntix.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import MotorEntix.model.Vehiculo;
 import MotorEntix.repository.IVehiculoRepository;
 import MotorEntix.service.IVehiculoService;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
@@ -17,9 +15,7 @@ public class VehiculoServiceImpl implements IVehiculoService {
 
 	@Override
 	public List<Vehiculo> listarTodos() {
-		List<Vehiculo> lista = vehiculoRepository.findAll();
-		System.out.println("Vehiculos encontrados: " + lista.size());
-		return lista;
+		return vehiculoRepository.findAll();
 	}
 
 	@Override
@@ -38,8 +34,7 @@ public class VehiculoServiceImpl implements IVehiculoService {
 	}
 
 	@Override
-	public List<Vehiculo> buscarPorTermino(String termino) {
-		// TODO Auto-generated method stub
-		return vehiculoRepository.buscarPorTermino(termino);
+	public List<Vehiculo> buscarPorTermino(String search) {
+		return vehiculoRepository.buscarPorTermino(search);
 	}
 }

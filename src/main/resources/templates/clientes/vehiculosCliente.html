@@ -6,6 +6,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Mis Vehículos - MotorEntix</title>
 	<link rel="stylesheet" th:href="@{/css/panel.cliente.css}">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -30,7 +31,7 @@
 					</a>
 				</li>
 				<li class="menu-item active">
-					<a th:href="@{/vehiculos-cliente}" class="menu-link">
+					<a th:href="@{/mis-vehiculos}" class="menu-link">
 						<span>🚗</span> Mis Vehículos
 					</a>
 				</li>
@@ -60,20 +61,258 @@
 		<main class="main-content">
 			<div class="page-header">
 				<h2 class="page-title">Mis Vehículos</h2>
-				<button class="btn btn-primary">Agregar Vehículo</button>
+				<button class="btn btn-primary" onclick="abrirModal()">
+					<i class="fas fa-plus"></i> Agregar Vehículo
+				</button>
 			</div>
 
-			<!-- Contenido de vehículos aquí -->
+			<!-- Mensajes de éxito/error -->
+			<div th:if="${success}" class="alert alert-success"
+				style="background: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+				<i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+			</div>
+			<div th:if="${error}" class="alert alert-danger"
+				style="background: #f8d7da; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+				<i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+			</div>
+
+			<!-- Contenido de vehículos -->
 			<div class="table-container">
 				<div class="table-header">
 					<h3 class="table-title">Vehículos Registrados</h3>
+					<span class="badge" th:text="${vehiculos != null ? vehiculos.size() : 0} + ' vehículos'"></span>
 				</div>
-				<div style="padding: 2rem; text-align: center;">
-					<p>Contenido de vehículos del cliente</p>
+
+				<div th:if="${vehiculos != null and !vehiculos.empty}">
+					<div class="table-responsive">
+						<table>
+							<thead>
+								<tr>
+									<th>Placa</th>
+									<th>Marca</th>
+									<th>Modelo</th>
+									<th>Año</th>
+									<th>Color</th>
+									<th>Tipo</th>
+									<th>Combustible</th>
+									<th>Estado</th>
+									<th>Acciones</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr th:each="vehiculo : ${vehiculos}">
+									<td th:text="${vehiculo.placa}"></td>
+									<td th:text="${vehiculo.marca}"></td>
+									<td th:text="${vehiculo.modelo}"></td>
+									<td th:text="${vehiculo.anio}"></td>
+									<td th:text="${vehiculo.color}"></td>
+									<td th:text="${vehiculo.tipoVehiculo}"></td>
+									<td th:text="${vehiculo.combustible}"></td>
+									<td>
+										<span class="status-indicator status-available"
+											th:text="${vehiculo.estadoVehiculo ?: 'Activo'}">
+											Activo
+										</span>
+									</td>
+									<td>
+										<div class="action-buttons">
+											<form
+												th:action="@{/mis-vehiculos/eliminar/{id}(id=${vehiculo.id_vehiculo})}"
+												method="post" style="display: inline;">
+												<button type="submit" class="btn-action btn-delete"
+													onclick="return confirm('¿Estás seguro de eliminar el vehículo con placa ' + '[[${vehiculo.placa}]]' + '?')">
+													<i class="fas fa-trash"></i> Eliminar
+												</button>
+											</form>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+				<div th:if="${vehiculos == null or vehiculos.empty}"
+					style="padding: 3rem; text-align: center; color: #666;">
+					<i class="fas fa-car" style="font-size: 3rem; margin-bottom: 1rem; color: #ccc;"></i>
+					<h3 style="margin-bottom: 1rem;">No tienes vehículos registrados</h3>
+					<p style="margin-bottom: 2rem;">Comienza agregando tu primer vehículo para gestionar tus servicios
+					</p>
+					<button class="btn btn-primary" onclick="abrirModal()">
+						<i class="fas fa-plus"></i> Agregar Primer Vehículo
+					</button>
 				</div>
 			</div>
 		</main>
 	</div>
+
+	<!-- Modal para agregar vehículo -->
+	<div id="modalVehiculo" class="modal"
+		style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; overflow-y: auto;">
+		<div class="modal-content"
+			style="background: white; margin: 2% auto; padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+			<div class="modal-header"
+				style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--accent-color);">
+				<h3 style="color: var(--primary-color); margin: 0;">
+					<i class="fas fa-car"></i> Agregar Nuevo Vehículo
+				</h3>
+				<button onclick="cerrarModal()"
+					style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
+			</div>
+
+			<form th:action="@{/mis-vehiculos/guardar}" method="post" th:object="${vehiculo}" id="formVehiculo">
+				<div class="input-group">
+					<label class="input-label required">Placa</label>
+					<input type="text" th:field="*{placa}" class="search-input" required maxlength="10"
+						placeholder="Ej: ABC123">
+				</div>
+
+				<div class="input-group-horizontal">
+					<div class="input-group">
+						<label class="input-label required">Marca</label>
+						<input type="text" th:field="*{marca}" class="search-input" required placeholder="Ej: Toyota">
+					</div>
+					<div class="input-group">
+						<label class="input-label required">Modelo</label>
+						<input type="text" th:field="*{modelo}" class="search-input" required placeholder="Ej: Corolla">
+					</div>
+				</div>
+
+				<div class="input-group-horizontal">
+					<div class="input-group">
+						<label class="input-label required">Año</label>
+						<input type="number" th:field="*{anio}" class="search-input" required min="1990" max="2024"
+							placeholder="Ej: 2020">
+					</div>
+					<div class="input-group">
+						<label class="input-label required">Color</label>
+						<input type="text" th:field="*{color}" class="search-input" required placeholder="Ej: Rojo">
+					</div>
+				</div>
+
+				<div class="input-group-horizontal">
+					<div class="input-group">
+						<label class="input-label">Tipo de Vehículo</label>
+						<select th:field="*{tipoVehiculo}" class="search-input">
+							<option value="">Seleccionar tipo</option>
+							<option value="Sedán">Sedán</option>
+							<option value="SUV">SUV</option>
+							<option value="Pickup">Pickup</option>
+							<option value="Hatchback">Hatchback</option>
+							<option value="Deportivo">Deportivo</option>
+							<option value="Van">Van</option>
+							<option value="Motocicleta">Motocicleta</option>
+						</select>
+					</div>
+					<div class="input-group">
+						<label class="input-label">Transmisión</label>
+						<select th:field="*{transmicion}" class="search-input">
+							<option value="">Seleccionar</option>
+							<option value="Automática">Automática</option>
+							<option value="Manual">Manual</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="input-group-horizontal">
+					<div class="input-group">
+						<label class="input-label">Combustible</label>
+						<select th:field="*{combustible}" class="search-input">
+							<option value="">Seleccionar</option>
+							<option value="Gasolina">Gasolina</option>
+							<option value="Diésel">Diésel</option>
+							<option value="Eléctrico">Eléctrico</option>
+							<option value="Híbrido">Híbrido</option>
+							<option value="Gas">Gas</option>
+						</select>
+					</div>
+					<div class="input-group">
+						<label class="input-label">Versión</label>
+						<input type="text" th:field="*{version}" class="search-input" placeholder="Ej: XLI 1.8">
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label class="input-label">Descripción</label>
+					<textarea th:field="*{descripcion}" class="search-input" rows="3"
+						placeholder="Observaciones adicionales sobre el vehículo..."></textarea>
+				</div>
+
+				<input type="hidden" th:field="*{estadoVehiculo}" value="Activo">
+
+				<div
+					style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+					<button type="button" class="btn" onclick="cerrarModal()"
+						style="background: #6c757d; color: white; padding: 0.75rem 1.5rem;">Cancelar</button>
+					<button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
+						<i class="fas fa-save"></i> Guardar Vehículo
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<script>
+		function abrirModal() {
+			document.getElementById('modalVehiculo').style.display = 'block';
+			document.body.style.overflow = 'hidden';
+		}
+
+		function cerrarModal() {
+			document.getElementById('modalVehiculo').style.display = 'none';
+			document.body.style.overflow = 'auto';
+			document.getElementById('formVehiculo').reset();
+		}
+
+		window.onclick = function (event) {
+			const modal = document.getElementById('modalVehiculo');
+			if (event.target === modal) {
+				cerrarModal();
+			}
+		}
+
+		document.addEventListener('keydown', function (event) {
+			if (event.key === 'Escape') {
+				cerrarModal();
+			}
+		});
+	</script>
+
+	<style>
+		.badge {
+			background: var(--accent-color);
+			color: white;
+			padding: 0.25rem 0.75rem;
+			border-radius: 20px;
+			font-size: 0.8rem;
+			font-weight: 600;
+		}
+
+		.table-responsive {
+			overflow-x: auto;
+		}
+
+		.action-buttons {
+			display: flex;
+			gap: 0.5rem;
+			flex-wrap: wrap;
+		}
+
+		.required::after {
+			content: " *";
+			color: var(--danger-color);
+		}
+
+		@media (max-width: 768px) {
+			.action-buttons {
+				flex-direction: column;
+			}
+
+			.action-buttons .btn-action {
+				min-width: 100%;
+			}
+		}
+	</style>
 </body>
 
 </html>

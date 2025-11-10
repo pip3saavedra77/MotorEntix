@@ -1,4 +1,4 @@
-package MotorEntix.controler;
+package MotorEntix.controller;
 
 import MotorEntix.model.HistorialServicios;
 import MotorEntix.service.IHistorialServiciosService;

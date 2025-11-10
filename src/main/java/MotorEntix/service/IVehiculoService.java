@@ -1,7 +1,7 @@
 package MotorEntix.service;
 
-import java.util.List;
 import MotorEntix.model.Vehiculo;
+import java.util.List;
 
 public interface IVehiculoService {
 	List<Vehiculo> listarTodos();

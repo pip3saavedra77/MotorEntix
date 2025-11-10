@@ -1,4 +1,4 @@
-package MotorEntix.controler;
+package MotorEntix.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -50,11 +50,13 @@ public class LoginController {
 			session.setAttribute("usuarioEmail", u.getCorreo()); // ← Email como backup
 			session.setAttribute("usuarioLogueado", u.getNombre()); // ← Nombre para mostrar
 			session.setAttribute("rol", u.getRol()); // ← Rol para redirección
+			session.setAttribute("usuario", u); // ← OBJETO COMPLETO - ESTA LÍNEA FALTABA
 
 			// DEBUG: Verificar qué se guardó en sesión
 			System.out.println("=== SESIÓN GUARDADA ===");
 			System.out.println("usuarioId: " + session.getAttribute("usuarioId"));
 			System.out.println("usuarioEmail: " + session.getAttribute("usuarioEmail"));
+			System.out.println("usuario (objeto): " + session.getAttribute("usuario"));
 
 			// Redirección según rol
 			switch (u.getRol().toLowerCase()) {
