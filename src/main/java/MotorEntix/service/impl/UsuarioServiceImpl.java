@@ -1,6 +1,7 @@
 package MotorEntix.service.impl;
 
 import java.util.Optional;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import MotorEntix.model.Usuario;
 import MotorEntix.repository.IUsuarioRepository;
@@ -10,9 +11,11 @@ import MotorEntix.service.IUsuarioService;
 public class UsuarioServiceImpl implements IUsuarioService {
 
     private final IUsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository) {
+    public UsuarioServiceImpl(IUsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // TUS MÉTODOS EXISTENTES (se mantienen igual)
@@ -28,6 +31,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
         }
         usuario.setEstado("activo");
         usuario.setRol("cliente");
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
         return usuarioRepository.save(usuario);
     }
 
