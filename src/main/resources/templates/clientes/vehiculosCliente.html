@@ -116,6 +116,11 @@
 									</td>
 									<td>
 										<div class="action-buttons">
+											<button type="button" class="btn-action btn-edit"
+												th:attr="data-id=${vehiculo.id_vehiculo},data-placa=${vehiculo.placa},data-marca=${vehiculo.marca},data-modelo=${vehiculo.modelo},data-anio=${vehiculo.anio},data-color=${vehiculo.color},data-tipo=${vehiculo.tipoVehiculo},data-transmicion=${vehiculo.transmicion},data-combustible=${vehiculo.combustible},data-version=${vehiculo.version},data-descripcion=${vehiculo.descripcion},data-estado=${vehiculo.estadoVehiculo}"
+												onclick="abrirModalEditar(this)">
+												<i class="fas fa-edit"></i> Editar
+											</button>
 											<form
 												th:action="@{/mis-vehiculos/eliminar/{id}(id=${vehiculo.id_vehiculo})}"
 												method="post" style="display: inline;">
@@ -252,6 +257,106 @@
 		</div>
 	</div>
 
+	<div id="modalVehiculoEditar" class="modal"
+		style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; overflow-y: auto;">
+		<div class="modal-content"
+			style="background: white; margin: 2% auto; padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+			<div class="modal-header"
+				style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--accent-color);">
+				<h3 style="color: var(--primary-color); margin: 0;">
+					<i class="fas fa-pen"></i> Editar Vehículo
+				</h3>
+				<button onclick="cerrarModalEditar()"
+					style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
+			</div>
+
+			<form id="formVehiculoEditar" method="post">
+				<div class="input-group">
+					<label class="input-label required">Placa</label>
+					<input name="placa" type="text" class="search-input" required maxlength="10" placeholder="Ej: ABC123">
+				</div>
+
+				<div class="input-group-horizontal">
+					<div class="input-group">
+						<label class="input-label required">Marca</label>
+						<input name="marca" type="text" class="search-input" required placeholder="Ej: Toyota">
+					</div>
+					<div class="input-group">
+						<label class="input-label required">Modelo</label>
+						<input name="modelo" type="text" class="search-input" required placeholder="Ej: Corolla">
+					</div>
+				</div>
+
+				<div class="input-group-horizontal">
+					<div class="input-group">
+						<label class="input-label required">Año</label>
+						<input name="anio" type="number" class="search-input" required min="1990" max="2024" placeholder="Ej: 2020">
+					</div>
+					<div class="input-group">
+						<label class="input-label required">Color</label>
+						<input name="color" type="text" class="search-input" required placeholder="Ej: Rojo">
+					</div>
+				</div>
+
+				<div class="input-group-horizontal">
+					<div class="input-group">
+						<label class="input-label">Tipo de Vehículo</label>
+						<select name="tipoVehiculo" class="search-input">
+							<option value="">Seleccionar tipo</option>
+							<option value="Sedán">Sedán</option>
+							<option value="SUV">SUV</option>
+							<option value="Pickup">Pickup</option>
+							<option value="Hatchback">Hatchback</option>
+							<option value="Deportivo">Deportivo</option>
+							<option value="Van">Van</option>
+							<option value="Motocicleta">Motocicleta</option>
+						</select>
+					</div>
+					<div class="input-group">
+						<label class="input-label">Transmisión</label>
+						<select name="transmicion" class="search-input">
+							<option value="">Seleccionar</option>
+							<option value="Automática">Automática</option>
+							<option value="Manual">Manual</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="input-group-horizontal">
+					<div class="input-group">
+						<label class="input-label">Combustible</label>
+						<select name="combustible" class="search-input">
+							<option value="">Seleccionar</option>
+							<option value="Gasolina">Gasolina</option>
+							<option value="Diésel">Diésel</option>
+							<option value="Eléctrico">Eléctrico</option>
+							<option value="Híbrido">Híbrido</option>
+							<option value="Gas">Gas</option>
+						</select>
+					</div>
+					<div class="input-group">
+						<label class="input-label">Versión</label>
+						<input name="version" type="text" class="search-input" placeholder="Ej: XLI 1.8">
+					</div>
+				</div>
+
+				<div class="input-group">
+					<label class="input-label">Descripción</label>
+					<textarea name="descripcion" class="search-input" rows="3" placeholder="Observaciones adicionales sobre el vehículo..."></textarea>
+				</div>
+
+				<input name="estadoVehiculo" type="hidden" value="Activo">
+
+				<div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
+					<button type="button" class="btn" onclick="cerrarModalEditar()" style="background: #6c757d; color: white; padding: 0.75rem 1.5rem;">Cancelar</button>
+					<button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
+						<i class="fas fa-save"></i> Guardar Cambios
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+
 	<script>
 		function abrirModal() {
 			document.getElementById('modalVehiculo').style.display = 'block';
@@ -264,16 +369,49 @@
 			document.getElementById('formVehiculo').reset();
 		}
 
+		function abrirModalEditar(btn) {
+			const modal = document.getElementById('modalVehiculoEditar');
+			const form = document.getElementById('formVehiculoEditar');
+			const id = btn.getAttribute('data-id');
+			form.setAttribute('action', `/mis-vehiculos/actualizar/${id}`);
+
+			form.elements['placa'].value = btn.getAttribute('data-placa') || '';
+			form.elements['marca'].value = btn.getAttribute('data-marca') || '';
+			form.elements['modelo'].value = btn.getAttribute('data-modelo') || '';
+			form.elements['anio'].value = btn.getAttribute('data-anio') || '';
+			form.elements['color'].value = btn.getAttribute('data-color') || '';
+			form.elements['tipoVehiculo'].value = btn.getAttribute('data-tipo') || '';
+			form.elements['transmicion'].value = btn.getAttribute('data-transmicion') || '';
+			form.elements['combustible'].value = btn.getAttribute('data-combustible') || '';
+			form.elements['version'].value = btn.getAttribute('data-version') || '';
+			form.elements['descripcion'].value = btn.getAttribute('data-descripcion') || '';
+			form.elements['estadoVehiculo'].value = btn.getAttribute('data-estado') || 'Activo';
+
+			modal.style.display = 'block';
+			document.body.style.overflow = 'hidden';
+		}
+
+		function cerrarModalEditar() {
+			document.getElementById('modalVehiculoEditar').style.display = 'none';
+			document.body.style.overflow = 'auto';
+			document.getElementById('formVehiculoEditar').reset();
+		}
+
 		window.onclick = function (event) {
-			const modal = document.getElementById('modalVehiculo');
-			if (event.target === modal) {
+			const modalAdd = document.getElementById('modalVehiculo');
+			const modalEdit = document.getElementById('modalVehiculoEditar');
+			if (event.target === modalAdd) {
 				cerrarModal();
+			}
+			if (event.target === modalEdit) {
+				cerrarModalEditar();
 			}
 		}
 
 		document.addEventListener('keydown', function (event) {
 			if (event.key === 'Escape') {
 				cerrarModal();
+				cerrarModalEditar();
 			}
 		});
 	</script>

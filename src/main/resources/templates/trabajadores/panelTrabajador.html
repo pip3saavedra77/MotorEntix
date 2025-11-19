@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Panel Trabajador - MotorEntix</title>
+	<link rel="stylesheet" th:href="@{/css/panel.trabajador.css}">
+</head>
+
+<body>
+	<header>
+		<div class="logo">
+			<h1>MotorEntix</h1>
+		</div>
+		<div class="user-info">
+			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Trabajador</span>
+			<span th:unless="${usuario != null}">Invitado</span>
+			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">T</div>
+			<div class="user-avatar" th:unless="${usuario != null}">I</div>
+		</div>
+	</header>
+
+	<div class="container">
+		<nav class="sidebar">
+			<ul class="sidebar-menu">
+				<li class="menu-item active">
+					<a th:href="@{/panel.trabajador}" class="menu-link">
+						<span>👤</span> Mi Perfil
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/trabajador/servicios-asignados}" class="menu-link">
+						<span>🧰</span> Servicios asignados
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/trabajador/agenda}" class="menu-link">
+						<span>📅</span> Agenda
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/trabajador/historial-servicios}" class="menu-link">
+						<span>📊</span> Historial de servicios
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/logout}" class="menu-link">
+						<span>🚪</span> Cerrar Sesión
+					</a>
+				</li>
+			</ul>
+		</nav>
+
+		<main class="main-content">
+			<div class="page-header">
+				<h1 class="page-title">Panel de Trabajador</h1>
+			</div>
+
+			<div class="welcome-card">
+				<h3 th:if="${usuario != null}">¡Bienvenido, <span th:text="${usuario.nombre}"></span>!</h3>
+				<h3 th:unless="${usuario != null}">¡Bienvenido!</h3>
+				<p>Aquí puedes ver tu información y un resumen de tus servicios y actividades.</p>
+			</div>
+
+			<div class="profile-section">
+				<div class="table-header">
+					<h2 class="table-title">Información del Trabajador</h2>
+					<div class="table-actions">
+						<a th:href="@{/editar-perfil}" class="btn btn-primary">
+							<span>✏️</span> Editar Perfil
+						</a>
+					</div>
+				</div>
+
+				<div class="profile-info-grid">
+					<div class="profile-info-item">
+						<label class="input-label">Nombre Completo</label>
+						<div class="profile-info-value" th:if="${usuario != null}"
+							th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">
+							Nombre Apellido
+						</div>
+						<div class="profile-info-value" th:unless="${usuario != null}">
+							No disponible
+						</div>
+					</div>
+
+					<div class="profile-info-item">
+						<label class="input-label">Correo Electrónico</label>
+						<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.correo}">
+							trabajador@ejemplo.com
+						</div>
+						<div class="profile-info-value" th:unless="${usuario != null}">
+							No disponible
+						</div>
+					</div>
+
+					<div class="profile-info-item">
+						<label class="input-label">Teléfono</label>
+						<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.telefono}">
+							+1234567890
+						</div>
+						<div class="profile-info-value" th:unless="${usuario != null}">
+							No disponible
+						</div>
+					</div>
+
+					<div class="profile-info-item">
+						<label class="input-label">Rol</label>
+						<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.rol}">
+							Trabajador
+						</div>
+						<div class="profile-info-value" th:unless="${usuario != null}">
+							No disponible
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="stats-cards">
+				<div class="stat-card">
+					<div class="stat-value">0</div>
+					<div class="stat-label">Servicios en curso</div>
+				</div>
+
+				<div class="stat-card">
+					<div class="stat-value">0</div>
+					<div class="stat-label">Servicios completados hoy</div>
+				</div>
+
+				<div class="stat-card">
+					<div class="stat-value">0</div>
+					<div class="stat-label">Horas trabajadas esta semana</div>
+				</div>
+
+				<div class="stat-card">
+					<div class="stat-value">-</div>
+					<div class="stat-label">Próximo turno</div>
+				</div>
+			</div>
+
+			<div class="profile-section">
+				<div class="table-header">
+					<h2 class="table-title">Servicios recientes</h2>
+				</div>
+				<p>Esta sección mostrará los servicios más recientes asignados al trabajador.</p>
+			</div>
+		</main>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Servicios asignados - Trabajador</title>
+	<link rel="stylesheet" th:href="@{/css/panel.trabajador.css}">
+</head>
+<body>
+	<header>
+		<div class="logo">
+			<h1>MotorEntix</h1>
+		</div>
+		<div class="user-info">
+			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Trabajador</span>
+			<span th:unless="${usuario != null}">Invitado</span>
+			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">T</div>
+			<div class="user-avatar" th:unless="${usuario != null}">I</div>
+		</div>
+	</header>
+	<div class="container">
+		<nav class="sidebar">
+			<ul class="sidebar-menu">
+				<li class="menu-item">
+					<a th:href="@{/panel.trabajador}" class="menu-link">
+						<span>👤</span> Mi Perfil
+					</a>
+				</li>
+				<li class="menu-item active">
+					<a th:href="@{/trabajador/servicios-asignados}" class="menu-link">
+						<span>🧰</span> Servicios asignados
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/trabajador/agenda}" class="menu-link">
+						<span>📅</span> Agenda
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/trabajador/historial-servicios}" class="menu-link">
+						<span>📊</span> Historial de servicios
+					</a>
+				</li>
+				<li class="menu-item">
+					<a th:href="@{/logout}" class="menu-link">
+						<span>🚪</span> Cerrar Sesión
+					</a>
+				</li>
+			</ul>
+		</nav>
+		<main class="main-content">
+			<div class="page-header">
+				<h1 class="page-title">Servicios asignados</h1>
+			</div>
+			<div class="welcome-card">
+				<p>Aquí se mostrarán los servicios actualmente asignados al trabajador.</p>
+			</div>
+		</main>
+	</div>
+</body>
+</html>

@@ -14,8 +14,10 @@
 			<h1>MotorEntix</h1>
 		</div>
 		<div class="user-info">
-			<span>Administrador</span>
-			<div class="user-avatar">A</div>
+			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Administrador</span>
+			<span th:unless="${usuario != null}">Administrador</span>
+			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">A</div>
+			<div class="user-avatar" th:unless="${usuario != null}">A</div>
 		</div>
 	</header>
 

@@ -39,5 +39,7 @@ public class ProveedorController {
     @DeleteMapping("/{id}")
     public void deleteProveedor(@PathVariable Integer id) {
         proveedorService.deleteById(id);
+        
+       
     }
 }

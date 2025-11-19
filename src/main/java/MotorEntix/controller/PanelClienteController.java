@@ -16,6 +16,23 @@ public class PanelClienteController {
 
 	@GetMapping("/panel.cliente")
 	public String mostrarPanelCliente(Model model, HttpSession session) {
+		// Validar rol
+		String rol = (String) session.getAttribute("rol");
+		if (rol == null) {
+			return "redirect:/login";
+		}
+		switch (rol.toLowerCase()) {
+		case "cliente":
+			break; // permitido
+		case "administrador":
+			return "redirect:/admin/panel";
+		case "trabajador":
+			return "redirect:/panel.trabajador";
+		case "dueno":
+			return "redirect:/panel.dueno";
+		default:
+			return "redirect:/login";
+		}
 		// DEBUG EXTENDIDO
 		System.out.println("=== DEBUG SESIÓN COMPLETO ===");
 		System.out.println("usuarioId: " + session.getAttribute("usuarioId"));
@@ -65,13 +82,9 @@ public class PanelClienteController {
 	}
 
 	@GetMapping("/vehiculos-cliente")
-	public String mostrarVehiculosCliente(Model model, HttpSession session) {
-		Integer usuarioId = (Integer) session.getAttribute("usuarioId");
-		if (usuarioId != null) {
-			Usuario usuario = usuarioService.findById(usuarioId);
-			model.addAttribute("usuario", usuario);
-		}
-		return "clientes/vehiculosCliente"; // ← Cambiado a vehiculosCliente
+	public String mostrarVehiculosCliente(HttpSession session) {
+		// Esta ruta solo redirige a /mis-vehiculos, que es manejada por VehiculoClienteController
+		return "redirect:/mis-vehiculos";
 	}
 
 	@GetMapping("/reservasCliente")

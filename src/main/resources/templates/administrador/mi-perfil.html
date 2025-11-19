@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mi Perfil - Admin - MotorEntix</title>
+	<link rel="stylesheet" th:href="@{/css/panel.admin.css}">
+</head>
+<body>
+	<header>
+		<div class="logo">
+			<h1>MotorEntix</h1>
+		</div>
+		<div class="user-info">
+			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Administrador</span>
+			<span th:unless="${usuario != null}">Administrador</span>
+			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">A</div>
+			<div class="user-avatar" th:unless="${usuario != null}">A</div>
+		</div>
+	</header>
+	<div class="container">
+		<nav class="sidebar">
+			<ul class="sidebar-menu">
+				<li class="menu-item">
+					<a href="/admin/panel" style="text-decoration: none; color: inherit;">
+						<span>🏠</span> Panel
+					</a>
+				</li>
+				<li class="menu-item active">
+					<a href="/admin/mi-perfil" style="text-decoration: none; color: inherit;">
+						<span>👤</span> Mi Perfil
+					</a>
+				</li>
+				<li class="menu-item">
+					<a href="/admin/vehiculos" style="text-decoration: none; color: inherit;">
+						<span>🚗</span> Vehículos
+					</a>
+				</li>
+				<li class="menu-item">
+					<a href="/admin/inventario" style="text-decoration: none; color: inherit;">
+						<span>📦</span> Inventario
+					</a>
+				</li>
+				<li class="menu-item">
+					<a href="/admin/clientes" style="text-decoration: none; color: inherit;">
+						<span>👥</span> Clientes
+					</a>
+				</li>
+				<li class="menu-item">
+					<a href="/admin/reservas" style="text-decoration: none; color: inherit;">
+						<span>📋</span> Reservas
+					</a>
+				</li>
+				<li class="menu-item">
+					<a href="/admin/pagos" style="text-decoration: none; color: inherit;">
+						<span>💰</span> Pagos
+					</a>
+				</li>
+				<li class="menu-item">
+					<a href="/admin/configuracion" style="text-decoration: none; color: inherit;">
+						<span>⚙️</span> Configuración
+					</a>
+				</li>
+			</ul>
+		</nav>
+		<main class="main-content">
+			<div class="page-header">
+				<h2 class="page-title">Mi Perfil</h2>
+				<a th:href="@{/editar-perfil}" class="btn btn-primary">✏️ Editar perfil</a>
+			</div>
+			<div class="welcome-section">
+				<h3 th:if="${usuario != null}">Bienvenido, <span th:text="${usuario.nombre}"></span></h3>
+				<h3 th:unless="${usuario != null}">Bienvenido, Administrador</h3>
+				<p>Desde aquí puedes ver tu información personal y acceder a la edición de tu perfil.</p>
+			</div>
+			<div class="dashboard-content">
+				<div class="quick-actions">
+					<h4>Información personal</h4>
+					<div class="profile-info-grid">
+						<div class="profile-info-item">
+							<label class="input-label">Nombre completo</label>
+							<div class="profile-info-value" th:if="${usuario != null}"
+								th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Nombre Apellido
+							</div>
+							<div class="profile-info-value" th:unless="${usuario != null}">No disponible</div>
+						</div>
+						<div class="profile-info-item">
+							<label class="input-label">Correo electrónico</label>
+							<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.correo}">admin@ejemplo.com</div>
+							<div class="profile-info-value" th:unless="${usuario != null}">No disponible</div>
+						</div>
+						<div class="profile-info-item">
+							<label class="input-label">Teléfono</label>
+							<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.telefono}">+1234567890</div>
+							<div class="profile-info-value" th:unless="${usuario != null}">No disponible</div>
+						</div>
+						<div class="profile-info-item">
+							<label class="input-label">Rol</label>
+							<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.rol}">ADMIN</div>
+							<div class="profile-info-value" th:unless="${usuario != null}">Admin</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+	</div>
+</body>
+</html>

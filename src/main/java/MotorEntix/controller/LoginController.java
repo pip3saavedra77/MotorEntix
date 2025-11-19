@@ -58,12 +58,15 @@ public class LoginController {
 			System.out.println("usuarioEmail: " + session.getAttribute("usuarioEmail"));
 			System.out.println("usuario (objeto): " + session.getAttribute("usuario"));
 
-			// Redirección según rol
-			switch (u.getRol().toLowerCase()) {
+			// Redirección según rol en BD
+			String rol = u.getRol() != null ? u.getRol().toLowerCase() : "";
+			switch (rol) {
 			case "administrador":
 				return "redirect:/admin/panel";
 			case "cliente":
 				return "redirect:/panel.cliente";
+			case "trabajador":
+				return "redirect:/panel.trabajador";
 			case "dueno":
 				return "redirect:/panel.dueno";
 			default:

@@ -95,4 +95,55 @@ public class VehiculoClienteController {
 
         return "redirect:/mis-vehiculos";
     }
+
+    @PostMapping("/actualizar/{id}")
+    public String actualizarVehiculo(@PathVariable Integer id,
+                                     @ModelAttribute Vehiculo datos,
+                                     HttpSession session,
+                                     RedirectAttributes redirectAttributes) {
+        Usuario usuario = (Usuario) session.getAttribute("usuario");
+
+        if (usuario == null) {
+            return "redirect:/login";
+        }
+
+        try {
+            Vehiculo existente = vehiculoService.obtenerPorId(id);
+            if (existente == null || existente.getUsuario() == null ||
+                !existente.getUsuario().getId_usuario().equals(usuario.getId_usuario())) {
+                redirectAttributes.addFlashAttribute("error", "No tienes permisos para editar este vehículo");
+                return "redirect:/mis-vehiculos";
+            }
+
+            String nuevaPlaca = datos.getPlaca();
+            if (nuevaPlaca != null && !nuevaPlaca.equalsIgnoreCase(existente.getPlaca())) {
+                if (vehiculoService.existePlaca(nuevaPlaca)) {
+                    redirectAttributes.addFlashAttribute("error", "La placa '" + nuevaPlaca + "' ya está registrada");
+                    return "redirect:/mis-vehiculos";
+                }
+            }
+
+            // Actualizar campos permitidos
+            existente.setPlaca(datos.getPlaca());
+            existente.setMarca(datos.getMarca());
+            existente.setModelo(datos.getModelo());
+            existente.setAnio(datos.getAnio());
+            existente.setColor(datos.getColor());
+            existente.setTipoVehiculo(datos.getTipoVehiculo());
+            existente.setTransmicion(datos.getTransmicion());
+            existente.setCombustible(datos.getCombustible());
+            existente.setVersion(datos.getVersion());
+            existente.setDescripcion(datos.getDescripcion());
+            if (datos.getEstadoVehiculo() != null && !datos.getEstadoVehiculo().isEmpty()) {
+                existente.setEstadoVehiculo(datos.getEstadoVehiculo());
+            }
+
+            vehiculoService.guardarVehiculoConUsuario(existente, usuario);
+            redirectAttributes.addFlashAttribute("success", "Vehículo actualizado exitosamente");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Error al actualizar el vehículo: " + e.getMessage());
+        }
+
+        return "redirect:/mis-vehiculos";
+    }
 }
