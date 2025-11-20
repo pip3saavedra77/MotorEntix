@@ -40,17 +40,17 @@ public class PanelAdminController {
 		return "administrador/panel.admin";
 	}
 
-	// 📌 Redirección a la vista de vehículos
+	// Redirección a la vista de vehículos
 	@GetMapping("/vehiculos")
 	public String mostrarVehiculos() {
 		return "redirect:/admin/vehiculos/lista";
 	}
 
-	// 📌 Otras secciones del panel
+	// Otras secciones del panel
 	@GetMapping("/inventario")
 	public String inventario(Model model) {
 		model.addAttribute("pagina", "inventario");
-		return "administrador/inventario"; // ← Cuando lo crees
+		return "redirect:/admin/inventario/lista";
 	}
 
 	@GetMapping("/proveedor")

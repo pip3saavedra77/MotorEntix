@@ -52,12 +52,14 @@ public class UsuarioController {
 	@GetMapping("/editar-perfil")
 	public String mostrarFormularioEdicion(Model model, HttpSession session) {
 		Integer usuarioId = (Integer) session.getAttribute("usuarioId");
+		String rol = (String) session.getAttribute("rol");
+		model.addAttribute("rol", rol);
 
 		if (usuarioId != null) {
 			Usuario usuario = usuarioService.findById(usuarioId);
 			if (usuario != null) {
 				model.addAttribute("usuario", usuario);
-				return "clientes/editarPerfil"; // ← Cambiado a editarPerfil (sin guión)
+				return "clientes/editarPerfil"; // ← Vista de edición de perfil compartida
 			}
 		}
 		return "redirect:/panel.cliente";
@@ -83,15 +85,24 @@ public class UsuarioController {
 					usuarioService.actualizarUsuario(usuarioExistente);
 
 					session.setAttribute("usuarioLogueado", usuarioExistente.getNombre());
-
-					return "redirect:/panel.cliente?exito=true";
+					String rol = usuarioExistente.getRol() != null ? usuarioExistente.getRol().toLowerCase() : "";
+					switch (rol) {
+					case "administrador":
+						return "redirect:/admin/mi-perfil?exito=true";
+					case "cliente":
+					default:
+						return "redirect:/panel.cliente?exito=true";
+					}
 				}
 			} catch (Exception e) {
 				model.addAttribute("error", "Error al actualizar el perfil");
-				return "clientes/editarPerfil"; // ← Cambiado aquí también
+				return "clientes/editarPerfil"; // 	 Vista de edicin de perfil
 			}
 		}
-
+		String rolSession = (String) session.getAttribute("rol");
+		if (rolSession != null && rolSession.equalsIgnoreCase("administrador")) {
+			return "redirect:/admin/mi-perfil";
+		}
 		return "redirect:/panel.cliente";
 	}
 }

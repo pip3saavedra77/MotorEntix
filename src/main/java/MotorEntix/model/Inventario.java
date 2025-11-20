@@ -17,13 +17,19 @@ public class Inventario {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-
+	@jakarta.persistence.Column(name = "id_repuesto")
 	private Integer id;
-	private String nombre;
+
+	private String nombre; // misma columna en BD
+
+	@jakarta.persistence.Column(name = "cantidad_stock")
 	private Integer cantidad;
+
+	@jakarta.persistence.Column(name = "precio_unitario")
 	private String precioUnitario;
 
 	@ManyToOne
+	@jakarta.persistence.JoinColumn(name = "id_proveedor")
 	private Proveedor proveedor;
 
 	@OneToMany(mappedBy = "inventario")

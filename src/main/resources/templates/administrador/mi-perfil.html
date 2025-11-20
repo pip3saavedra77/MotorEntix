@@ -5,6 +5,179 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Mi Perfil - Admin - MotorEntix</title>
 	<link rel="stylesheet" th:href="@{/css/panel.admin.css}">
+	<style>
+		.profile-layout {
+			display: flex;
+			flex-direction: column;
+			gap: 1.5rem;
+		}
+
+		.profile-card {
+			background: linear-gradient(135deg, #ffffff 0%, #f6f7fb 100%);
+			border-radius: 18px;
+			box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
+			border: 1px solid rgba(255, 255, 255, 0.75);
+			padding: 1.8rem 2.2rem;
+			display: grid;
+			grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+			gap: 2rem;
+			align-items: flex-start;
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
+		}
+
+		.profile-card:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+		}
+
+		.profile-sidebar {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			text-align: center;
+			gap: 0.9rem;
+		}
+
+		.profile-avatar-large {
+			width: 96px;
+			height: 96px;
+			border-radius: 999px;
+			background: linear-gradient(135deg, #f97316, #fb923c);
+			color: #ffffff;
+			font-size: 2.4rem;
+			font-weight: 700;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			box-shadow: 0 14px 30px rgba(249, 115, 22, 0.55);
+			text-transform: uppercase;
+		}
+
+		.profile-name {
+			font-size: 1.3rem;
+			font-weight: 600;
+			color: #111827;
+		}
+
+		.profile-role-badge {
+			padding: 0.2rem 0.7rem;
+			border-radius: 999px;
+			background: rgba(59, 130, 246, 0.1);
+			color: #1d4ed8;
+			font-size: 0.75rem;
+			font-weight: 600;
+		}
+
+		.profile-meta {
+			font-size: 0.8rem;
+			color: #6b7280;
+		}
+
+		.profile-actions {
+			margin-top: 1rem;
+			display: flex;
+			flex-direction: column;
+			gap: 0.6rem;
+			width: 100%;
+		}
+
+		.profile-actions .btn-primary {
+			width: 100%;
+			border-radius: 999px;
+			justify-content: center;
+			box-shadow: 0 12px 30px rgba(249, 115, 22, 0.55);
+			transition: transform 0.15s ease, box-shadow 0.15s ease;
+		}
+
+		.profile-actions .btn-primary:hover {
+			transform: translateY(-1px);
+			box-shadow: 0 18px 40px rgba(249, 115, 22, 0.7);
+		}
+
+		.profile-actions .btn-secondary {
+			border-radius: 999px;
+			border: 1px solid #e5e7eb;
+			background: #ffffff;
+			color: #4b5563;
+			font-size: 0.85rem;
+			padding: 0.55rem 1rem;
+			text-align: center;
+			transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+		}
+
+		.profile-actions .btn-secondary:hover {
+			background: #f3f4f6;
+			border-color: #d1d5db;
+			color: #111827;
+		}
+
+		.profile-details {
+			display: flex;
+			flex-direction: column;
+			gap: 1.25rem;
+		}
+
+		.profile-section-title {
+			font-size: 1.05rem;
+			font-weight: 600;
+			color: #111827;
+			margin-bottom: 0.35rem;
+		}
+
+		.profile-section-subtitle {
+			font-size: 0.85rem;
+			color: #6b7280;
+			margin-bottom: 0.9rem;
+		}
+
+		.profile-info-grid {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 1rem 1.5rem;
+		}
+
+		.profile-info-item {
+			display: flex;
+			flex-direction: column;
+			gap: 0.3rem;
+		}
+
+		.profile-info-item .input-label {
+			font-size: 0.82rem;
+			font-weight: 600;
+			color: #4b5563;
+			text-transform: uppercase;
+			letter-spacing: 0.04em;
+		}
+
+		.profile-info-value {
+			padding: 0.55rem 0.8rem;
+			border-radius: 0.75rem;
+			background: #f9fafb;
+			border: 1px solid #e5e7eb;
+			font-size: 0.9rem;
+			color: #111827;
+		}
+
+		.profile-info-value.empty {
+			color: #9ca3af;
+			font-style: italic;
+		}
+
+		.profile-activity-hint {
+			font-size: 0.8rem;
+			color: #6b7280;
+		}
+
+		@media (max-width: 900px) {
+			.profile-card {
+				grid-template-columns: 1fr;
+			}
+			.profile-info-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
 </head>
 <body>
 	<header>
@@ -66,42 +239,56 @@
 		<main class="main-content">
 			<div class="page-header">
 				<h2 class="page-title">Mi Perfil</h2>
-				<a th:href="@{/editar-perfil}" class="btn btn-primary">✏️ Editar perfil</a>
 			</div>
-			<div class="welcome-section">
-				<h3 th:if="${usuario != null}">Bienvenido, <span th:text="${usuario.nombre}"></span></h3>
-				<h3 th:unless="${usuario != null}">Bienvenido, Administrador</h3>
-				<p>Desde aquí puedes ver tu información personal y acceder a la edición de tu perfil.</p>
-			</div>
-			<div class="dashboard-content">
-				<div class="quick-actions">
-					<h4>Información personal</h4>
-					<div class="profile-info-grid">
-						<div class="profile-info-item">
-							<label class="input-label">Nombre completo</label>
-							<div class="profile-info-value" th:if="${usuario != null}"
-								th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Nombre Apellido
-							</div>
-							<div class="profile-info-value" th:unless="${usuario != null}">No disponible</div>
-						</div>
-						<div class="profile-info-item">
-							<label class="input-label">Correo electrónico</label>
-							<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.correo}">admin@ejemplo.com</div>
-							<div class="profile-info-value" th:unless="${usuario != null}">No disponible</div>
-						</div>
-						<div class="profile-info-item">
-							<label class="input-label">Teléfono</label>
-							<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.telefono}">+1234567890</div>
-							<div class="profile-info-value" th:unless="${usuario != null}">No disponible</div>
-						</div>
-						<div class="profile-info-item">
-							<label class="input-label">Rol</label>
-							<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.rol}">ADMIN</div>
-							<div class="profile-info-value" th:unless="${usuario != null}">Admin</div>
+			<section class="profile-layout">
+				<div class="profile-card">
+					<div class="profile-sidebar">
+						<div class="profile-avatar-large" th:if="${usuario != null}"
+							th:text="${usuario.nombre.substring(0,1)}">A</div>
+						<div class="profile-avatar-large" th:unless="${usuario != null}">A</div>
+						<div class="profile-name" th:if="${usuario != null}"
+							th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Nombre Apellido</div>
+						<div class="profile-name" th:unless="${usuario != null}">Administrador</div>
+						<span class="profile-role-badge" th:text="${usuario != null} ? ${usuario.rol} : 'ADMIN'">ADMIN</span>
+						<p class="profile-meta">Desde aquí puedes gestionar los datos de tu cuenta de administrador.</p>
+						<div class="profile-actions">
+							<a th:href="@{/editar-perfil}" class="btn btn-primary">✏️ Editar perfil</a>
+							<a th:href="@{/logout}" class="btn-secondary">🚪 Cerrar sesión</a>
 						</div>
 					</div>
+					<div class="profile-details">
+						<div>
+							<h3 class="profile-section-title">Información personal</h3>
+							<p class="profile-section-subtitle">Estos son los datos principales asociados a tu cuenta.</p>
+							<div class="profile-info-grid">
+								<div class="profile-info-item">
+									<label class="input-label">Nombre completo</label>
+									<div class="profile-info-value" th:if="${usuario != null}"
+										th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Nombre Apellido
+									</div>
+									<div class="profile-info-value empty" th:unless="${usuario != null}">No disponible</div>
+								</div>
+								<div class="profile-info-item">
+									<label class="input-label">Correo electrónico</label>
+									<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.correo}">admin@ejemplo.com</div>
+									<div class="profile-info-value empty" th:unless="${usuario != null}">No disponible</div>
+								</div>
+								<div class="profile-info-item">
+									<label class="input-label">Teléfono</label>
+									<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.telefono}">+1234567890</div>
+									<div class="profile-info-value empty" th:unless="${usuario != null}">No disponible</div>
+								</div>
+								<div class="profile-info-item">
+									<label class="input-label">Rol</label>
+									<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.rol}">ADMIN</div>
+									<div class="profile-info-value" th:unless="${usuario != null}">Admin</div>
+								</div>
+							</div>
+						</div>
+						<p class="profile-activity-hint">Consejo: mantén tus datos siempre actualizados para una mejor experiencia en MotorEntix.</p>
+					</div>
 				</div>
-			</div>
+			</section>
 		</main>
 	</div>
 </body>

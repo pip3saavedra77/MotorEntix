@@ -16,7 +16,7 @@ public class Proveedor {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-
+	@jakarta.persistence.Column(name = "id_proveedor")
 	private Integer id;
 	private String nombre;
 	private String contacto;
