@@ -11,7 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import MotorEntix.model.Usuario;
+import MotorEntix.model.Reserva;
+import MotorEntix.model.Servicio;
+import MotorEntix.model.Trabajador;
 import MotorEntix.service.IUsuarioService;
+import MotorEntix.service.IReservaService;
+import MotorEntix.service.IServicioService;
+import MotorEntix.service.ITrabajadorService;
+
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -20,6 +27,15 @@ public class PanelAdminController {
 
 	@Autowired
 	private IUsuarioService usuarioService;
+
+	@Autowired
+	private IReservaService reservaService;
+
+	@Autowired
+	private ITrabajadorService trabajadorService;
+
+	@Autowired
+	private IServicioService servicioService;
 
 	@GetMapping("/panel")
 	public String mostrarPanelAdmin(Model model, HttpSession session) {
@@ -123,9 +139,60 @@ public class PanelAdminController {
 	}
 
 	@GetMapping("/reservas")
-	public String reservas(Model model) {
+	public String reservas(Model model, HttpSession session) {
+		agregarUsuarioAlModelo(model, session);
 		model.addAttribute("pagina", "reservas");
-		return "administrador/reservas"; // ← Cuando lo crees
+		model.addAttribute("reservas", reservaService.findAll());
+		model.addAttribute("trabajadores", trabajadorService.findAll());
+		return "administrador/reservasAdmin";
+	}
+
+	@PostMapping("/reservas/actualizar/{id}")
+	public String actualizarReservaAdmin(@PathVariable("id") Integer id,
+			@RequestParam(name = "trabajadorId", required = false) Integer trabajadorId,
+			@RequestParam("estado") String estado,
+			RedirectAttributes redirectAttributes) {
+		try {
+			Reserva reserva = reservaService.findById(id);
+			if (reserva != null) {
+				// Actualizar estado de la reserva
+				reserva.setEstado(estado);
+				reservaService.save(reserva);
+
+				// Asignar trabajador al servicio de la reserva (si se envió)
+				if (trabajadorId != null) {
+					Trabajador trabajador = trabajadorService.findById(trabajadorId);
+					Servicio servicio = reserva.getServicio();
+					if (trabajador != null && servicio != null) {
+						servicio.setTrabajador(trabajador);
+						servicioService.save(servicio);
+					}
+				}
+				redirectAttributes.addFlashAttribute("exito", "Reserva actualizada correctamente");
+			} else {
+				redirectAttributes.addFlashAttribute("error", "Reserva no encontrada");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar la reserva");
+		}
+		return "redirect:/admin/reservas";
+	}
+
+	@PostMapping("/reservas/cancelar/{id}")
+	public String cancelarReservaAdmin(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes) {
+		try {
+			Reserva reserva = reservaService.findById(id);
+			if (reserva != null) {
+				reserva.setEstado("cancelada");
+				reservaService.save(reserva);
+				redirectAttributes.addFlashAttribute("exito", "Reserva cancelada correctamente");
+			} else {
+				redirectAttributes.addFlashAttribute("error", "Reserva no encontrada");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error al cancelar la reserva");
+		}
+		return "redirect:/admin/reservas";
 	}
 
 	@GetMapping("/pagos")

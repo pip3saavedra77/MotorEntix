@@ -6,6 +6,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Column;
+import jakarta.persistence.JoinColumn;
 
 @Entity
 @Table(name = "Reserva")
@@ -13,15 +15,18 @@ public class Reserva {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-
+	@Column(name = "id_reserva")
 	private Integer id;
+	@Column(name = "fecha_reserva")
 	private String fechaReserva;
+	@Column(name = "hora_reserva")
 	private String horaReserva;
 	private String estado;
 
 	@ManyToOne
 	private Usuario usuario;
 	@ManyToOne
+	@JoinColumn(name = "id_servicio")
 	private Servicio servicio;
 
 	public Reserva() {

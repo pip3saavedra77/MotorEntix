@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Reservas - MotorEntix</title>
+  <link rel="stylesheet" th:href="@{/css/panel.admin.css}">
+  <style>
+    .reservas-page {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .reservas-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f6f7fb 100%);
+      border-radius: 16px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+      padding: 1.75rem 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .reservas-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+    }
+
+    .reservas-header-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .reservas-header-title span.icon {
+      font-size: 1.4rem;
+    }
+
+    .reservas-subtitle {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+
+    .reservas-meta {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    .reservas-meta span.badge {
+      background: rgba(37, 99, 235, 0.1);
+      color: #1d4ed8;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-weight: 600;
+      margin-left: 0.25rem;
+    }
+
+    .table-wrapper {
+      margin-top: 0.75rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead {
+      background: #f3f4f6;
+    }
+
+    th,
+    td {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #6b7280;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .btn-pill {
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      color: #4b5563;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-pill:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #111827;
+      transform: translateY(-1px);
+    }
+
+    .btn-pill-primary {
+      border-color: #fb923c;
+      background: #f97316;
+      color: #ffffff;
+      box-shadow: 0 8px 18px rgba(249, 115, 22, 0.45);
+    }
+
+    .btn-pill-primary:hover {
+      background: #ea580c;
+      border-color: #ea580c;
+      color: #ffffff;
+    }
+
+    .btn-pill-delete {
+      border-color: #fecaca;
+      color: #b91c1c;
+      background: #ffffff;
+    }
+
+    .btn-pill-delete:hover {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+
+    .estado-select {
+      min-width: 130px;
+    }
+
+    .estado-select.pendiente {
+      border-color: #fbbf24;
+      color: #b45309;
+      background: rgba(251, 191, 36, 0.08);
+    }
+
+    .estado-select.confirmada {
+      border-color: #22c55e;
+      color: #15803d;
+      background: rgba(34, 197, 94, 0.06);
+    }
+
+    .estado-select.cancelada {
+      border-color: #fca5a5;
+      color: #b91c1c;
+      background: rgba(248, 113, 113, 0.06);
+    }
+
+    .estado-select.completada {
+      border-color: #60a5fa;
+      color: #1d4ed8;
+      background: rgba(96, 165, 250, 0.08);
+    }
+
+    .small-text {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <h1>MotorEntix</h1>
+    </div>
+    <div class="user-info">
+      <span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Administrador</span>
+      <span th:unless="${usuario != null}">Administrador</span>
+      <div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">A</div>
+      <div class="user-avatar" th:unless="${usuario != null}">A</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="sidebar">
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a th:href="@{/admin/mi-perfil}" style="text-decoration: none; color: inherit;">
+            <span>👤</span> Mi Perfil
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/vehiculos}" style="text-decoration: none; color: inherit;">
+            <span>🚗</span> Vehículos
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/inventario}" style="text-decoration: none; color: inherit;">
+            <span>📦</span> Inventario
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/proveedor}" style="text-decoration: none; color: inherit;">
+            <span>🏢</span> Proveedor
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/clientes}" style="text-decoration: none; color: inherit;">
+            <span>👥</span> Clientes
+          </a>
+        </li>
+        <li class="menu-item active">
+          <a th:href="@{/admin/reservas}" style="text-decoration: none; color: inherit;">
+            <span>📋</span> Reservas
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/pagos}" style="text-decoration: none; color: inherit;">
+            <span>💰</span> Pagos
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/configuracion}" style="text-decoration: none; color: inherit;">
+            <span>⚙️</span> Configuración
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="main-content">
+      <div class="page-header">
+        <h2 class="page-title">Gestión de Reservas</h2>
+      </div>
+
+      <div class="reservas-page">
+        <section class="reservas-card">
+          <h3 class="reservas-header-title">
+            <span class="icon">📋</span>
+            <span>Listado de reservas de clientes</span>
+          </h3>
+          <p class="reservas-subtitle">Revisa el detalle de las citas reservadas, asigna un trabajador y actualiza el estado de cada reserva.</p>
+
+          <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
+          <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+          <p class="reservas-meta">
+            <span>Total de reservas:</span>
+            <span class="badge" th:text="${reservas != null ? reservas.size() : 0}">0</span>
+          </p>
+
+          <div class="table-wrapper" style="margin-top: 1rem;">
+            <div th:if="${reservas != null} and !${reservas.empty}"
+                 style="display: flex; flex-direction: column; gap: 1rem;">
+
+              <div th:each="res : ${reservas}"
+                   style="background: #ffffff; border-radius: 14px; box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08); padding: 1rem 1.25rem; border: 1px solid #e5e7eb; display:flex; flex-direction:column; gap:0.75rem;">
+
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1rem;">
+                  <div>
+                    <div class="small-text" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af;">
+                      Reserva #<span th:text="${res.id}"></span>
+                    </div>
+                    <div class="small-text" th:if="${res.usuario != null}" style="margin-top:0.15rem;">
+                      <div style="font-weight:600; color:#111827;" th:text="${res.usuario.nombre} + ' ' + ${res.usuario.apellido}"></div>
+                      <div style="color:#6b7280;" th:text="${res.usuario.correo}"></div>
+                    </div>
+                    <span class="small-text" th:if="${res.usuario == null}">Sin cliente asociado</span>
+                  </div>
+
+                  <div style="text-align:right;">
+                    <div class="small-text" style="color:#6b7280;">
+                      <span style="font-weight:500;">Fecha:</span>
+                      <span th:text="${res.fechaReserva}"></span>
+                    </div>
+                    <div class="small-text" style="color:#6b7280;">
+                      <span style="font-weight:500;">Hora:</span>
+                      <span th:text="${res.horaReserva}"></span>
+                    </div>
+                  </div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:1.25rem; flex-wrap:wrap;">
+                  <div style="min-width:180px;">
+                    <div class="small-text" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af; margin-bottom:0.15rem;">
+                      Servicio
+                    </div>
+                    <div class="small-text" th:if="${res.servicio != null}">
+                      <div style="font-weight:500; color:#111827;" th:text="${res.servicio.nombre}"></div>
+                      <div style="color:#6b7280;" th:text="${res.servicio.descripcion}"></div>
+                    </div>
+                    <span class="small-text" th:if="${res.servicio == null}">Sin servicio</span>
+                  </div>
+
+                  <form th:action="@{/admin/reservas/actualizar/{id}(id=${res.id})}" method="post"
+                        style="display:flex; flex:1; justify-content:flex-end; gap:0.75rem; align-items:flex-end; flex-wrap:wrap;">
+
+                    <div style="display:flex; flex-direction:column; gap:0.25rem; min-width:190px;">
+                      <label class="small-text" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af;">Trabajador asignado</label>
+                      <select name="trabajadorId" class="btn-pill" style="min-width: 180px;">
+                        <option value="">-- Sin asignar --</option>
+                        <option th:each="trab : ${trabajadores}"
+                                th:value="${trab.id_trabajador}"
+                                th:text="${trab.usuario != null ? trab.usuario.nombre + ' ' + trab.usuario.apellido : 'Trabajador ' + trab.id_trabajador}"
+                                th:selected="${res.servicio != null and res.servicio.trabajador != null} and ${trab.id_trabajador} == ${res.servicio.trabajador.id_trabajador}">
+                        </option>
+                      </select>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:0.25rem; min-width:170px;">
+                      <label class="small-text" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af;">Estado</label>
+                      <select name="estado" class="btn-pill estado-select"
+                              th:classappend="${#strings.equalsIgnoreCase(res.estado, 'pendiente')} ? ' pendiente' : (${#strings.equalsIgnoreCase(res.estado, 'confirmada')} ? ' confirmada' : (${#strings.equalsIgnoreCase(res.estado, 'completada')} ? ' completada' : (${#strings.equalsIgnoreCase(res.estado, 'cancelada')} ? ' cancelada' : '')))">
+                        <option value="pendiente" th:selected="${#strings.equalsIgnoreCase(res.estado, 'pendiente')}">Pendiente</option>
+                        <option value="confirmada" th:selected="${#strings.equalsIgnoreCase(res.estado, 'confirmada')}">Confirmada</option>
+                        <option value="completada" th:selected="${#strings.equalsIgnoreCase(res.estado, 'completada')}">Completada</option>
+                        <option value="cancelada" th:selected="${#strings.equalsIgnoreCase(res.estado, 'cancelada')}">Cancelada</option>
+                      </select>
+                    </div>
+
+                    <div style="display:flex; flex-direction:column; gap:0.3rem;">
+                      <button type="submit" class="btn-pill btn-pill-primary">Guardar</button>
+                    </div>
+                  </form>
+                </div>
+
+                <div style="display:flex; justify-content:flex-end; margin-top:0.25rem;">
+                  <form th:action="@{/admin/reservas/cancelar/{id}(id=${res.id})}" method="post"
+                        onsubmit="return confirm('¿Seguro que deseas cancelar esta reserva?');">
+                    <button type="submit" class="btn-pill btn-pill-delete">Cancelar</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <div th:if="${reservas == null} or ${reservas.empty}" class="clients-empty" style="margin-top:0.5rem;">
+              <span>
+                <span>📝</span>
+                <span>No hay reservas registradas todavía.</span>
+              </span>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
