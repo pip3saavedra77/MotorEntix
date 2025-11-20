@@ -4,7 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import MotorEntix.model.Usuario;
 import MotorEntix.service.IUsuarioService;
@@ -67,9 +71,55 @@ public class PanelAdminController {
 	}
 
 	@GetMapping("/clientes")
-	public String clientes(Model model) {
+	public String clientes(@RequestParam(name = "q", required = false) String q, Model model, HttpSession session) {
+		agregarUsuarioAlModelo(model, session);
 		model.addAttribute("pagina", "clientes");
-		return "administrador/clientes"; // ← Cuando lo crees
+		if (q != null && !q.trim().isEmpty()) {
+			model.addAttribute("usuarios", usuarioService.buscarPorTexto(q.trim()));
+			model.addAttribute("q", q.trim());
+		} else {
+			model.addAttribute("usuarios", usuarioService.findAll());
+		}
+		return "administrador/clientesAdmin";
+	}
+
+	@PostMapping("/clientes/actualizar/{id}")
+	public String actualizarUsuarioAdmin(@PathVariable("id") Integer id,
+			@RequestParam("rol") String rol,
+			@RequestParam("estado") String estado,
+			RedirectAttributes redirectAttributes) {
+		try {
+			Usuario usuario = usuarioService.findById(id);
+			if (usuario != null) {
+				usuario.setRol(rol);
+				usuario.setEstado(estado);
+				usuarioService.actualizarUsuario(usuario);
+				redirectAttributes.addFlashAttribute("exito", "Usuario actualizado correctamente");
+			} else {
+				redirectAttributes.addFlashAttribute("error", "Usuario no encontrado");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error al actualizar usuario");
+		}
+		return "redirect:/admin/clientes";
+	}
+
+	@PostMapping("/clientes/eliminar/{id}")
+	public String eliminarUsuarioAdmin(@PathVariable("id") Integer id, RedirectAttributes redirectAttributes,
+			HttpSession session) {
+		// Evitar que el usuario logueado se elimine a sí mismo
+		Integer usuarioIdSesion = (Integer) session.getAttribute("usuarioId");
+		if (usuarioIdSesion != null && usuarioIdSesion.equals(id)) {
+			redirectAttributes.addFlashAttribute("error", "No puedes eliminar tu propio usuario desde el panel.");
+			return "redirect:/admin/clientes";
+		}
+		try {
+			usuarioService.eliminarPorId(id);
+			redirectAttributes.addFlashAttribute("exito", "Usuario eliminado correctamente");
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Error al eliminar usuario");
+		}
+		return "redirect:/admin/clientes";
 	}
 
 	@GetMapping("/reservas")

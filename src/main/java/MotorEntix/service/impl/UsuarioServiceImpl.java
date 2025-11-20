@@ -1,6 +1,8 @@
 package MotorEntix.service.impl;
 
+import java.util.List;
 import java.util.Optional;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import MotorEntix.model.Usuario;
@@ -59,5 +61,28 @@ public class UsuarioServiceImpl implements IUsuarioService {
     @Override
     public Usuario actualizarUsuario(Usuario usuario) {
         return usuarioRepository.save(usuario);
+    }
+
+    @Override
+    public List<Usuario> findByRol(String rol) {
+        return usuarioRepository.findByRolIgnoreCase(rol);
+    }
+
+    @Override
+    public List<Usuario> findAll() {
+        return usuarioRepository.findAll();
+    }
+
+    @Override
+    public void eliminarPorId(Integer id) {
+        usuarioRepository.deleteById(id);
+    }
+
+    @Override
+    public List<Usuario> buscarPorTexto(String texto) {
+        String valor = texto != null ? texto : "";
+        return usuarioRepository
+                .findByNombreContainingIgnoreCaseOrApellidoContainingIgnoreCaseOrCorreoContainingIgnoreCase(valor, valor,
+                        valor);
     }
 }

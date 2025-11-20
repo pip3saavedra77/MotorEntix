@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Clientes - MotorEntix</title>
+  <link rel="stylesheet" th:href="@{/css/panel.admin.css}">
+  <style>
+    .clients-page {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .clients-card {
+      background: linear-gradient(135deg, #ffffff 0%, #f6f7fb 100%);
+      border-radius: 16px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+      padding: 1.75rem 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .clients-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+    }
+
+    .clients-header-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .clients-header-title span.icon {
+      font-size: 1.4rem;
+    }
+
+    .clients-subtitle {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-bottom: 1rem;
+    }
+
+    .clients-meta {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 0.75rem;
+    }
+
+    .clients-meta span.badge {
+      background: rgba(37, 99, 235, 0.1);
+      color: #1d4ed8;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-weight: 600;
+      margin-left: 0.25rem;
+    }
+
+    .clients-empty {
+      padding: 2rem 1rem;
+      text-align: center;
+      color: #6b7280;
+      font-size: 0.9rem;
+    }
+
+    .clients-empty span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .estado-select.activo {
+      border-color: #22c55e;
+      color: #15803d;
+      background: rgba(34, 197, 94, 0.06);
+    }
+
+    .estado-select.inactivo {
+      border-color: #fca5a5;
+      color: #b91c1c;
+      background: rgba(248, 113, 113, 0.06);
+    }
+
+    .badge-role {
+      background: rgba(249, 115, 22, 0.08);
+      color: #c2410c;
+      padding: 0.15rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .clients-table-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.6rem;
+    }
+
+    .clients-table-title small {
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    thead {
+      background: #f3f4f6;
+    }
+
+    th,
+    td {
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    th {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      color: #6b7280;
+    }
+
+    tbody tr:hover {
+      background: #f9fafb;
+    }
+
+    .btn-pill {
+      border-radius: 999px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      color: #4b5563;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.1s ease;
+    }
+
+    .btn-pill:hover {
+      background: #f3f4f6;
+      border-color: #d1d5db;
+      color: #111827;
+      transform: translateY(-1px);
+    }
+
+    .btn-pill-primary {
+      border-color: #fb923c;
+      background: #f97316;
+      color: #ffffff;
+      box-shadow: 0 8px 18px rgba(249, 115, 22, 0.45);
+    }
+
+    .btn-pill-primary:hover {
+      background: #ea580c;
+      border-color: #ea580c;
+      color: #ffffff;
+    }
+
+    .btn-pill-delete {
+      border-color: #fecaca;
+      color: #b91c1c;
+      background: #ffffff;
+    }
+
+    .btn-pill-delete:hover {
+      background: #fef2f2;
+      border-color: #fca5a5;
+      color: #991b1b;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <h1>MotorEntix</h1>
+    </div>
+    <div class="user-info">
+      <span>Administrador</span>
+      <div class="user-avatar">A</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="sidebar">
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a th:href="@{/admin/mi-perfil}" style="text-decoration: none; color: inherit;">
+            <span>👤</span> Mi Perfil
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/vehiculos}" style="text-decoration: none; color: inherit;">
+            <span>🚗</span> Vehículos
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/inventario}" style="text-decoration: none; color: inherit;">
+            <span>📦</span> Inventario
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/proveedor}" style="text-decoration: none; color: inherit;">
+            <span>🏢</span> Proveedor
+          </a>
+        </li>
+        <li class="menu-item active">
+          <a th:href="@{/admin/clientes}" style="text-decoration: none; color: inherit;">
+            <span>👥</span> Clientes
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/reservas}" style="text-decoration: none; color: inherit;">
+            <span>📋</span> Reservas
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/pagos}" style="text-decoration: none; color: inherit;">
+            <span>💰</span> Pagos
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/configuracion}" style="text-decoration: none; color: inherit;">
+            <span>⚙️</span> Configuración
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="main-content">
+      <div class="page-header">
+        <h2 class="page-title">Gestión de Clientes</h2>
+      </div>
+
+      <div class="clients-page">
+        <section class="clients-card">
+          <h3 class="clients-header-title">
+            <span class="icon">👥</span>
+            <span>Listado de usuarios registrados</span>
+          </h3>
+          <p class="clients-subtitle">Consulta y administra la información básica de todos los usuarios del sistema.</p>
+
+          <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
+          <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+            <p class="clients-meta" style="margin-bottom:0;">
+              <span>Total de usuarios:</span>
+              <span class="badge" th:text="${usuarios != null ? usuarios.size() : 0}">0</span>
+            </p>
+
+            <form th:action="@{/admin/clientes}" method="get" style="display:flex; gap:0.5rem; align-items:center;">
+              <input type="text" name="q" placeholder="Buscar por nombre o correo..." class="search-input"
+                     th:value="${q}" style="min-width:220px; border-radius:999px;">
+              <button type="submit" class="btn-pill btn-pill-primary">Buscar</button>
+            </form>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nombre</th>
+                  <th>Correo</th>
+                  <th>Teléfono</th>
+                  <th>Rol</th>
+                  <th>Estado</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="usr : ${usuarios}">
+                  <td th:text="${usr.id_usuario}"></td>
+                  <td th:text="${usr.nombre} + ' ' + ${usr.apellido}"></td>
+                  <td th:text="${usr.correo}"></td>
+                  <td th:text="${usr.telefono}"></td>
+                  <td>
+                    <form th:action="@{/admin/clientes/actualizar/{id}(id=${usr.id_usuario})}" method="post" style="display:flex; gap:0.4rem; align-items:center;">
+                      <select name="rol" class="btn-pill" style="min-width: 130px;">
+                        <option value="administrador" th:selected="${#strings.equalsIgnoreCase(usr.rol, 'administrador')}">Administrador</option>
+                        <option value="cliente" th:selected="${#strings.equalsIgnoreCase(usr.rol, 'cliente')}">Cliente</option>
+                        <option value="trabajador" th:selected="${#strings.equalsIgnoreCase(usr.rol, 'trabajador')}">Trabajador</option>
+                      </select>
+                  </td>
+                  <td>
+                      <select name="estado" class="btn-pill estado-select"
+                              th:classappend="${usr.estado != null} and ${#strings.equalsIgnoreCase(usr.estado, 'activo')} ? ' activo' : ' inactivo'"
+                              style="min-width: 110px;">
+                        <option value="activo" th:selected="${usr.estado != null} and ${#strings.equalsIgnoreCase(usr.estado, 'activo')}">Activo</option>
+                        <option value="inactivo" th:selected="${usr.estado != null} and ${#strings.equalsIgnoreCase(usr.estado, 'inactivo')}">Inactivo</option>
+                      </select>
+                  </td>
+                  <td>
+                      <button type="submit" class="btn-pill btn-pill-primary">Guardar</button>
+                    </form>
+                    <form th:if="${usuario == null} or ${usr.id_usuario} != ${usuario.id_usuario}"
+                          th:action="@{/admin/clientes/eliminar/{id}(id=${usr.id_usuario})}" method="post" style="margin-top:0.3rem;"
+                          onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?');">
+                      <button type="submit" class="btn-pill btn-pill-delete">Eliminar</button>
+                    </form>
+                  </td>
+                </tr>
+
+                <tr th:if="${usuarios == null} or ${usuarios.empty}">
+                  <td colspan="6" class="clients-empty">
+                    <span>
+                      <span>📝</span>
+                      <span>No hay usuarios registrados todavía.</span>
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
