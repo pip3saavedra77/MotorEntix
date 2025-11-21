@@ -14,10 +14,27 @@
 			<h1>MotorEntix</h1>
 		</div>
 		<div class="user-info">
-			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Administrador</span>
-			<span th:unless="${usuario != null}">Administrador</span>
-			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">A</div>
-			<div class="user-avatar" th:unless="${usuario != null}">A</div>
+			<div class="user-menu">
+				<button type="button" class="user-menu-toggle">
+					<span class="user-name-label" th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Administrador</span>
+					<span class="user-name-label" th:unless="${usuario != null}">Administrador</span>
+					<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">A</div>
+					<div class="user-avatar" th:unless="${usuario != null}">A</div>
+					<span class="user-menu-arrow">▾</span>
+				</button>
+				<div class="user-menu-dropdown">
+					<a th:href="@{/admin/mi-perfil}" class="user-menu-item">
+						<span>👤 Mi perfil</span>
+					</a>
+					<a th:href="@{/editar-perfil}" class="user-menu-item">
+						<span>✏️ Editar perfil</span>
+					</a>
+					<div class="user-menu-divider"></div>
+					<a th:href="@{/logout}" class="user-menu-item user-menu-item-danger">
+						<span>🚪 Cerrar sesión</span>
+					</a>
+				</div>
+			</div>
 		</div>
 	</header>
 
@@ -59,11 +76,6 @@
 						<span>💰</span> Pagos
 					</a>
 				</li>
-				<li class="menu-item">
-					<a href="/admin/configuracion" style="text-decoration: none; color: inherit;">
-						<span>⚙️</span> Configuración
-					</a>
-				</li>
 			</ul>
 		</nav>
 
@@ -96,8 +108,7 @@
 			<div class="dashboard-content">
 				<div class="welcome-section">
 					<h3>Bienvenido al Panel de Administración</h3>
-					<p>Desde aquí puedes gestionar todas las operaciones de MotorEntix. Utiliza el menú lateral para
-						acceder a las diferentes secciones.</p>
+					<p>Desde aquí puedes gestionar todas las operaciones de MotorEntix. Utiliza el menú lateral para acceder a las diferentes secciones.</p>
 				</div>
 
 				<div class="quick-actions">
@@ -138,6 +149,29 @@
 			</div>
 		</main>
 	</div>
+
+	<script>
+		// Dropdown de usuario en header (panel admin)
+		document.addEventListener('DOMContentLoaded', function () {
+			const userMenu = document.querySelector('.user-menu');
+			if (!userMenu) return;
+			const toggle = userMenu.querySelector('.user-menu-toggle');
+			if (!toggle) return;
+
+			function closeMenu() {
+				userMenu.classList.remove('open');
+			}
+
+			toggle.addEventListener('click', function (event) {
+				event.stopPropagation();
+				userMenu.classList.toggle('open');
+			});
+
+			document.addEventListener('click', function () {
+				closeMenu();
+			});
+		});
+	</script>
 </body>
 
 </html>

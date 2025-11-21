@@ -14,8 +14,28 @@
 			<h1>MotorEntix</h1>
 		</div>
 		<div class="user-info">
-			<span>Administrador</span>
-			<div class="user-avatar">A</div>
+			<div class="user-menu">
+				<button type="button" class="user-menu-toggle">
+					<span class="user-name-label" th:if="${usuario != null}"
+					      th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Administrador</span>
+					<span class="user-name-label" th:unless="${usuario != null}">Administrador</span>
+					<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">A</div>
+					<div class="user-avatar" th:unless="${usuario != null}">A</div>
+					<span class="user-menu-arrow">▾</span>
+				</button>
+				<div class="user-menu-dropdown">
+					<a th:href="@{/admin/mi-perfil}" class="user-menu-item">
+						<span>👤 Mi perfil</span>
+					</a>
+					<a th:href="@{/editar-perfil}" class="user-menu-item">
+						<span>✏️ Editar perfil</span>
+					</a>
+					<div class="user-menu-divider"></div>
+					<a th:href="@{/logout}" class="user-menu-item user-menu-item-danger">
+						<span>🚪 Cerrar sesión</span>
+					</a>
+				</div>
+			</div>
 		</div>
 	</header>
 
@@ -23,28 +43,39 @@
 		<nav class="sidebar">
 			<ul class="sidebar-menu">
 				<li class="menu-item">
-					<span>👤</span> Mi Perfil
+					<a th:href="@{/admin/mi-perfil}" style="text-decoration: none; color: inherit;">
+						<span>👤</span> Mi Perfil
+					</a>
 				</li>
 				<li class="menu-item active">
-					<span>🚗</span> Vehículos
+					<a th:href="@{/admin/vehiculos}" style="text-decoration: none; color: inherit;">
+						<span>🚗</span> Vehículos
+					</a>
 				</li>
 				<li class="menu-item">
-					<span>📦</span> Inventario
+					<a th:href="@{/admin/inventario}" style="text-decoration: none; color: inherit;">
+						<span>📦</span> Inventario
+					</a>
 				</li>
 				<li class="menu-item">
-					<span>🏢</span> Proveedor
+					<a th:href="@{/admin/proveedor}" style="text-decoration: none; color: inherit;">
+						<span>🏢</span> Proveedor
+					</a>
 				</li>
 				<li class="menu-item">
-					<span>👥</span> Clientes
+					<a th:href="@{/admin/clientes}" style="text-decoration: none; color: inherit;">
+						<span>👥</span> Clientes
+					</a>
 				</li>
 				<li class="menu-item">
-					<span>📋</span> Reservas
+					<a th:href="@{/admin/reservas}" style="text-decoration: none; color: inherit;">
+						<span>📋</span> Reservas
+					</a>
 				</li>
 				<li class="menu-item">
-					<span>💰</span> Pagos
-				</li>
-				<li class="menu-item">
-					<span>⚙️</span> Configuración
+					<a th:href="@{/admin/pagos}" style="text-decoration: none; color: inherit;">
+						<span>💰</span> Pagos
+					</a>
 				</li>
 			</ul>
 		</nav>
@@ -89,7 +120,7 @@
 								<th>Acciones</th>
 							</tr>
 						</thead>
-						<tbody id="tableBody">S
+						<tbody id="tableBody">
 							<tr th:each="vehiculo : ${vehiculos}">
 								<td th:text="${vehiculo.id_vehiculo}"></td>
 								<td th:text="${vehiculo.placa}"></td>
@@ -107,7 +138,9 @@
 										th:data-transmision="${vehiculo.transmicion}"
 										th:data-combustible="${vehiculo.combustible}" th:data-color="${vehiculo.color}"
 										th:data-estado="${vehiculo.estadoVehiculo}"
-										th:data-descripcion="${vehiculo.descripcion}">
+										th:data-descripcion="${vehiculo.descripcion}"
+										th:data-usuario-id="${vehiculo.usuario != null ? vehiculo.usuario.id_usuario : null}"
+										th:data-usuario-nombre="${vehiculo.usuario != null ? vehiculo.usuario.nombre + ' ' + vehiculo.usuario.apellido : 'Sin asignar'}">
 										Ver más
 									</button>
 									<a th:href="@{/admin/vehiculos/editar/{id}(id=${vehiculo.id_vehiculo})}"
@@ -166,6 +199,14 @@
 									<div class="modal-detail">
 										<span class="modal-label">ID:</span>
 										<span id="modal-id">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">ID Dueño:</span>
+										<span id="modal-usuario-id">-</span>
+									</div>
+									<div class="modal-detail">
+										<span class="modal-label">Dueño:</span>
+										<span id="modal-usuario-nombre">-</span>
 									</div>
 									<div class="modal-detail">
 										<span class="modal-label">Placa:</span>
@@ -236,6 +277,35 @@
 	</div>
 
 	<script>
+		// Dropdown de usuario en header (todas las instancias .user-menu de la página)
+		document.addEventListener('DOMContentLoaded', function () {
+			const userMenus = document.querySelectorAll('.user-menu');
+			if (!userMenus.length) return;
+
+			function closeAllMenus() {
+				userMenus.forEach(m => m.classList.remove('open'));
+			}
+
+			userMenus.forEach(function (userMenu) {
+				const toggle = userMenu.querySelector('.user-menu-toggle');
+				if (!toggle) return;
+
+				toggle.addEventListener('click', function (event) {
+					event.stopPropagation();
+					const isOpen = userMenu.classList.contains('open');
+					closeAllMenus();
+					if (!isOpen) {
+						userMenu.classList.add('open');
+					}
+				});
+			});
+
+			document.addEventListener('click', function () {
+				closeAllMenus();
+			});
+		});
+	</script>
+	<script>
 		// Variables globales
 		let modal = null;
 
@@ -256,7 +326,9 @@
 				combustible: button.getAttribute('data-combustible') || 'N/A',
 				color: button.getAttribute('data-color') || 'N/A',
 				estado: button.getAttribute('data-estado') || 'N/A',
-				descripcion: button.getAttribute('data-descripcion') || 'Sin descripción disponible'
+				descripcion: button.getAttribute('data-descripcion') || 'Sin descripción disponible',
+				usuarioId: button.getAttribute('data-usuario-id') || 'Sin asignar',
+				usuarioNombre: button.getAttribute('data-usuario-nombre') || 'Sin asignar'
 			};
 
 			console.log('Datos del vehículo:', vehiculoData);
@@ -268,6 +340,9 @@
 			};
 
 			fillField('modal-id', vehiculoData.id);
+			fillField('modal-usuario-id', vehiculoData.usuarioId);
+			fillField('modal-usuario-nombre', vehiculoData.usuarioNombre);
+
 			fillField('modal-placa', vehiculoData.placa);
 			fillField('modal-marca', vehiculoData.marca);
 			fillField('modal-modelo', vehiculoData.modelo);
@@ -282,13 +357,15 @@
 			// Configurar el estado con la clase correspondiente
 			const estadoElement = document.getElementById('modal-estado');
 			if (estadoElement) {
-				estadoElement.textContent = vehiculoData.estado;
+				const estadoTexto = (vehiculoData.estado || '').trim();
+				const estadoLower = estadoTexto.toLowerCase();
+				estadoElement.textContent = estadoTexto;
 
-				// Remover clases anteriores y agregar la nueva
+				// Remover clases anteriores y agregar la nueva según el estado
 				estadoElement.className = 'status-indicator';
-				if (vehiculoData.estado === 'Disponible') {
+				if (estadoLower === 'disponible') {
 					estadoElement.classList.add('status-available');
-				} else if (vehiculoData.estado === 'Mantenimiento') {
+				} else if (estadoLower === 'mantenimiento') {
 					estadoElement.classList.add('status-maintenance');
 				} else {
 					estadoElement.classList.add('status-rented');
@@ -297,6 +374,8 @@
 
 			// Mostrar el modal
 			if (modal) {
+				// Asegurar que la ventana se posicione al inicio para ver el modal completo
+				window.scrollTo({ top: 0, behavior: 'auto' });
 				modal.style.display = 'block';
 				document.body.style.overflow = 'hidden'; // Prevenir scroll del body
 			}
@@ -508,11 +587,12 @@
 			document.querySelectorAll('tbody tr').forEach(row => {
 				const estadoElement = row.querySelector('.status-indicator');
 				if (estadoElement && row.style.display !== 'none') {
-					const estado = estadoElement.textContent.trim();
+					const estadoTexto = estadoElement.textContent.trim();
+					const estadoLower = estadoTexto.toLowerCase();
 					estadoElement.className = 'status-indicator';
-					if (estado === 'Disponible') {
+					if (estadoLower === 'disponible') {
 						estadoElement.classList.add('status-available');
-					} else if (estado === 'Mantenimiento') {
+					} else if (estadoLower === 'mantenimiento') {
 						estadoElement.classList.add('status-maintenance');
 					} else {
 						estadoElement.classList.add('status-rented');

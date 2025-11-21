@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Pagos - MotorEntix</title>
+  <link rel="stylesheet" th:href="@{/css/panel.admin.css}">
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <h1>MotorEntix</h1>
+    </div>
+    <div class="user-info">
+      <span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Administrador</span>
+      <span th:unless="${usuario != null}">Administrador</span>
+      <div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">A</div>
+      <div class="user-avatar" th:unless="${usuario != null}">A</div>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="sidebar">
+      <ul class="sidebar-menu">
+        <li class="menu-item">
+          <a th:href="@{/admin/mi-perfil}" style="text-decoration: none; color: inherit;">
+            <span>👤</span> Mi Perfil
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/vehiculos}" style="text-decoration: none; color: inherit;">
+            <span>🚗</span> Vehículos
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/inventario}" style="text-decoration: none; color: inherit;">
+            <span>📦</span> Inventario
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/proveedor}" style="text-decoration: none; color: inherit;">
+            <span>🏢</span> Proveedor
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/clientes}" style="text-decoration: none; color: inherit;">
+            <span>👥</span> Clientes
+          </a>
+        </li>
+        <li class="menu-item">
+          <a th:href="@{/admin/reservas}" style="text-decoration: none; color: inherit;">
+            <span>📋</span> Reservas
+          </a>
+        </li>
+        <li class="menu-item active">
+          <a th:href="@{/admin/pagos}" style="text-decoration: none; color: inherit;">
+            <span>💰</span> Pagos
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+    <main class="main-content">
+      <div class="page-header">
+        <h2 class="page-title">Gestión de Pagos</h2>
+      </div>
+
+      <div class="reservas-page">
+        <section class="reservas-card">
+          <h3 class="reservas-header-title">
+            <span class="icon">💰</span>
+            <span>Resumen de pagos y cobros</span>
+          </h3>
+          <p class="reservas-subtitle">Aquí podrás visualizar y controlar los pagos relacionados con las reservas y servicios.</p>
+
+          <!-- Placeholder simple mientras conectamos con backend -->
+          <p class="reservas-meta">
+            <span>Pronto podrás gestionar aquí los pagos de tus clientes.</span>
+          </p>
+        </section>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

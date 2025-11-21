@@ -15,10 +15,28 @@
 			<h1>MotorEntix</h1>
 		</div>
 		<div class="user-info">
-			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Usuario</span>
-			<span th:unless="${usuario != null}">Invitado</span>
-			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">U</div>
-			<div class="user-avatar" th:unless="${usuario != null}">I</div>
+			<div class="user-menu">
+				<button type="button" class="user-menu-toggle">
+					<span class="user-name-label" th:if="${usuario != null}"
+					      th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Usuario</span>
+					<span class="user-name-label" th:unless="${usuario != null}">Invitado</span>
+					<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">U</div>
+					<div class="user-avatar" th:unless="${usuario != null}">I</div>
+					<span class="user-menu-arrow">▾</span>
+				</button>
+				<div class="user-menu-dropdown">
+					<a th:href="@{/panel.cliente}" class="user-menu-item">
+						<span>👤 Mi perfil</span>
+					</a>
+					<a th:href="@{/editar-perfil}" class="user-menu-item">
+						<span>✏️ Editar perfil</span>
+					</a>
+					<div class="user-menu-divider"></div>
+					<a th:href="@{/logout}" class="user-menu-item user-menu-item-danger">
+						<span>🚪 Cerrar sesión</span>
+					</a>
+				</div>
+			</div>
 		</div>
 	</header>
 
@@ -72,6 +90,11 @@
 
 			<!-- Información del Perfil -->
 			<div class="profile-section">
+				<div class="profile-avatar-section" th:if="${usuario != null}">
+					<div class="profile-avatar-large" th:text="${usuario.nombre.substring(0, 1)}">U</div>
+					<h2 th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Nombre Apellido</h2>
+					<p th:text="${usuario.correo}">usuario@ejemplo.com</p>
+				</div>
 				<div class="table-header">
 					<h2 class="table-title">Información Personal</h2>
 					<div class="table-actions">
@@ -117,16 +140,6 @@
 						<label class="input-label">Dirección</label>
 						<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.direccion}">
 							Calle Ejemplo #123
-						</div>
-						<div class="profile-info-value" th:unless="${usuario != null}">
-							No disponible
-						</div>
-					</div>
-
-					<div class="profile-info-item">
-						<label class="input-label">ID de Usuario</label>
-						<div class="profile-info-value" th:if="${usuario != null}" th:text="${usuario.id_usuario}">
-							123
 						</div>
 						<div class="profile-info-value" th:unless="${usuario != null}">
 							No disponible
@@ -217,6 +230,29 @@
 			</div>
 		</main>
 	</div>
+
+	<script>
+		// Dropdown de usuario en header (panel cliente)
+		document.addEventListener('DOMContentLoaded', function () {
+			const userMenu = document.querySelector('.user-menu');
+			if (!userMenu) return;
+			const toggle = userMenu.querySelector('.user-menu-toggle');
+			if (!toggle) return;
+
+			function closeMenu() {
+				userMenu.classList.remove('open');
+			}
+
+			toggle.addEventListener('click', function (event) {
+				event.stopPropagation();
+				userMenu.classList.toggle('open');
+			});
+
+			document.addEventListener('click', function () {
+				closeMenu();
+			});
+		});
+	</script>
 </body>
 
 </html>

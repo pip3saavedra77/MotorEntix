@@ -11,20 +11,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import MotorEntix.model.Inventario;
+import MotorEntix.model.Proveedor;
 import MotorEntix.model.Usuario;
-import MotorEntix.service.IInventarioService;
 import MotorEntix.service.IProveedorService;
 import MotorEntix.service.IUsuarioService;
-
 import jakarta.servlet.http.HttpSession;
 
 @Controller
-@RequestMapping("/admin/inventario")
-public class InventarioAdminController {
-
-    @Autowired
-    private IInventarioService inventarioService;
+@RequestMapping("/admin/proveedor")
+public class ProveedorAdminController {
 
     @Autowired
     private IProveedorService proveedorService;
@@ -32,41 +27,39 @@ public class InventarioAdminController {
     @Autowired
     private IUsuarioService usuarioService;
 
-    @GetMapping("/lista")
-    public String listarInventario(Model model, HttpSession session) {
+    @GetMapping
+    public String listarProveedores(Model model, HttpSession session) {
         agregarUsuarioAlModelo(model, session);
-        List<Inventario> inventarios = inventarioService.findAll();
-        model.addAttribute("inventarios", inventarios);
-        model.addAttribute("inventario", new Inventario());
-        model.addAttribute("proveedores", proveedorService.findAll());
+        List<Proveedor> proveedores = proveedorService.findAll();
+        model.addAttribute("proveedores", proveedores);
+        model.addAttribute("proveedor", new Proveedor());
         model.addAttribute("editMode", false);
-        model.addAttribute("pagina", "inventario");
-        return "administrador/inventarioAdmin";
+        model.addAttribute("pagina", "proveedor");
+        return "administrador/proveedor";
     }
 
     @GetMapping("/editar/{id}")
-    public String editarInventario(@PathVariable Integer id, Model model, HttpSession session) {
+    public String editarProveedor(@PathVariable Integer id, Model model, HttpSession session) {
         agregarUsuarioAlModelo(model, session);
-        Inventario inventario = inventarioService.findById(id);
-        List<Inventario> inventarios = inventarioService.findAll();
-        model.addAttribute("inventarios", inventarios);
-        model.addAttribute("inventario", inventario);
-        model.addAttribute("proveedores", proveedorService.findAll());
+        Proveedor proveedor = proveedorService.findById(id);
+        List<Proveedor> proveedores = proveedorService.findAll();
+        model.addAttribute("proveedores", proveedores);
+        model.addAttribute("proveedor", proveedor);
         model.addAttribute("editMode", true);
-        model.addAttribute("pagina", "inventario");
-        return "administrador/inventarioAdmin";
+        model.addAttribute("pagina", "proveedor");
+        return "administrador/proveedor";
     }
 
     @PostMapping("/guardar")
-    public String guardarInventario(@ModelAttribute Inventario inventario) {
-        inventarioService.save(inventario);
-        return "redirect:/admin/inventario/lista";
+    public String guardarProveedor(@ModelAttribute Proveedor proveedor) {
+        proveedorService.save(proveedor);
+        return "redirect:/admin/proveedor";
     }
 
     @PostMapping("/eliminar/{id}")
-    public String eliminarInventario(@PathVariable Integer id) {
-        inventarioService.deleteById(id);
-        return "redirect:/admin/inventario/lista";
+    public String eliminarProveedor(@PathVariable Integer id) {
+        proveedorService.deleteById(id);
+        return "redirect:/admin/proveedor";
     }
 
     private void agregarUsuarioAlModelo(Model model, HttpSession session) {

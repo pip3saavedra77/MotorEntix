@@ -73,12 +73,6 @@ public class PanelAdminController {
 		return "redirect:/admin/inventario/lista";
 	}
 
-	@GetMapping("/proveedor")
-	public String proveedor(Model model) {
-		model.addAttribute("pagina", "proveedor");
-		return "administrador/proveedor"; // ← Cuando lo crees
-	}
-
 	@GetMapping("/mi-perfil")
 	public String miPerfil(Model model, HttpSession session) {
 		agregarUsuarioAlModelo(model, session);

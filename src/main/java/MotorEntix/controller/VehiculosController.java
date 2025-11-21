@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import MotorEntix.model.Usuario;
 import MotorEntix.model.Vehiculo;
 import MotorEntix.service.IVehiculoService;
+import MotorEntix.service.IUsuarioService;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping("/admin/vehiculos")
@@ -22,9 +26,14 @@ public class VehiculosController {
 	@Autowired
 	private IVehiculoService vehiculoService;
 
+	@Autowired
+	private IUsuarioService usuarioService;
+
 	// 📌 Lista de vehículos con búsqueda
 	@GetMapping("/lista")
-	public String listarVehiculos(@RequestParam(required = false) String search, Model model) {
+	public String listarVehiculos(@RequestParam(required = false) String search, Model model, HttpSession session) {
+		agregarUsuarioAlModelo(model, session);
+
 		List<Vehiculo> vehiculos;
 
 		if (search != null && !search.trim().isEmpty()) {
@@ -42,7 +51,8 @@ public class VehiculosController {
 
 	// 📌 Mostrar formulario de registro de vehículos
 	@GetMapping("/registrar")
-	public String mostrarFormularioRegistro(Model model) {
+	public String mostrarFormularioRegistro(Model model, HttpSession session) {
+		agregarUsuarioAlModelo(model, session);
 		model.addAttribute("vehiculo", new Vehiculo());
 		model.addAttribute("pagina", "vehiculos");
 		return "administrador/registrarVehiculo"; // ← NOMBRE REAL
@@ -50,7 +60,8 @@ public class VehiculosController {
 
 	// 📌 Mostrar formulario de edición
 	@GetMapping("/editar/{id}")
-	public String mostrarFormularioEditar(@PathVariable Integer id, Model model) {
+	public String mostrarFormularioEditar(@PathVariable Integer id, Model model, HttpSession session) {
+		agregarUsuarioAlModelo(model, session);
 		Vehiculo vehiculo = vehiculoService.obtenerPorId(id);
 		model.addAttribute("vehiculo", vehiculo);
 		model.addAttribute("pagina", "vehiculos");
@@ -89,5 +100,20 @@ public class VehiculosController {
 	public String eliminarVehiculo(@PathVariable Integer id) {
 		vehiculoService.eliminar(id);
 		return "redirect:/admin/vehiculos/lista";
+	}
+
+	private void agregarUsuarioAlModelo(Model model, HttpSession session) {
+		Integer usuarioId = (Integer) session.getAttribute("usuarioId");
+		String usuarioEmail = (String) session.getAttribute("usuarioEmail");
+		Usuario usuario = null;
+		if (usuarioId != null) {
+			usuario = usuarioService.findById(usuarioId);
+		}
+		if (usuario == null && usuarioEmail != null) {
+			usuario = usuarioService.findByCorreo(usuarioEmail);
+		}
+		if (usuario != null) {
+			model.addAttribute("usuario", usuario);
+		}
 	}
 }
