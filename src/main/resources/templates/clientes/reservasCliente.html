@@ -14,10 +14,28 @@
 			<h1>MotorEntix</h1>
 		</div>
 		<div class="user-info">
-			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Cliente</span>
-			<span th:unless="${usuario != null}">Cliente</span>
-			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">C</div>
-			<div class="user-avatar" th:unless="${usuario != null}">C</div>
+			<div class="user-menu">
+				<button type="button" class="user-menu-toggle">
+					<span class="user-name-label" th:if="${usuario != null}"
+					      th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Usuario</span>
+					<span class="user-name-label" th:unless="${usuario != null}">Invitado</span>
+					<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">U</div>
+					<div class="user-avatar" th:unless="${usuario != null}">I</div>
+					<span class="user-menu-arrow">▾</span>
+				</button>
+				<div class="user-menu-dropdown">
+					<a th:href="@{/panel.cliente}" class="user-menu-item">
+						<span>👤 Mi perfil</span>
+					</a>
+					<a th:href="@{/editar-perfil}" class="user-menu-item">
+						<span>✏️ Editar perfil</span>
+					</a>
+					<div class="user-menu-divider"></div>
+					<a th:href="@{/logout}" class="user-menu-item user-menu-item-danger">
+						<span>🚪 Cerrar sesión</span>
+					</a>
+				</div>
+			</div>
 		</div>
 	</header>
 
@@ -60,7 +78,17 @@
 		<main class="main-content">
 			<div class="page-header">
 				<h2 class="page-title">Mis Reservas</h2>
-				<button class="btn btn-primary">Nueva Reserva</button>
+				<button class="btn btn-primary" onclick="abrirModalReserva()">Nueva Reserva</button>
+			</div>
+
+			<!-- Mensajes de éxito/error -->
+			<div th:if="${success}" class="alert alert-success"
+				 style="background:#d4edda;color:#155724;padding:12px;border-radius:4px;margin-bottom:20px;border:1px solid #c3e6cb;">
+				<i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+			</div>
+			<div th:if="${error}" class="alert alert-danger"
+				 style="background:#f8d7da;color:#721c24;padding:12px;border-radius:4px;margin-bottom:20px;border:1px solid #f5c6cb;">
+				<i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
 			</div>
 
 			<!-- Filtros de búsqueda -->
@@ -86,18 +114,86 @@
 				</div>
 			</div>
 
+			<!-- Tabla de reservas -->
+			<div class="table-container">
+				<div class="table-header">
+					<h3 class="table-title">Mis Reservas</h3>
+					<div class="table-actions">
+						<a href="#" class="btn btn-primary">Descargar Reporte</a>
+					</div>
+				</div>
+				<table>
+					<thead>
+						<tr>
+							<th>ID Reserva</th>
+							<th>Servicio</th>
+							<th>Fecha</th>
+							<th>Hora</th>
+							<th>Estado</th>
+							<th>Acciones</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="reserva : ${reservas}">
+							<td th:text="'#RES' + ${reserva.id}">#RES001</td>
+							<td>
+								<strong th:text="${reserva.servicio != null ? reserva.servicio.nombre : 'Servicio no asignado'}">Servicio</strong><br>
+								<small th:text="${reserva.servicio != null ? reserva.servicio.descripcion : ''}">Descripción</small>
+							</td>
+							<td th:text="${reserva.fechaReserva}">2025-03-15</td>
+							<td th:text="${reserva.horaReserva}">10:00</td>
+							<td>
+								<span class="status-indicator" th:text="${reserva.estado}"
+									 th:classappend="${#strings.equalsIgnoreCase(reserva.estado, 'activa') ? ' status-available' : 
+									 	(#strings.equalsIgnoreCase(reserva.estado, 'pendiente') ? ' status-maintenance' : 
+									 		(#strings.equalsIgnoreCase(reserva.estado, 'completada') ? ' status-available' : 
+									 			(#strings.equalsIgnoreCase(reserva.estado, 'cancelada') ? ' status-rented' : '')))}">
+									Pendiente
+								</span>
+							</td>
+							<td>
+								<button type="button" class="btn-action btn-edit"
+									th:attr="
+										data-id=${reserva.id},
+										data-servicio=${reserva.servicio != null ? reserva.servicio.nombre : 'Servicio no asignado'},
+										data-descripcion=${reserva.servicio != null ? reserva.servicio.descripcion : ''},
+										data-fecha=${reserva.fechaReserva},
+										data-hora=${reserva.horaReserva},
+										data-vehiculo=${reserva.vehiculo != null ? reserva.vehiculo.placa + ' - ' + reserva.vehiculo.marca + ' ' + reserva.vehiculo.modelo : 'No asociado'},
+										data-trabajador=${reserva.trabajador != null && reserva.trabajador.usuario != null ? reserva.trabajador.usuario.nombre + ' ' + reserva.trabajador.usuario.apellido : 'No asignado'},
+										data-estado=${reserva.estado}"
+									onclick="abrirModalDetalleReserva(this)">
+									Detalles
+								</button>
+								<form th:action="@{'/reservasCliente/cancelar/' + ${reserva.id}}" method="post" style="display:inline;">
+									<button type="submit" class="btn-action btn-delete"
+											onclick="return confirm('¿Seguro que deseas cancelar esta reserva?');">
+										Cancelar
+									</button>
+								</form>
+							</td>
+						</tr>
+						<tr th:if="${reservas == null} or ${#lists.isEmpty(reservas)}">
+							<td colspan="6" style="text-align:center; padding:2rem; color:#6b7280;">
+								No tienes reservas registradas. Crea tu primera reserva con el botón "Nueva Reserva".
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
 			<!-- Tarjetas de estadísticas -->
-			<div class="stats-cards">
+			<div class="stats-cards" style="margin-top: 2rem;">
 				<div class="stat-card">
-					<div class="stat-value">2</div>
+					<div class="stat-value" th:text="${activas != null} ? ${activas} : 0">0</div>
 					<div class="stat-label">Reservas Activas</div>
 				</div>
 				<div class="stat-card">
-					<div class="stat-value">3</div>
+					<div class="stat-value" th:text="${pendientes != null} ? ${pendientes} : 0">0</div>
 					<div class="stat-label">Pendientes</div>
 				</div>
 				<div class="stat-card">
-					<div class="stat-value">12</div>
+					<div class="stat-value" th:text="${completadas != null} ? ${completadas} : 0">0</div>
 					<div class="stat-label">Completadas</div>
 				</div>
 				<div class="stat-card">
@@ -105,78 +201,243 @@
 					<div class="stat-label">Total Gastado</div>
 				</div>
 			</div>
-
-			<!-- Tabla de reservas activas -->
-			<div class="table-container">
-				<div class="table-header">
-					<h3 class="table-title">Reservas Activas y Pendientes</h3>
-					<div class="table-actions">
-						<a href="#" class="btn btn-primary">Descargar Reporte</a>
-					</div>
-				</div>
-
-				<table>
-					<thead>
-						<tr>
-							<th>ID Reserva</th>
-							<th>Vehículo</th>
-							<th>Fecha Inicio</th>
-							<th>Fecha Fin</th>
-							<th>Duración</th>
-							<th>Total</th>
-							<th>Estado</th>
-							<th>Acciones</th>
-						</tr>
-					</thead>
-					<tbody>
-						<!-- Reserva 1 - Activa -->
-						<tr>
-							<td>#RES001</td>
-							<td>
-								<strong>Toyota Corolla 2023</strong><br>
-								<small>Placa: ABC123</small>
-							</td>
-							<td>15/03/2025<br><small>10:00 AM</small></td>
-							<td>20/03/2025<br><small>05:00 PM</small></td>
-							<td>5 días</td>
-							<td><strong>$250</strong></td>
-							<td>
-								<span class="status-indicator status-available">Activa</span>
-							</td>
-							<td>
-								<button class="btn-action btn-edit">Detalles</button>
-								<button class="btn-action btn-info">Extender</button>
-								<button class="btn-action btn-delete">Cancelar</button>
-							</td>
-						</tr>
-
-						<!-- Reserva 2 - Confirmada -->
-						<tr>
-							<td>#RES002</td>
-							<td>
-								<strong>Honda Civic 2024</strong><br>
-								<small>Placa: XYZ789</small>
-							</td>
-							<td>25/03/2025<br><small>09:00 AM</small></td>
-							<td>30/03/2025<br><small>06:00 PM</small></td>
-							<td>5 días</td>
-							<td><strong>$300</strong></td>
-							<td>
-								<span class="status-indicator status-available"
-									style="background-color: rgba(23, 162, 184, 0.1); color: #0c5460; border-color: rgba(23, 162, 184, 0.3);">
-									Confirmada
-								</span>
-							</td>
-							<td>
-								<button class="btn-action btn-edit">Detalles</button>
-								<button class="btn-action btn-delete">Cancelar</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
 		</main>
 	</div>
+
+	<!-- Modal de detalles de reserva -->
+	<div id="modalDetalleReserva" class="modal"
+		 style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:2150; overflow-y:auto;">
+		<div class="modal-content"
+			 style="background: var(--card-bg); margin: 3% auto; border-radius: 16px; width: 95%; max-width: 900px; box-shadow: 0 20px 60px rgba(15,23,42,0.6); overflow:hidden;">
+			<div class="modal-header"
+				 style="background: linear-gradient(135deg, var(--primary-color), #1a2d3f); color: white; padding: 1.5rem 2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--accent-color);">
+				<h3 style="margin:0; font-size:1.5rem; display:flex; align-items:center; gap:0.5rem;">
+					<span>📋</span>
+					<span>Detalles de la Reserva</span>
+				</h3>
+				<button type="button" onclick="cerrarModalDetalleReserva()"
+					 style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:white; line-height:1;">&times;</button>
+			</div>
+			<div style="padding:1.5rem 2rem;">
+				<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem;">
+					<div class="profile-info-item">
+						<label class="input-label">Servicio</label>
+						<div class="profile-info-value" id="detalle-servicio">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Estado</label>
+						<div class="profile-info-value"><span id="detalle-estado-reserva" class="status-indicator">-</span></div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Fecha</label>
+						<div class="profile-info-value" id="detalle-fecha">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Hora</label>
+						<div class="profile-info-value" id="detalle-hora">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Vehículo</label>
+						<div class="profile-info-value" id="detalle-vehiculo">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Trabajador</label>
+						<div class="profile-info-value" id="detalle-trabajador">-</div>
+					</div>
+				</div>
+				<div style="margin-top:1.5rem;" class="profile-info-item">
+					<label class="input-label">Descripción del servicio</label>
+					<div class="profile-info-value" id="detalle-descripcion-servicio" style="font-size:1rem; font-weight:400; color:var(--text-dark);">-</div>
+				</div>
+			</div>
+			<div style="padding:1.25rem 2rem; border-top:1px solid rgba(0,0,0,0.08); text-align:right; background:rgba(13,27,42,0.03);">
+				<button type="button" class="btn" onclick="cerrarModalDetalleReserva()" style="background:#6c757d; color:white; padding:0.75rem 1.5rem;">Cerrar</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal para crear nueva reserva -->
+	<div id="modalReserva" class="modal"
+		 style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.65); z-index:2100; overflow-y:auto;">
+		<div class="modal-content"
+			 style="background: var(--card-bg); margin: 3% auto; padding: 0; border-radius: 16px; width: 95%; max-width: 800px; box-shadow: 0 18px 45px rgba(15,23,42,0.6); overflow:hidden;">
+			<div class="modal-header"
+				 style="display:flex; justify-content:space-between; align-items:center; padding:1.5rem 2rem; background: linear-gradient(135deg, var(--primary-color), #1a2d3f); color:white; border-bottom:3px solid var(--accent-color);">
+				<h3 style="margin:0; display:flex; align-items:center; gap:0.5rem;">
+					<span>📅</span>
+					<span>Nueva Reserva</span>
+				</h3>
+				<button type="button" onclick="cerrarModalReserva()"
+					 style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:white; line-height:1;">&times;</button>
+			</div>
+			<div class="inventory-page" style="padding:1.5rem 2rem 2rem 2rem;">
+				<section class="inventory-card" style="box-shadow:none; border-radius:14px;">
+					<div class="inventory-header" style="margin-bottom:1.25rem;">
+						<div>
+							<h3 class="inventory-header-title">
+								<span class="icon">🛠</span>
+								<span>Configura los detalles de tu reserva</span>
+							</h3>
+							<p class="inventory-subtitle">Selecciona el servicio y la fecha en la que deseas agendar.</p>
+						</div>
+					</div>
+
+					<form th:action="@{/reservasCliente/crear}" method="post" class="inventory-form">
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label required">Servicio</label>
+								<select name="servicioId" class="search-input" required>
+									<option value="" disabled selected>Selecciona un servicio</option>
+									<option th:each="serv : ${servicios}" th:value="${serv.id}" th:text="${serv.nombre}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label class="input-label">Vehículo</label>
+								<select name="vehiculoId" class="search-input">
+									<option value="" selected>Selecciona un vehículo (opcional)</option>
+									<option th:each="veh : ${vehiculos}" th:value="${veh.id_vehiculo}"
+										th:text="${veh.placa} + ' - ' + ${veh.marca} + ' ' + ${veh.modelo}"></option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label class="input-label required">Fecha</label>
+								<input type="date" name="fechaReserva" class="search-input" required>
+							</div>
+						</div>
+
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label required">Hora</label>
+								<input type="time" name="horaReserva" class="search-input" required>
+							</div>
+							<div class="form-group">
+								<label class="input-label">Trabajador</label>
+								<select name="trabajadorId" class="search-input">
+									<option value="" selected>Seleccionar trabajador (opcional)</option>
+									<option th:each="trab : ${trabajadores}" th:value="${trab.id_trabajador}"
+										th:text="${trab.usuario != null ? trab.usuario.nombre + ' ' + trab.usuario.apellido : 'Trabajador ' + trab.id_trabajador}"></option>
+								</select>
+							</div>
+						</div>
+
+						<div style="margin-top:1.5rem; display:flex; justify-content:flex-end; gap:1rem; flex-wrap:wrap;">
+							<button type="button" class="btn" onclick="cerrarModalReserva()" style="background:#6c757d; color:white; padding:0.75rem 1.5rem;">Cancelar</button>
+							<button type="submit" class="btn btn-primary" style="padding:0.75rem 1.5rem;">
+								<i class="fas fa-save"></i> Confirmar Reserva
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		function abrirModalReserva() {
+			const modal = document.getElementById('modalReserva');
+			if (modal) {
+				modal.style.display = 'block';
+				document.body.style.overflow = 'hidden';
+			}
+		}
+
+		function cerrarModalReserva() {
+			const modal = document.getElementById('modalReserva');
+			if (modal) {
+				modal.style.display = 'none';
+				document.body.style.overflow = 'auto';
+			}
+		}
+	</script>
+
+	<script>
+		function abrirModalDetalleReserva(btn) {
+			const modal = document.getElementById('modalDetalleReserva');
+			if (!modal) return;
+
+			const setText = (id, value) => {
+				const el = document.getElementById(id);
+				if (el) el.textContent = value || '-';
+			};
+
+			setText('detalle-servicio', btn.getAttribute('data-servicio'));
+			setText('detalle-descripcion-servicio', btn.getAttribute('data-descripcion'));
+			setText('detalle-fecha', btn.getAttribute('data-fecha'));
+			setText('detalle-hora', btn.getAttribute('data-hora'));
+			setText('detalle-vehiculo', btn.getAttribute('data-vehiculo'));
+			setText('detalle-trabajador', btn.getAttribute('data-trabajador'));
+
+			const estadoEl = document.getElementById('detalle-estado-reserva');
+			if (estadoEl) {
+				const estado = (btn.getAttribute('data-estado') || '').trim();
+				estadoEl.textContent = estado || '-';
+				estadoEl.className = 'status-indicator';
+				const lower = estado.toLowerCase();
+				if (lower === 'activa') {
+					estadoEl.classList.add('status-available');
+				} else if (lower === 'pendiente') {
+					estadoEl.classList.add('status-maintenance');
+				} else if (lower === 'completada') {
+					estadoEl.classList.add('status-available');
+				} else if (lower === 'cancelada') {
+					estadoEl.classList.add('status-rented');
+				}
+			}
+
+			modal.style.display = 'block';
+			document.body.style.overflow = 'hidden';
+		}
+
+		function cerrarModalDetalleReserva() {
+			const modal = document.getElementById('modalDetalleReserva');
+			if (!modal) return;
+			modal.style.display = 'none';
+			document.body.style.overflow = 'auto';
+		}
+
+		// Cerrar modales al hacer clic fuera o con Escape
+		window.addEventListener('click', function (event) {
+			const modalReserva = document.getElementById('modalReserva');
+			const modalDetalle = document.getElementById('modalDetalleReserva');
+			if (event.target === modalReserva) {
+				cerrarModalReserva();
+			}
+			if (event.target === modalDetalle) {
+				cerrarModalDetalleReserva();
+			}
+		});
+
+		document.addEventListener('keydown', function (event) {
+			if (event.key === 'Escape') {
+				cerrarModalReserva();
+				cerrarModalDetalleReserva();
+			}
+		});
+	</script>
+
+	<script>
+		// Dropdown de usuario en header (panel cliente)
+		document.addEventListener('DOMContentLoaded', function () {
+			const userMenu = document.querySelector('.user-menu');
+			if (!userMenu) return;
+			const toggle = userMenu.querySelector('.user-menu-toggle');
+			if (!toggle) return;
+
+			function closeMenu() {
+				userMenu.classList.remove('open');
+			}
+
+			toggle.addEventListener('click', function (event) {
+				event.stopPropagation();
+				userMenu.classList.toggle('open');
+			});
+
+			document.addEventListener('click', function () {
+				closeMenu();
+			});
+		});
+	</script>
+
 </body>
 
 </html>

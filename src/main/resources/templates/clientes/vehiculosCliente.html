@@ -15,10 +15,28 @@
 			<h1>MotorEntix</h1>
 		</div>
 		<div class="user-info">
-			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Cliente</span>
-			<span th:unless="${usuario != null}">Cliente</span>
-			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">C</div>
-			<div class="user-avatar" th:unless="${usuario != null}">C</div>
+			<div class="user-menu">
+				<button type="button" class="user-menu-toggle">
+					<span class="user-name-label" th:if="${usuario != null}"
+					      th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Usuario</span>
+					<span class="user-name-label" th:unless="${usuario != null}">Invitado</span>
+					<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">U</div>
+					<div class="user-avatar" th:unless="${usuario != null}">I</div>
+					<span class="user-menu-arrow">▾</span>
+				</button>
+				<div class="user-menu-dropdown">
+					<a th:href="@{/panel.cliente}" class="user-menu-item">
+						<span>👤 Mi perfil</span>
+					</a>
+					<a th:href="@{/editar-perfil}" class="user-menu-item">
+						<span>✏️ Editar perfil</span>
+					</a>
+					<div class="user-menu-divider"></div>
+					<a th:href="@{/logout}" class="user-menu-item user-menu-item-danger">
+						<span>🚪 Cerrar sesión</span>
+					</a>
+				</div>
+			</div>
 		</div>
 	</header>
 
@@ -88,12 +106,10 @@
 						<table>
 							<thead>
 								<tr>
+									<th>ID</th>
 									<th>Placa</th>
 									<th>Marca</th>
-									<th>Modelo</th>
-									<th>Año</th>
 									<th>Color</th>
-									<th>Tipo</th>
 									<th>Combustible</th>
 									<th>Estado</th>
 									<th>Acciones</th>
@@ -101,12 +117,10 @@
 							</thead>
 							<tbody>
 								<tr th:each="vehiculo : ${vehiculos}">
+									<td th:text="${vehiculo.id_vehiculo}"></td>
 									<td th:text="${vehiculo.placa}"></td>
 									<td th:text="${vehiculo.marca}"></td>
-									<td th:text="${vehiculo.modelo}"></td>
-									<td th:text="${vehiculo.anio}"></td>
 									<td th:text="${vehiculo.color}"></td>
-									<td th:text="${vehiculo.tipoVehiculo}"></td>
 									<td th:text="${vehiculo.combustible}"></td>
 									<td>
 										<span class="status-indicator status-available"
@@ -116,6 +130,11 @@
 									</td>
 									<td>
 										<div class="action-buttons">
+											<button type="button" class="btn-action btn-info btn-view-more"
+												th:attr="data-id=${vehiculo.id_vehiculo},data-placa=${vehiculo.placa},data-marca=${vehiculo.marca},data-modelo=${vehiculo.modelo},data-anio=${vehiculo.anio},data-color=${vehiculo.color},data-tipo=${vehiculo.tipoVehiculo},data-transmicion=${vehiculo.transmicion},data-combustible=${vehiculo.combustible},data-version=${vehiculo.version},data-descripcion=${vehiculo.descripcion},data-estado=${vehiculo.estadoVehiculo}"
+												onclick="abrirModalDetalle(this)">
+												<i class="fas fa-eye"></i> Ver más
+											</button>
 											<button type="button" class="btn-action btn-edit"
 												th:attr="data-id=${vehiculo.id_vehiculo},data-placa=${vehiculo.placa},data-marca=${vehiculo.marca},data-modelo=${vehiculo.modelo},data-anio=${vehiculo.anio},data-color=${vehiculo.color},data-tipo=${vehiculo.tipoVehiculo},data-transmicion=${vehiculo.transmicion},data-combustible=${vehiculo.combustible},data-version=${vehiculo.version},data-descripcion=${vehiculo.descripcion},data-estado=${vehiculo.estadoVehiculo}"
 												onclick="abrirModalEditar(this)">
@@ -151,220 +170,325 @@
 		</main>
 	</div>
 
+	<!-- Modal para ver detalles del vehículo -->
+	<div id="modalVehiculoDetalle" class="modal"
+		style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:2100; overflow-y:auto;">
+		<div class="modal-content"
+			style="background: var(--card-bg); margin: 3% auto; border-radius: 16px; width: 95%; max-width: 1000px; box-shadow: 0 20px 60px rgba(15,23,42,0.6); overflow:hidden;">
+			<div class="modal-header"
+				style="background: linear-gradient(135deg, var(--primary-color), #1a2d3f); color: white; padding: 1.5rem 2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:3px solid var(--accent-color);">
+				<h3 style="margin:0; font-size:1.5rem; display:flex; align-items:center; gap:0.5rem;">
+					<span>🚗</span>
+					<span>Detalles del Vehículo</span>
+				</h3>
+				<button type="button" onclick="cerrarModalDetalle()"
+					style="background:none; border:none; font-size:1.8rem; cursor:pointer; color:white; line-height:1;">&times;</button>
+			</div>
+			<div style="padding:1.5rem 2rem;">
+				<div class="profile-info-item" style="grid-column:1 / -1; text-align:left; margin-bottom:1.25rem;">
+					<label class="input-label">Placa</label>
+					<div class="profile-info-value" id="detalle-placa" style="font-size:1.4rem; font-weight:700; color:var(--primary-color); letter-spacing:0.5px;">-</div>
+				</div>
+				<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:1rem;">
+					<div class="profile-info-item">
+						<label class="input-label">Marca</label>
+						<div class="profile-info-value" id="detalle-marca">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Modelo</label>
+						<div class="profile-info-value" id="detalle-modelo">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Año</label>
+						<div class="profile-info-value" id="detalle-anio">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Color</label>
+						<div class="profile-info-value" id="detalle-color">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Tipo</label>
+						<div class="profile-info-value" id="detalle-tipo">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Transmisión</label>
+						<div class="profile-info-value" id="detalle-transmision">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Combustible</label>
+						<div class="profile-info-value" id="detalle-combustible">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Versión</label>
+						<div class="profile-info-value" id="detalle-version">-</div>
+					</div>
+					<div class="profile-info-item">
+						<label class="input-label">Estado</label>
+						<div><span id="detalle-estado" class="status-indicator status-available">-</span></div>
+					</div>
+				</div>
+				<div style="margin-top:1.5rem;" class="profile-info-item">
+					<label class="input-label">Descripción</label>
+					<div class="profile-info-value" id="detalle-descripcion" style="font-size:1rem; font-weight:400; color:var(--text-dark);">-</div>
+				</div>
+			</div>
+			<div style="padding:1.25rem 2rem; border-top:1px solid rgba(0,0,0,0.08); text-align:right; background:rgba(13,27,42,0.03);">
+				<button type="button" class="btn" onclick="cerrarModalDetalle()" style="background:#6c757d; color:white; padding:0.75rem 1.5rem;">Cerrar</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- Modal para agregar vehículo -->
 	<div id="modalVehiculo" class="modal"
-		style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; overflow-y: auto;">
+		style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 2000; overflow-y: auto;">
 		<div class="modal-content"
-			style="background: white; margin: 2% auto; padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+			style="background: var(--card-bg); margin: 3% auto; padding: 0; border-radius: 16px; width: 95%; max-width: 900px; box-shadow: 0 18px 45px rgba(15,23,42,0.6); overflow:hidden;">
 			<div class="modal-header"
-				style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--accent-color);">
-				<h3 style="color: var(--primary-color); margin: 0;">
-					<i class="fas fa-car"></i> Agregar Nuevo Vehículo
+				style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; background: linear-gradient(135deg, var(--primary-color), #1a2d3f); color: white; border-bottom: 3px solid var(--accent-color);">
+				<h3 style="margin: 0; display:flex; align-items:center; gap:0.5rem;">
+					<span>🚗</span>
+					<span>Agregar Nuevo Vehículo</span>
 				</h3>
 				<button onclick="cerrarModal()"
-					style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
+					style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: white; line-height:1;">&times;</button>
 			</div>
 
-			<form th:action="@{/mis-vehiculos/guardar}" method="post" th:object="${vehiculo}" id="formVehiculo">
-				<div class="input-group">
-					<label class="input-label required">Placa</label>
-					<input type="text" th:field="*{placa}" class="search-input" required maxlength="10"
-						placeholder="Ej: ABC123">
-				</div>
+			<div class="inventory-page" style="padding:1.5rem 2rem 2rem 2rem;">
+				<section class="inventory-card" style="box-shadow:none; border-radius:14px;">
+					<div class="inventory-header" style="margin-bottom:1.25rem;">
+						<div>
+							<h3 class="inventory-header-title">
+								<span class="icon">📝</span>
+								<span>Información del vehículo</span>
+							</h3>
+							<p class="inventory-subtitle">Completa los datos para registrar tu vehículo.</p>
+						</div>
+					</div>
 
-				<div class="input-group-horizontal">
-					<div class="input-group">
-						<label class="input-label required">Marca</label>
-						<input type="text" th:field="*{marca}" class="search-input" required placeholder="Ej: Toyota">
-					</div>
-					<div class="input-group">
-						<label class="input-label required">Modelo</label>
-						<input type="text" th:field="*{modelo}" class="search-input" required placeholder="Ej: Corolla">
-					</div>
-				</div>
+					<form th:action="@{/mis-vehiculos/guardar}" method="post" th:object="${vehiculo}" id="formVehiculo"
+						class="inventory-form">
+						<input type="hidden" th:field="*{estadoVehiculo}" value="Activo">
 
-				<div class="input-group-horizontal">
-					<div class="input-group">
-						<label class="input-label required">Año</label>
-						<input type="number" th:field="*{anio}" class="search-input" required min="1990" max="2024"
-							placeholder="Ej: 2020">
-					</div>
-					<div class="input-group">
-						<label class="input-label required">Color</label>
-						<input type="text" th:field="*{color}" class="search-input" required placeholder="Ej: Rojo">
-					</div>
-				</div>
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label required">Placa</label>
+								<input type="text" th:field="*{placa}" class="search-input" required maxlength="10"
+									placeholder="Ej: ABC123">
+							</div>
+							<div class="form-group">
+								<label class="input-label required">Marca</label>
+								<input type="text" th:field="*{marca}" class="search-input" required placeholder="Ej: Toyota">
+							</div>
+						</div>
 
-				<div class="input-group-horizontal">
-					<div class="input-group">
-						<label class="input-label">Tipo de Vehículo</label>
-						<select th:field="*{tipoVehiculo}" class="search-input">
-							<option value="">Seleccionar tipo</option>
-							<option value="Sedán">Sedán</option>
-							<option value="SUV">SUV</option>
-							<option value="Pickup">Pickup</option>
-							<option value="Hatchback">Hatchback</option>
-							<option value="Deportivo">Deportivo</option>
-							<option value="Van">Van</option>
-							<option value="Motocicleta">Motocicleta</option>
-						</select>
-					</div>
-					<div class="input-group">
-						<label class="input-label">Transmisión</label>
-						<select th:field="*{transmicion}" class="search-input">
-							<option value="">Seleccionar</option>
-							<option value="Automática">Automática</option>
-							<option value="Manual">Manual</option>
-						</select>
-					</div>
-				</div>
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label required">Modelo</label>
+								<input type="text" th:field="*{modelo}" class="search-input" required placeholder="Ej: Corolla">
+							</div>
+							<div class="form-group">
+								<label class="input-label required">Año</label>
+								<input type="number" th:field="*{anio}" class="search-input" required min="1990" max="2024"
+									placeholder="Ej: 2020">
+							</div>
+						</div>
 
-				<div class="input-group-horizontal">
-					<div class="input-group">
-						<label class="input-label">Combustible</label>
-						<select th:field="*{combustible}" class="search-input">
-							<option value="">Seleccionar</option>
-							<option value="Gasolina">Gasolina</option>
-							<option value="Diésel">Diésel</option>
-							<option value="Eléctrico">Eléctrico</option>
-							<option value="Híbrido">Híbrido</option>
-							<option value="Gas">Gas</option>
-						</select>
-					</div>
-					<div class="input-group">
-						<label class="input-label">Versión</label>
-						<input type="text" th:field="*{version}" class="search-input" placeholder="Ej: XLI 1.8">
-					</div>
-				</div>
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label required">Color</label>
+								<input type="text" th:field="*{color}" class="search-input" required placeholder="Ej: Rojo">
+							</div>
+							<div class="form-group">
+								<label class="input-label">Tipo de Vehículo</label>
+								<select th:field="*{tipoVehiculo}" class="search-input">
+									<option value="">Seleccionar tipo</option>
+									<option value="Sedán">Sedán</option>
+									<option value="SUV">SUV</option>
+									<option value="Pickup">Pickup</option>
+									<option value="Hatchback">Hatchback</option>
+									<option value="Deportivo">Deportivo</option>
+									<option value="Van">Van</option>
+									<option value="Motocicleta">Motocicleta</option>
+								</select>
+							</div>
+						</div>
 
-				<div class="input-group">
-					<label class="input-label">Descripción</label>
-					<textarea th:field="*{descripcion}" class="search-input" rows="3"
-						placeholder="Observaciones adicionales sobre el vehículo..."></textarea>
-				</div>
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label">Transmisión</label>
+								<select th:field="*{transmicion}" class="search-input">
+									<option value="">Seleccionar</option>
+									<option value="Automática">Automática</option>
+									<option value="Manual">Manual</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label class="input-label">Combustible</label>
+								<select th:field="*{combustible}" class="search-input">
+									<option value="">Seleccionar</option>
+									<option value="Gasolina">Gasolina</option>
+									<option value="Diésel">Diésel</option>
+									<option value="Eléctrico">Eléctrico</option>
+									<option value="Híbrido">Híbrido</option>
+									<option value="Gas">Gas</option>
+								</select>
+							</div>
+						</div>
 
-				<input type="hidden" th:field="*{estadoVehiculo}" value="Activo">
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label">Versión</label>
+								<input type="text" th:field="*{version}" class="search-input" placeholder="Ej: XLI 1.8">
+							</div>
+							<div class="form-group">
+								<label class="input-label">Descripción</label>
+								<textarea th:field="*{descripcion}" class="search-input" rows="3"
+									placeholder="Observaciones adicionales sobre el vehículo..."></textarea>
+							</div>
+						</div>
 
-				<div
-					style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
-					<button type="button" class="btn" onclick="cerrarModal()"
-						style="background: #6c757d; color: white; padding: 0.75rem 1.5rem;">Cancelar</button>
-					<button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
-						<i class="fas fa-save"></i> Guardar Vehículo
-					</button>
-				</div>
-			</form>
+						<div class="inventory-meta" style="margin-top:1rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+							<span>Revisa que los datos coincidan con tu tarjeta de circulación.</span>
+						</div>
+
+						<div style="margin-top:1.5rem; display:flex; justify-content:flex-end; gap:1rem; flex-wrap:wrap;">
+							<button type="button" class="btn" onclick="cerrarModal()"
+								style="background:#6c757d; color:white; padding:0.75rem 1.5rem;">Cancelar</button>
+							<button type="submit" class="btn btn-primary" style="padding:0.75rem 1.5rem;">
+								<i class="fas fa-save"></i> Guardar Vehículo
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
 		</div>
 	</div>
 
 	<div id="modalVehiculoEditar" class="modal"
-		style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; overflow-y: auto;">
+		style="display: none; position: fixed; inset: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 2000; overflow-y: auto;">
 		<div class="modal-content"
-			style="background: white; margin: 2% auto; padding: 2rem; border-radius: 8px; width: 90%; max-width: 600px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+			style="background: var(--card-bg); margin: 3% auto; padding: 0; border-radius: 16px; width: 95%; max-width: 900px; box-shadow: 0 18px 45px rgba(0,0,0,0.6); overflow:hidden;">
 			<div class="modal-header"
-				style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--accent-color);">
-				<h3 style="color: var(--primary-color); margin: 0;">
-					<i class="fas fa-pen"></i> Editar Vehículo
+				style="display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 2rem; background: linear-gradient(135deg, var(--primary-color), #1a2d3f); color: white; border-bottom: 3px solid var(--accent-color);">
+				<h3 style="margin: 0; display:flex; align-items:center; gap:0.5rem;">
+					<span>✏️</span>
+					<span>Editar Vehículo</span>
 				</h3>
 				<button onclick="cerrarModalEditar()"
-					style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;">&times;</button>
+					style="background: none; border: none; font-size: 1.8rem; cursor: pointer; color: white; line-height:1;">&times;</button>
 			</div>
-
-			<form id="formVehiculoEditar" method="post">
-				<div class="input-group">
-					<label class="input-label required">Placa</label>
-					<input name="placa" type="text" class="search-input" required maxlength="10" placeholder="Ej: ABC123">
-				</div>
-
-				<div class="input-group-horizontal">
-					<div class="input-group">
-						<label class="input-label required">Marca</label>
-						<input name="marca" type="text" class="search-input" required placeholder="Ej: Toyota">
+			<div class="inventory-page" style="padding:1.5rem 2rem 2rem 2rem;">
+				<section class="inventory-card" style="box-shadow:none; border-radius:14px;">
+					<div class="inventory-header" style="margin-bottom:1.25rem;">
+						<div>
+							<h3 class="inventory-header-title">
+								<span class="icon">🛠</span>
+								<span>Actualizar datos del vehículo</span>
+							</h3>
+							<p class="inventory-subtitle">Modifica la información de tu vehículo y guarda los cambios.</p>
+						</div>
 					</div>
-					<div class="input-group">
-						<label class="input-label required">Modelo</label>
-						<input name="modelo" type="text" class="search-input" required placeholder="Ej: Corolla">
-					</div>
-				</div>
 
-				<div class="input-group-horizontal">
-					<div class="input-group">
-						<label class="input-label required">Año</label>
-						<input name="anio" type="number" class="search-input" required min="1990" max="2024" placeholder="Ej: 2020">
-					</div>
-					<div class="input-group">
-						<label class="input-label required">Color</label>
-						<input name="color" type="text" class="search-input" required placeholder="Ej: Rojo">
-					</div>
-				</div>
+					<form id="formVehiculoEditar" method="post" class="inventory-form">
+						<input name="estadoVehiculo" type="hidden" value="Activo">
 
-				<div class="input-group-horizontal">
-					<div class="input-group">
-						<label class="input-label">Tipo de Vehículo</label>
-						<select name="tipoVehiculo" class="search-input">
-							<option value="">Seleccionar tipo</option>
-							<option value="Sedán">Sedán</option>
-							<option value="SUV">SUV</option>
-							<option value="Pickup">Pickup</option>
-							<option value="Hatchback">Hatchback</option>
-							<option value="Deportivo">Deportivo</option>
-							<option value="Van">Van</option>
-							<option value="Motocicleta">Motocicleta</option>
-						</select>
-					</div>
-					<div class="input-group">
-						<label class="input-label">Transmisión</label>
-						<select name="transmicion" class="search-input">
-							<option value="">Seleccionar</option>
-							<option value="Automática">Automática</option>
-							<option value="Manual">Manual</option>
-						</select>
-					</div>
-				</div>
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label required">Placa</label>
+								<input name="placa" type="text" class="search-input" required maxlength="10" placeholder="Ej: ABC123">
+							</div>
+							<div class="form-group">
+								<label class="input-label required">Marca</label>
+								<input name="marca" type="text" class="search-input" required placeholder="Ej: Toyota">
+							</div>
+						</div>
 
-				<div class="input-group-horizontal">
-					<div class="input-group">
-						<label class="input-label">Combustible</label>
-						<select name="combustible" class="search-input">
-							<option value="">Seleccionar</option>
-							<option value="Gasolina">Gasolina</option>
-							<option value="Diésel">Diésel</option>
-							<option value="Eléctrico">Eléctrico</option>
-							<option value="Híbrido">Híbrido</option>
-							<option value="Gas">Gas</option>
-						</select>
-					</div>
-					<div class="input-group">
-						<label class="input-label">Versión</label>
-						<input name="version" type="text" class="search-input" placeholder="Ej: XLI 1.8">
-					</div>
-				</div>
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label required">Modelo</label>
+								<input name="modelo" type="text" class="search-input" required placeholder="Ej: Corolla">
+							</div>
+							<div class="form-group">
+								<label class="input-label required">Año</label>
+								<input name="anio" type="number" class="search-input" required min="1990" max="2024" placeholder="Ej: 2020">
+							</div>
+						</div>
 
-				<div class="input-group">
-					<label class="input-label">Descripción</label>
-					<textarea name="descripcion" class="search-input" rows="3" placeholder="Observaciones adicionales sobre el vehículo..."></textarea>
-				</div>
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label required">Color</label>
+								<input name="color" type="text" class="search-input" required placeholder="Ej: Rojo">
+							</div>
+							<div class="form-group">
+								<label class="input-label">Tipo de Vehículo</label>
+								<select name="tipoVehiculo" class="search-input">
+									<option value="">Seleccionar tipo</option>
+									<option value="Sedán">Sedán</option>
+									<option value="SUV">SUV</option>
+									<option value="Pickup">Pickup</option>
+									<option value="Hatchback">Hatchback</option>
+									<option value="Deportivo">Deportivo</option>
+									<option value="Van">Van</option>
+									<option value="Motocicleta">Motocicleta</option>
+								</select>
+							</div>
+						</div>
 
-				<input name="estadoVehiculo" type="hidden" value="Activo">
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label">Transmisión</label>
+								<select name="transmicion" class="search-input">
+									<option value="">Seleccionar</option>
+									<option value="Automática">Automática</option>
+									<option value="Manual">Manual</option>
+								</select>
+							</div>
+							<div class="form-group">
+								<label class="input-label">Combustible</label>
+								<select name="combustible" class="search-input">
+									<option value="">Seleccionar</option>
+									<option value="Gasolina">Gasolina</option>
+									<option value="Diésel">Diésel</option>
+									<option value="Eléctrico">Eléctrico</option>
+									<option value="Híbrido">Híbrido</option>
+									<option value="Gas">Gas</option>
+								</select>
+							</div>
+						</div>
 
-				<div style="display: flex; gap: 1rem; justify-content: flex-end; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #eee;">
-					<button type="button" class="btn" onclick="cerrarModalEditar()" style="background: #6c757d; color: white; padding: 0.75rem 1.5rem;">Cancelar</button>
-					<button type="submit" class="btn btn-primary" style="padding: 0.75rem 1.5rem;">
-						<i class="fas fa-save"></i> Guardar Cambios
-					</button>
-				</div>
-			</form>
+						<div class="form-row">
+							<div class="form-group">
+								<label class="input-label">Versión</label>
+								<input name="version" type="text" class="search-input" placeholder="Ej: XLI 1.8">
+							</div>
+							<div class="form-group">
+								<label class="input-label">Descripción</label>
+								<textarea name="descripcion" class="search-input" rows="3" placeholder="Observaciones adicionales sobre el vehículo..."></textarea>
+							</div>
+						</div>
+
+						<div style="margin-top:1.5rem; display:flex; justify-content:flex-end; gap:1rem; flex-wrap:wrap;">
+							<button type="button" class="btn" onclick="cerrarModalEditar()" style="background:#6c757d; color:white; padding:0.75rem 1.5rem;">Cancelar</button>
+							<button type="submit" class="btn btn-primary" style="padding:0.75rem 1.5rem;">
+								<i class="fas fa-save"></i> Guardar Cambios
+							</button>
+						</div>
+					</form>
+				</section>
+			</div>
 		</div>
 	</div>
 
 	<script>
 		function abrirModal() {
-			document.getElementById('modalVehiculo').style.display = 'block';
+			const modal = document.getElementById('modalVehiculo');
+			modal.style.display = 'block';
 			document.body.style.overflow = 'hidden';
 		}
 
 		function cerrarModal() {
-			document.getElementById('modalVehiculo').style.display = 'none';
+			const modal = document.getElementById('modalVehiculo');
+			modal.style.display = 'none';
 			document.body.style.overflow = 'auto';
 			document.getElementById('formVehiculo').reset();
 		}
@@ -392,19 +516,71 @@
 		}
 
 		function cerrarModalEditar() {
-			document.getElementById('modalVehiculoEditar').style.display = 'none';
+			const modal = document.getElementById('modalVehiculoEditar');
+			modal.style.display = 'none';
 			document.body.style.overflow = 'auto';
 			document.getElementById('formVehiculoEditar').reset();
+		}
+
+		function abrirModalDetalle(btn) {
+			const modal = document.getElementById('modalVehiculoDetalle');
+			if (!modal) return;
+
+			// Rellenar campos de detalle
+			const setText = (id, value) => {
+				const el = document.getElementById(id);
+				if (el) el.textContent = value || '-';
+			};
+
+			setText('detalle-placa', btn.getAttribute('data-placa'));
+			setText('detalle-marca', btn.getAttribute('data-marca'));
+			setText('detalle-modelo', btn.getAttribute('data-modelo'));
+			setText('detalle-anio', btn.getAttribute('data-anio'));
+			setText('detalle-color', btn.getAttribute('data-color'));
+			setText('detalle-tipo', btn.getAttribute('data-tipo'));
+			setText('detalle-transmision', btn.getAttribute('data-transmicion'));
+			setText('detalle-combustible', btn.getAttribute('data-combustible'));
+			setText('detalle-version', btn.getAttribute('data-version'));
+			setText('detalle-descripcion', btn.getAttribute('data-descripcion'));
+
+			const estadoEl = document.getElementById('detalle-estado');
+			if (estadoEl) {
+				const estado = (btn.getAttribute('data-estado') || 'Activo').trim();
+				estadoEl.textContent = estado;
+				estadoEl.className = 'status-indicator';
+				const lower = estado.toLowerCase();
+				if (lower === 'disponible' || lower === 'activo') {
+					estadoEl.classList.add('status-available');
+				} else if (lower.includes('manten')) {
+					estadoEl.classList.add('status-maintenance');
+				} else {
+					estadoEl.classList.add('status-rented');
+				}
+			}
+
+			modal.style.display = 'block';
+			document.body.style.overflow = 'hidden';
+		}
+
+		function cerrarModalDetalle() {
+			const modal = document.getElementById('modalVehiculoDetalle');
+			if (!modal) return;
+			modal.style.display = 'none';
+			document.body.style.overflow = 'auto';
 		}
 
 		window.onclick = function (event) {
 			const modalAdd = document.getElementById('modalVehiculo');
 			const modalEdit = document.getElementById('modalVehiculoEditar');
+			const modalDetalle = document.getElementById('modalVehiculoDetalle');
 			if (event.target === modalAdd) {
 				cerrarModal();
 			}
 			if (event.target === modalEdit) {
 				cerrarModalEditar();
+			}
+			if (event.target === modalDetalle) {
+				cerrarModalDetalle();
 			}
 		}
 
@@ -412,7 +588,31 @@
 			if (event.key === 'Escape') {
 				cerrarModal();
 				cerrarModalEditar();
+				cerrarModalDetalle();
 			}
+		});
+	</script>
+
+	<script>
+		// Dropdown de usuario en header (panel cliente)
+		document.addEventListener('DOMContentLoaded', function () {
+			const userMenu = document.querySelector('.user-menu');
+			if (!userMenu) return;
+			const toggle = userMenu.querySelector('.user-menu-toggle');
+			if (!toggle) return;
+
+			function closeMenu() {
+				userMenu.classList.remove('open');
+			}
+
+			toggle.addEventListener('click', function (event) {
+				event.stopPropagation();
+				userMenu.classList.toggle('open');
+			});
+
+			document.addEventListener('click', function () {
+				closeMenu();
+			});
 		});
 	</script>
 

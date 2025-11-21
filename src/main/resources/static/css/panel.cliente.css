@@ -387,6 +387,96 @@ header {
 	color: var(--text-dark);
 	font-weight: 500;
 	font-size: 0.9rem;
+	line-height: 1.6;
+}
+
+/* Estilos tipo "inventory" usados también en panel cliente (formularios en tarjetas) */
+.inventory-page {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+}
+
+.inventory-card {
+	background: #ffffff;
+	border-radius: 16px;
+	box-shadow: 0 16px 40px rgba(15, 23, 42, 0.14);
+	padding: 1.75rem 2rem;
+	border: 1px solid rgba(226, 232, 240, 0.9);
+}
+
+.inventory-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	margin-bottom: 1rem;
+}
+
+.inventory-header-title {
+	font-size: 1.2rem;
+	font-weight: 600;
+	color: #111827;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.inventory-header-title .icon {
+	font-size: 1.4rem;
+}
+
+.inventory-subtitle {
+	font-size: 0.9rem;
+	color: #6b7280;
+	margin-top: 0.25rem;
+}
+
+.inventory-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.inventory-form .form-row {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem 1.5rem;
+}
+
+.inventory-form .form-group {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+}
+
+.inventory-form label {
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: #374151;
+}
+
+.inventory-form .search-input,
+.inventory-form select {
+	border-radius: 999px;
+	border: 1px solid #d1d5db;
+	padding: 0.55rem 0.9rem;
+	background-color: #f9fafb;
+	font-size: 0.9rem;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease, transform 0.1s ease;
+}
+
+.inventory-form .search-input:focus,
+.inventory-form select:focus {
+	outline: none;
+	border-color: #f97316;
+	box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.25);
+	background-color: #ffffff;
+	transform: translateY(-1px);
+}
+
+.inventory-meta {
+	font-size: 0.85rem;
+	color: #6b7280;
 }
 
 /* Tarjeta de bienvenida */
@@ -411,6 +501,21 @@ header {
 	color: var(--text-dark);
 	font-size: 1rem;
 	line-height: 1.6;
+}
+
+/* Bloques de información (reutilizados en modales de detalles) */
+.profile-info-item {
+	background: #ffffff;
+	border-radius: 12px;
+	padding: 0.9rem 1.1rem;
+	box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08);
+	border: 1px solid #e5e7eb;
+}
+
+.profile-info-value {
+	font-size: 0.95rem;
+	color: var(--text-dark);
+	font-weight: 500;
 }
 
 /* Contenedor de tabla */

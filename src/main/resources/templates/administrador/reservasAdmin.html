@@ -91,6 +91,30 @@
           </h3>
           <p class="reservas-subtitle">Revisa el detalle de las citas reservadas, asigna un trabajador y actualiza el estado de cada reserva.</p>
 
+          <!-- Filtros de búsqueda -->
+          <form method="get" th:action="@{/admin/reservas}"
+                style="display:flex; flex-wrap:wrap; gap:0.75rem; align-items:flex-end; margin-bottom:1rem;">
+            <div style="display:flex; flex-direction:column; gap:0.25rem; min-width:220px;">
+              <label class="small-text" style="font-size:0.8rem; font-weight:600; color:#4b5563;">Buscar (cliente, correo, servicio, vehículo)</label>
+              <input type="text" name="q" class="search-input" placeholder="Ej: placa, nombre, servicio..."
+                     th:value="${q}">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:0.25rem; min-width:180px;">
+              <label class="small-text" style="font-size:0.8rem; font-weight:600; color:#4b5563;">Estado</label>
+              <select name="estado" class="search-input">
+                <option value="" th:selected="${estadoSeleccionado == null || #strings.isEmpty(estadoSeleccionado)}">Todos</option>
+                <option value="pendiente" th:selected="${#strings.equalsIgnoreCase(estadoSeleccionado, 'pendiente')}">Pendiente</option>
+                <option value="confirmada" th:selected="${#strings.equalsIgnoreCase(estadoSeleccionado, 'confirmada')}">Confirmada</option>
+                <option value="completada" th:selected="${#strings.equalsIgnoreCase(estadoSeleccionado, 'completada')}">Completada</option>
+                <option value="cancelada" th:selected="${#strings.equalsIgnoreCase(estadoSeleccionado, 'cancelada')}">Cancelada</option>
+              </select>
+            </div>
+            <div style="display:flex; gap:0.5rem;">
+              <button type="submit" class="btn-pill btn-pill-primary">Aplicar filtros</button>
+              <a th:href="@{/admin/reservas}" class="btn-pill btn-pill-secondary" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">Limpiar</a>
+            </div>
+          </form>
+
           <div th:if="${exito}" class="alert alert-success" th:text="${exito}"></div>
           <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
 
@@ -140,6 +164,17 @@
                       <div style="color:#6b7280;" th:text="${res.servicio.descripcion}"></div>
                     </div>
                     <span class="small-text" th:if="${res.servicio == null}">Sin servicio</span>
+                  </div>
+
+                  <div style="min-width:180px;">
+                    <div class="small-text" style="font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; color:#9ca3af; margin-bottom:0.15rem;">
+                      Vehículo
+                    </div>
+                    <div class="small-text" th:if="${res.vehiculo != null}">
+                      <div style="font-weight:500; color:#111827;" th:text="${res.vehiculo.placa}"></div>
+                      <div style="color:#6b7280;" th:text="${res.vehiculo.marca} + ' ' + ${res.vehiculo.modelo}"></div>
+                    </div>
+                    <span class="small-text" th:if="${res.vehiculo == null}">Sin vehículo</span>
                   </div>
 
                   <form th:action="@{/admin/reservas/actualizar/{id}(id=${res.id})}" method="post"

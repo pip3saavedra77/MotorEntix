@@ -35,4 +35,9 @@ public class ReservaServiceImplement implements IReservaService {
     public void deleteById(Integer id) {
         reservaRepository.deleteById(id);
     }
+
+    @Override
+    public List<Reserva> findByUsuarioId(Integer usuarioId) {
+        return reservaRepository.findByUsuarioId(usuarioId);
+    }
 }

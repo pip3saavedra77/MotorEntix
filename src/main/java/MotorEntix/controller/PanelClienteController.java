@@ -1,11 +1,26 @@
 package MotorEntix.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import MotorEntix.model.Reserva;
+import MotorEntix.model.Servicio;
 import MotorEntix.model.Usuario;
+import MotorEntix.model.Trabajador;
+
+import MotorEntix.service.IReservaService;
+import MotorEntix.service.IServicioService;
 import MotorEntix.service.IUsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
+import MotorEntix.service.ITrabajadorService;
+import MotorEntix.service.IVehiculoClienteService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -13,6 +28,18 @@ public class PanelClienteController {
 
 	@Autowired
 	private IUsuarioService usuarioService;
+
+	@Autowired
+	private IReservaService reservaService;
+
+	@Autowired
+	private IServicioService servicioService;
+
+	@Autowired
+	private ITrabajadorService trabajadorService;
+
+	@Autowired
+	private IVehiculoClienteService vehiculoClienteService;
 
 	@GetMapping("/panel.cliente")
 	public String mostrarPanelCliente(Model model, HttpSession session) {
@@ -88,13 +115,152 @@ public class PanelClienteController {
 	}
 
 	@GetMapping("/reservasCliente")
-	public String mostrarReservas(Model model, HttpSession session) {
+	public String mostrarReservas(@RequestParam(name = "q", required = false) String q,
+			@RequestParam(name = "estado", required = false) String estado,
+			@RequestParam(name = "fecha", required = false) String fecha,
+			Model model, HttpSession session) {
+
 		Integer usuarioId = (Integer) session.getAttribute("usuarioId");
-		if (usuarioId != null) {
-			Usuario usuario = usuarioService.findById(usuarioId);
-			model.addAttribute("usuario", usuario);
+		if (usuarioId == null) {
+			return "redirect:/login";
 		}
-		return "clientes/reservasCliente"; // ← Si tu archivo se llama así
+
+		Usuario usuario = usuarioService.findById(usuarioId);
+		model.addAttribute("usuario", usuario);
+
+		List<Reserva> reservas = reservaService.findByUsuarioId(usuarioId);
+		
+		// Filtro por texto (servicio, vehículo, ID)
+		if (q != null && !q.trim().isEmpty()) {
+			String query = q.trim().toLowerCase();
+			reservas = reservas.stream().filter(r -> {
+				boolean match = false;
+				if (r.getServicio() != null && r.getServicio().getNombre() != null) {
+					match |= r.getServicio().getNombre().toLowerCase().contains(query);
+				}
+				if (r.getVehiculo() != null) {
+					String placa = r.getVehiculo().getPlaca() != null ? r.getVehiculo().getPlaca().toLowerCase() : "";
+					String descVeh = (r.getVehiculo().getMarca() + " " + r.getVehiculo().getModelo()).toLowerCase();
+					match |= placa.contains(query) || descVeh.contains(query);
+				}
+				// ID de reserva como texto (#RES123)
+				if (r.getId() != null) {
+					String idStr = ("res" + r.getId()).toLowerCase();
+					match |= idStr.contains(query);
+				}
+				return match;
+			}).toList();
+			model.addAttribute("q", q.trim());
+		}
+
+		// Filtro por estado
+		if (estado != null && !estado.trim().isEmpty()) {
+			String estadoFiltro = estado.trim().toLowerCase();
+			reservas = reservas.stream()
+					.filter(r -> r.getEstado() != null && r.getEstado().toLowerCase().equals(estadoFiltro))
+					.toList();
+			model.addAttribute("estadoSeleccionado", estado.trim());
+		}
+
+		// Filtro por fecha exacta (si se envía)
+		if (fecha != null && !fecha.trim().isEmpty()) {
+			String fechaFiltro = fecha.trim();
+			reservas = reservas.stream()
+					.filter(r -> fechaFiltro.equals(r.getFechaReserva()))
+					.toList();
+			model.addAttribute("fechaSeleccionada", fechaFiltro);
+		}
+
+		model.addAttribute("reservas", reservas);
+
+		model.addAttribute("servicios", servicioService.findAll());
+		model.addAttribute("trabajadores", trabajadorService.findAll());
+		model.addAttribute("vehiculos", vehiculoClienteService.obtenerVehiculosPorUsuario(usuarioId));
+
+		long pendientes = reservas.stream()
+				.filter(r -> r.getEstado() != null && r.getEstado().equalsIgnoreCase("pendiente")).count();
+		long activas = reservas.stream()
+				.filter(r -> r.getEstado() != null && r.getEstado().equalsIgnoreCase("activa")).count();
+		long completadas = reservas.stream()
+				.filter(r -> r.getEstado() != null && r.getEstado().equalsIgnoreCase("completada")).count();
+
+		model.addAttribute("pendientes", pendientes);
+		model.addAttribute("activas", activas);
+		model.addAttribute("completadas", completadas);
+
+		return "clientes/reservasCliente";
+	}
+
+	@PostMapping("/reservasCliente/crear")
+	public String crearReservaCliente(@RequestParam("servicioId") Integer servicioId,
+			@RequestParam("fechaReserva") String fechaReserva,
+			@RequestParam("horaReserva") String horaReserva,
+			@RequestParam(name = "trabajadorId", required = false) Integer trabajadorId,
+			@RequestParam(name = "vehiculoId", required = false) Integer vehiculoId,
+			HttpSession session,
+			RedirectAttributes redirectAttributes) {
+
+		Integer usuarioId = (Integer) session.getAttribute("usuarioId");
+		if (usuarioId == null) {
+			return "redirect:/login";
+		}
+
+		try {
+			Usuario usuario = usuarioService.findById(usuarioId);
+			Servicio servicio = servicioService.findById(servicioId);
+			if (usuario == null || servicio == null) {
+				redirectAttributes.addFlashAttribute("error", "No se pudo crear la reserva. Datos inválidos.");
+			} else {
+				Reserva reserva = new Reserva();
+				reserva.setUsuario(usuario);
+				reserva.setServicio(servicio);
+				reserva.setFechaReserva(fechaReserva);
+				reserva.setHoraReserva(horaReserva);
+				reserva.setIdCliente(usuarioId);
+				if (trabajadorId != null) {
+					var trabajador = trabajadorService.findById(trabajadorId);
+					reserva.setTrabajador(trabajador);
+				}
+				if (vehiculoId != null) {
+					var vehiculo = vehiculoClienteService.obtenerPorId(vehiculoId);
+					reserva.setVehiculo(vehiculo);
+				}
+				reserva.setEstado("pendiente");
+				reservaService.save(reserva);
+				redirectAttributes.addFlashAttribute("success", "Reserva creada correctamente.");
+
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Ocurrió un error al crear la reserva.");
+		}
+
+		return "redirect:/reservasCliente";
+	}
+
+	@PostMapping("/reservasCliente/cancelar/{id}")
+	public String cancelarReservaCliente(@PathVariable("id") Integer id,
+			HttpSession session,
+			RedirectAttributes redirectAttributes) {
+
+		Integer usuarioId = (Integer) session.getAttribute("usuarioId");
+		if (usuarioId == null) {
+			return "redirect:/login";
+		}
+
+		try {
+			Reserva reserva = reservaService.findById(id);
+			if (reserva == null || reserva.getUsuario() == null || !usuarioId.equals(reserva.getUsuario().getId_usuario())) {
+				redirectAttributes.addFlashAttribute("error", "No se encontró la reserva o no te pertenece.");
+			} else {
+				reserva.setEstado("cancelada");
+				reservaService.save(reserva);
+				redirectAttributes.addFlashAttribute("success", "Reserva cancelada correctamente.");
+			}
+		} catch (Exception e) {
+			redirectAttributes.addFlashAttribute("error", "Ocurrió un error al cancelar la reserva.");
+		}
+
+		return "redirect:/reservasCliente";
 	}
 
 	@GetMapping("/historial")

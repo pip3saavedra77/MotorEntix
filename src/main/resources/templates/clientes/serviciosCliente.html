@@ -14,10 +14,27 @@
 			<h1>MotorEntix</h1>
 		</div>
 		<div class="user-info">
-			<span th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Cliente</span>
-			<span th:unless="${usuario != null}">Cliente</span>
-			<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">C</div>
-			<div class="user-avatar" th:unless="${usuario != null}">C</div>
+			<div class="user-menu">
+				<button type="button" class="user-menu-toggle">
+					<span class="user-name-label" th:if="${usuario != null}" th:text="${usuario.nombre} + ' ' + ${usuario.apellido}">Usuario</span>
+					<span class="user-name-label" th:unless="${usuario != null}">Invitado</span>
+					<div class="user-avatar" th:if="${usuario != null}" th:text="${usuario.nombre.substring(0, 1)}">U</div>
+					<div class="user-avatar" th:unless="${usuario != null}">I</div>
+					<span class="user-menu-arrow">▾</span>
+				</button>
+				<div class="user-menu-dropdown">
+					<a th:href="@{/panel.cliente}" class="user-menu-item">
+						<span>👤 Mi perfil</span>
+					</a>
+					<a th:href="@{/editar-perfil}" class="user-menu-item">
+						<span>✏️ Editar perfil</span>
+					</a>
+					<div class="user-menu-divider"></div>
+					<a th:href="@{/logout}" class="user-menu-item user-menu-item-danger">
+						<span>🚪 Cerrar sesión</span>
+					</a>
+				</div>
+			</div>
 		</div>
 	</header>
 
@@ -66,6 +83,30 @@
 			<!-- ... resto del contenido de servicios igual ... -->
 		</main>
 	</div>
+
+	<script>
+		// Dropdown de usuario en header (panel cliente)
+		document.addEventListener('DOMContentLoaded', function () {
+			const userMenu = document.querySelector('.user-menu');
+			if (!userMenu) return;
+			const toggle = userMenu.querySelector('.user-menu-toggle');
+			if (!toggle) return;
+
+			function closeMenu() {
+				userMenu.classList.remove('open');
+			}
+
+			toggle.addEventListener('click', function (event) {
+				event.stopPropagation();
+				userMenu.classList.toggle('open');
+			});
+
+			document.addEventListener('click', function () {
+				closeMenu();
+			});
+		});
+	</script>
+
 </body>
 
 </html>

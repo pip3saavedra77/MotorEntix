@@ -133,10 +133,47 @@ public class PanelAdminController {
 	}
 
 	@GetMapping("/reservas")
-	public String reservas(Model model, HttpSession session) {
+	public String reservas(@RequestParam(name = "q", required = false) String q,
+			@RequestParam(name = "estado", required = false) String estado,
+			Model model, HttpSession session) {
 		agregarUsuarioAlModelo(model, session);
 		model.addAttribute("pagina", "reservas");
-		model.addAttribute("reservas", reservaService.findAll());
+
+		var reservas = reservaService.findAll();
+
+		// Filtro por texto (cliente, correo, servicio, vehículo)
+		if (q != null && !q.trim().isEmpty()) {
+			String query = q.trim().toLowerCase();
+			reservas = reservas.stream().filter(r -> {
+				boolean match = false;
+				if (r.getUsuario() != null) {
+					String nombreCompleto = (r.getUsuario().getNombre() + " " + r.getUsuario().getApellido()).toLowerCase();
+					String correo = r.getUsuario().getCorreo() != null ? r.getUsuario().getCorreo().toLowerCase() : "";
+					match |= nombreCompleto.contains(query) || correo.contains(query);
+				}
+				if (r.getServicio() != null && r.getServicio().getNombre() != null) {
+					match |= r.getServicio().getNombre().toLowerCase().contains(query);
+				}
+				if (r.getVehiculo() != null) {
+					String placa = r.getVehiculo().getPlaca() != null ? r.getVehiculo().getPlaca().toLowerCase() : "";
+					String descVeh = (r.getVehiculo().getMarca() + " " + r.getVehiculo().getModelo()).toLowerCase();
+					match |= placa.contains(query) || descVeh.contains(query);
+				}
+				return match;
+			}).toList();
+			model.addAttribute("q", q.trim());
+		}
+
+		// Filtro por estado
+		if (estado != null && !estado.trim().isEmpty()) {
+			String estadoFiltro = estado.trim().toLowerCase();
+			reservas = reservas.stream()
+					.filter(r -> r.getEstado() != null && r.getEstado().toLowerCase().equals(estadoFiltro))
+					.toList();
+			model.addAttribute("estadoSeleccionado", estado.trim());
+		}
+
+		model.addAttribute("reservas", reservas);
 		model.addAttribute("trabajadores", trabajadorService.findAll());
 		return "administrador/reservasAdmin";
 	}
@@ -151,17 +188,25 @@ public class PanelAdminController {
 			if (reserva != null) {
 				// Actualizar estado de la reserva
 				reserva.setEstado(estado);
-				reservaService.save(reserva);
 
-				// Asignar trabajador al servicio de la reserva (si se envió)
+				// Asignar trabajador a la reserva (y opcionalmente al servicio) si se envió
 				if (trabajadorId != null) {
 					Trabajador trabajador = trabajadorService.findById(trabajadorId);
-					Servicio servicio = reserva.getServicio();
-					if (trabajador != null && servicio != null) {
-						servicio.setTrabajador(trabajador);
-						servicioService.save(servicio);
+					if (trabajador != null) {
+						// Guardar en la propia reserva para que el panel cliente lo vea
+						reserva.setTrabajador(trabajador);
+						// Mantener compatibilidad asignando también al servicio si existe
+						Servicio servicio = reserva.getServicio();
+						if (servicio != null) {
+							servicio.setTrabajador(trabajador);
+							servicioService.save(servicio);
+						}
 					}
 				}
+
+				// Guardar cambios de la reserva al final
+				reservaService.save(reserva);
+
 				redirectAttributes.addFlashAttribute("exito", "Reserva actualizada correctamente");
 			} else {
 				redirectAttributes.addFlashAttribute("error", "Reserva no encontrada");

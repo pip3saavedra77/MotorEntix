@@ -21,10 +21,20 @@ public class Reserva {
 	private String fechaReserva;
 	@Column(name = "hora_reserva")
 	private String horaReserva;
+	@Column(name = "id_cliente")
+	private Integer idCliente;
 	private String estado;
 
 	@ManyToOne
 	private Usuario usuario;
+
+	@ManyToOne
+	@JoinColumn(name = "id_trabajador", nullable = true)
+	private Trabajador trabajador;
+
+	@ManyToOne
+	@JoinColumn(name = "id_vehiculo", nullable = true)
+	private Vehiculo vehiculo;
 	@ManyToOne
 	@JoinColumn(name = "id_servicio")
 	private Servicio servicio;
@@ -69,6 +79,14 @@ public class Reserva {
 		this.horaReserva = horaReserva;
 	}
 
+	public Integer getIdCliente() {
+		return idCliente;
+	}
+
+	public void setIdCliente(Integer idCliente) {
+		this.idCliente = idCliente;
+	}
+
 	public String getEstado() {
 		return estado;
 	}
@@ -83,6 +101,22 @@ public class Reserva {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	public Trabajador getTrabajador() {
+		return trabajador;
+	}
+
+	public void setTrabajador(Trabajador trabajador) {
+		this.trabajador = trabajador;
+	}
+
+	public Vehiculo getVehiculo() {
+		return vehiculo;
+	}
+
+	public void setVehiculo(Vehiculo vehiculo) {
+		this.vehiculo = vehiculo;
 	}
 
 	public Servicio getServicio() {
