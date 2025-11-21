@@ -5,8 +5,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Collections;
+
 import MotorEntix.model.Usuario;
+import MotorEntix.model.Trabajador;
+import MotorEntix.model.Reserva;
 import MotorEntix.service.IUsuarioService;
+import MotorEntix.service.ITrabajadorService;
+import MotorEntix.service.IReservaService;
 import jakarta.servlet.http.HttpSession;
 
 @Controller
@@ -14,6 +20,12 @@ public class PanelTrabajadorController {
 
     @Autowired
     private IUsuarioService usuarioService;
+
+    @Autowired
+    private ITrabajadorService trabajadorService;
+
+    @Autowired
+    private IReservaService reservaService;
 
     @GetMapping("/panel.trabajador")
     public String mostrarPanelTrabajador(Model model, HttpSession session) {
@@ -40,6 +52,20 @@ public class PanelTrabajadorController {
     @GetMapping("/trabajador/servicios-asignados")
     public String serviciosAsignados(Model model, HttpSession session) {
         agregarUsuarioAlModelo(model, session);
+
+        Integer usuarioId = (Integer) session.getAttribute("usuarioId");
+        if (usuarioId != null) {
+            Trabajador trabajador = trabajadorService.findByUsuarioId(usuarioId);
+            if (trabajador != null) {
+                java.util.List<Reserva> serviciosAsignados = reservaService.findByTrabajadorId(trabajador.getId_trabajador());
+                model.addAttribute("serviciosAsignados", serviciosAsignados);
+            } else {
+                model.addAttribute("serviciosAsignados", Collections.emptyList());
+            }
+        } else {
+            model.addAttribute("serviciosAsignados", Collections.emptyList());
+        }
+
         return "trabajadores/serviciosAsignados";
     }
 

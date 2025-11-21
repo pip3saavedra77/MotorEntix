@@ -9,4 +9,5 @@ public interface IReservaService {
     Reserva save(Reserva reserva);
     void deleteById(Integer id);
     List<Reserva> findByUsuarioId(Integer usuarioId);
+    List<Reserva> findByTrabajadorId(Integer trabajadorId);
 }

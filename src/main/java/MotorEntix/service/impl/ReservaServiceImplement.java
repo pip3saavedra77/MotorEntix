@@ -40,4 +40,9 @@ public class ReservaServiceImplement implements IReservaService {
     public List<Reserva> findByUsuarioId(Integer usuarioId) {
         return reservaRepository.findByUsuarioId(usuarioId);
     }
+
+    @Override
+    public List<Reserva> findByTrabajadorId(Integer trabajadorId) {
+        return reservaRepository.findByTrabajadorId(trabajadorId);
+    }
 }

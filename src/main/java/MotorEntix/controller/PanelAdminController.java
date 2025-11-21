@@ -104,6 +104,20 @@ public class PanelAdminController {
 				usuario.setRol(rol);
 				usuario.setEstado(estado);
 				usuarioService.actualizarUsuario(usuario);
+
+				// Si el usuario tiene rol trabajador, asegurarnos de que exista su registro en Trabajador
+				if ("trabajador".equalsIgnoreCase(rol)) {
+					Trabajador existente = trabajadorService.findByUsuarioId(usuario.getId_usuario());
+					if (existente == null) {
+						Trabajador nuevoTrabajador = new Trabajador();
+						nuevoTrabajador.setUsuario(usuario);
+						// Valores por defecto opcionales
+						nuevoTrabajador.setEspecialidad("General");
+						nuevoTrabajador.setHora_Ingreso("08:00");
+						nuevoTrabajador.setHora_Salida("18:00");
+						trabajadorService.save(nuevoTrabajador);
+					}
+				}
 				redirectAttributes.addFlashAttribute("exito", "Usuario actualizado correctamente");
 			} else {
 				redirectAttributes.addFlashAttribute("error", "Usuario no encontrado");

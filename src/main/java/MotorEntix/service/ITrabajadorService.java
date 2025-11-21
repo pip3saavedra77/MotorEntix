@@ -8,4 +8,5 @@ public interface ITrabajadorService {
     Trabajador findById(Integer id);
     Trabajador save(Trabajador trabajador);
     void deleteById(Integer id);
+	Trabajador findByUsuarioId(Integer usuarioId);
 }

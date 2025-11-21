@@ -52,8 +52,72 @@
 			<div class="page-header">
 				<h1 class="page-title">Servicios asignados</h1>
 			</div>
-			<div class="welcome-card">
-				<p>Aquí se mostrarán los servicios actualmente asignados al trabajador.</p>
+
+			<div class="inventory-page" style="padding-top:0;">
+				<section class="inventory-card" style="box-shadow:none; border-radius:14px;">
+					<div class="inventory-header" style="margin-bottom:1rem;">
+						<div>
+							<h3 class="inventory-header-title">
+								<span class="icon">🧰</span>
+								<span>Servicios actualmente asignados</span>
+							</h3>
+							<p class="inventory-subtitle">Revisa tus servicios pendientes, con su estado, cliente y vehículo asociados.</p>
+						</div>
+					</div>
+
+					<div th:if="${serviciosAsignados == null} or ${#lists.isEmpty(serviciosAsignados)}"
+							class="welcome-card" style="margin-top:0;">
+						<p>No tienes servicios asignados en este momento.</p>
+					</div>
+
+					<div th:if="${serviciosAsignados != null} and ${!#lists.isEmpty(serviciosAsignados)}"
+							style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:1rem;">
+						<div th:each="reserva : ${serviciosAsignados}"
+								style="background: var(--card-bg); border-radius:14px; padding:1rem 1.25rem; box-shadow:0 10px 25px rgba(0,0,0,0.18); border:1px solid rgba(0,191,165,0.25); position:relative; overflow:hidden;">
+							<div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.5rem;">
+								<div>
+									<h3 style="margin:0; font-size:1rem; font-weight:600; color:var(--text-dark);"
+											th:text="${reserva.servicio != null ? reserva.servicio.nombre : 'Servicio sin nombre'}">Servicio</h3>
+									<p style="margin:0.15rem 0 0; font-size:0.8rem; color:#6b7280;"
+											th:text="${reserva.servicio != null ? reserva.servicio.descripcion : ''}">Descripción</p>
+								</div>
+								<span class="status-indicator"
+										th:text="${reserva.estado}"
+										th:classappend="${#strings.equalsIgnoreCase(reserva.estado, 'activa') ? ' status-available' :
+											(#strings.equalsIgnoreCase(reserva.estado, 'pendiente') ? ' status-maintenance' :
+												(#strings.equalsIgnoreCase(reserva.estado, 'completada') ? ' status-available' :
+													(#strings.equalsIgnoreCase(reserva.estado, 'cancelada') ? ' status-rented' : '')))}">
+									Pendiente
+								</span>
+							</div>
+
+							<div style="display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0.5rem; font-size:0.82rem; color:#4b5563;">
+								<div>
+									<strong>Fecha</strong>
+									<div th:text="${reserva.fechaReserva}">2025-01-01</div>
+								</div>
+								<div>
+									<strong>Hora</strong>
+									<div th:text="${reserva.horaReserva}">10:00</div>
+								</div>
+								<div>
+									<strong>Cliente</strong>
+									<div th:text="${reserva.usuario != null ? reserva.usuario.nombre + ' ' + reserva.usuario.apellido : 'Sin cliente'}">Cliente</div>
+								</div>
+								<div>
+									<strong>Vehículo</strong>
+									<div th:text="${reserva.vehiculo != null ? reserva.vehiculo.placa + ' - ' + reserva.vehiculo.marca + ' ' + reserva.vehiculo.modelo : 'No asociado'}">Vehículo</div>
+								</div>
+							</div>
+
+							<div style="margin-top:0.5rem; display:flex; justify-content:space-between; align-items:center; font-size:0.75rem; color:#9ca3af;">
+								<span th:text="'ID reserva: #' + ${reserva.id}">#1</span>
+								<span th:if="${reserva.servicio != null && reserva.servicio.precioBase != null}"
+										th:text="'Precio base: S/ ' + ${reserva.servicio.precioBase}">Precio</span>
+							</div>
+						</div>
+					</div>
+				</section>
 			</div>
 		</main>
 	</div>

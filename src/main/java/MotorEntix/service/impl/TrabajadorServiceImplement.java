@@ -35,4 +35,9 @@ public class TrabajadorServiceImplement implements ITrabajadorService {
     public void deleteById(Integer id) {
         trabajadorRepository.deleteById(id);
     }
+
+    @Override
+    public Trabajador findByUsuarioId(Integer usuarioId) {
+        return trabajadorRepository.findByUsuarioId(usuarioId);
+    }
 }

@@ -92,26 +92,48 @@
 			</div>
 
 			<!-- Filtros de búsqueda -->
-			<div class="table-container" style="margin-bottom: 2rem;">
-				<div class="table-header">
-					<h3 class="table-title">Filtrar Reservas</h3>
-				</div>
-				<div style="padding: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-					<div class="search-container">
-						<input type="text" placeholder="Buscar por vehículo o ID..." class="search-input">
-						<button class="btn btn-search">🔍</button>
+			<div class="inventory-page" style="margin-bottom: 1.5rem; padding: 0;">
+				<section class="inventory-card" style="box-shadow:none; border-radius:14px; padding-top:1rem; padding-bottom:1rem;">
+					<div class="inventory-header" style="margin-bottom:0.75rem;">
+						<div>
+							<h3 class="inventory-header-title">
+								<span class="icon">🔎</span>
+								<span>Filtrar reservas</span>
+							</h3>
+							<p class="inventory-subtitle">Busca tus reservas por servicio, estado o fecha específica.</p>
+						</div>
 					</div>
-					<select class="search-input" style="min-width: 150px;">
-						<option value="">Todos los estados</option>
-						<option value="pendiente">Pendiente</option>
-						<option value="confirmada">Confirmada</option>
-						<option value="activa">Activa</option>
-						<option value="completada">Completada</option>
-						<option value="cancelada">Cancelada</option>
-					</select>
-					<input type="date" class="search-input" style="min-width: 150px;">
-					<button class="btn btn-primary">Aplicar Filtros</button>
-				</div>
+
+					<form method="get" th:action="@{/reservasCliente}" class="inventory-form" style="padding-top:0.5rem; padding-bottom:0.5rem;">
+						<div class="form-row" style="display:flex; gap:0.75rem; align-items:flex-end; flex-wrap:nowrap;">
+							<div class="form-group" style="flex: 2 1 0; min-width:0;">
+								<label class="input-label">Búsqueda rápida</label>
+								<input type="text" name="q" placeholder="Servicio, vehículo o ID de reserva" class="search-input"
+									   th:value="${q}">
+							</div>
+							<div class="form-group" style="flex: 1 1 0; min-width:0;">
+								<label class="input-label">Estado</label>
+								<select name="estado" class="search-input">
+									<option value="" th:selected="${estadoSeleccionado == null || #strings.isEmpty(estadoSeleccionado)}">Todos los estados</option>
+									<option value="pendiente" th:selected="${#strings.equalsIgnoreCase(estadoSeleccionado, 'pendiente')}">Pendiente</option>
+									<option value="confirmada" th:selected="${#strings.equalsIgnoreCase(estadoSeleccionado, 'confirmada')}">Confirmada</option>
+									<option value="activa" th:selected="${#strings.equalsIgnoreCase(estadoSeleccionado, 'activa')}">Activa</option>
+									<option value="completada" th:selected="${#strings.equalsIgnoreCase(estadoSeleccionado, 'completada')}">Completada</option>
+									<option value="cancelada" th:selected="${#strings.equalsIgnoreCase(estadoSeleccionado, 'cancelada')}">Cancelada</option>
+								</select>
+							</div>
+							<div class="form-group" style="flex: 1 1 0; min-width:0;">
+								<label class="input-label">Fecha</label>
+								<input type="date" name="fecha" class="search-input" th:value="${fechaSeleccionada}">
+							</div>
+						</div>
+
+						<div style="margin-top:0.75rem; display:flex; gap:0.75rem; justify-content:flex-end; flex-wrap:wrap;">
+							<button type="submit" class="btn btn-primary">Aplicar filtros</button>
+							<a th:href="@{/reservasCliente}" class="btn btn-clear" style="text-decoration:none;">Limpiar</a>
+						</div>
+					</form>
+				</section>
 			</div>
 
 			<!-- Tabla de reservas -->
